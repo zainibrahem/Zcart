@@ -1,1 +1,0 @@
-<li><a href="{{ url('/') }}">{{ trans('theme.nav.home') }}</a></li>

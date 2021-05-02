@@ -6,6 +6,8 @@
 
 @section('content')
 
+  @include('admin.partials._check_misconfigured_subscription')
+
   <!-- Info boxes -->
   <div class="row">
       <div class="col-md-3 col-sm-6 col-xs-12 nopadding-right">

@@ -84,13 +84,13 @@ class ConfigController extends Controller
             $config->shop->deleteLogo();
 
         if ($request->hasFile('image'))
-            $config->shop->saveImage($request->file('image'));
+            $config->shop->saveImage($request->file('image'), 'logo');
 
         if ($request->hasFile('cover_image') || ($request->input('delete_cover_image') == 1))
             $config->shop->deleteFeaturedImage();
 
         if ($request->hasFile('cover_image'))
-            $config->shop->saveImage($request->file('cover_image'), true);
+            $config->shop->saveImage($request->file('cover_image'), 'cover');
 
         return back()->with('success', trans('messages.updated', ['model' => $this->model_name]));
     }

@@ -214,7 +214,7 @@ class AuthController extends Controller
     public function reset(Request $request)
     {
         $request->validate([
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:6|confirmed',
             'token' => 'required|string'
         ]);
 

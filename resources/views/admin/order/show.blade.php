@@ -146,11 +146,11 @@
                           {{ $item->pivot->item_description }}
                           <a href="{{ route('show.product', $item->slug) }}" target="_blank" class="indent5 small"><i class=" fa fa-external-link"></i></a>
                         </td>
-                        <td class="nopadding-right" width="15%">
+                        <td class="nopadding-right text-right " width="15%">
                           {{ get_formated_currency($item->pivot->unit_price, true, 2) }}
                         </td>
-                        <td>x</td>
-                        <td class="nopadding-right" width="10%">
+                        <td>&times;</td>
+                        <td class="nopadding text-left" width="10%">
                           {{ $item->pivot->quantity }}
                         </td>
                         <td class="nopadding-right text-center" width="10%">
@@ -334,15 +334,25 @@
                     @endunless
                 @else
                   @unless($order->isCanceled() || $order->cancellation)
+
                     @if(! $order->cancellationFeeApplicable())
-                      {!! Form::open(['route' => ['admin.order.order.cancel', $order], 'method' => 'put', 'class' => 'inline']) !!}
-                        <button type="submit" class="confirm ajax-silent btn btn-lg btn-warning">{{ trans('app.cancel_order') }}</button>
-                      {!! Form::close() !!}
+
+                      @if(Auth::user()->isFromPlatform())
+                        <a href="javascript:void(0)" data-link="{{ route('admin.order.cancellation.create', $order) }}" class='ajax-modal-btn btn btn-lg btn-warning'>
+                          {{ trans('app.cancel_order') }}
+                        </a>
+                      @else
+                        {!! Form::open(['route' => ['admin.order.order.cancel', $order], 'method' => 'put', 'class' => 'inline']) !!}
+                          <button type="submit" class="confirm ajax-silent btn btn-lg btn-warning">{{ trans('app.cancel_order') }}</button>
+                        {!! Form::close() !!}
+                      @endif
+
                     @else
                       <a href="javascript:void(0)" data-link="{{ route('admin.order.cancellation.create', $order) }}" class='ajax-modal-btn btn btn-flat btn-lg btn-warning'>
                         {{ trans('app.cancel_order') }}
                       </a>
                     @endif
+
                   @endunless
 
                   <a href="javascript:void(0)" data-link="{{ route('admin.order.order.fulfillment', $order) }}" class='ajax-modal-btn btn btn-flat btn-lg btn-primary' >

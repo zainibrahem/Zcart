@@ -420,8 +420,6 @@ return [
 		'your_feedback_saved' => 'Thank you for your feedback!',
 		'you_will_be_redirected_to_paystack' => 'You will be redirected to Paystack.',
 		'you_will_be_redirected_to_instamojo' => 'You will be redirected to Instamojo.',
-		'all_seller_doesnt_ship' => 'All seller does not deliver to your selected Country/Region. Change the shipping address or find other sellers who ship to your area.',
-
 	],
 
 	'input_label' => [
@@ -672,7 +670,6 @@ return [
 	'shop_now' => 'Shop Now',
     'add_to_cart' => 'Add to Cart',
     'item_added_to_wishlist' => 'Item added to wishlist',
-    'single_checkout' => 'Checkout All',
     'flash_deal_days' => 'days',
     'hrs' => 'hrs',
     'mins' => 'mins',
@@ -684,4 +681,10 @@ return [
     'vendors' => 'Vendors',
     'all_brands' => 'All Brands',
     'all_shops' => 'All Vendors',
+    'sale_over' => 'Sorry! You\'ve missed the sale!',
+    'categories' => 'Categories',
+    'messages' => 'Messages',
+    'sell' => 'Sell',
+    'cart_update_failed' => 'Cart update failed!',
+    'cart_count' => 'Cart count',
 ];

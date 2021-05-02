@@ -15,7 +15,7 @@ class AddStripeStatusToSubscriptionsTable extends Migration
     {
         Schema::table('subscriptions', function (Blueprint $table) {
             if (! Schema::hasColumn('subscriptions','stripe_status')) {
-                $table->string('stripe_status')->nullable();
+                $table->string('stripe_status')->nullable()->after('stripe_id');
             }
         });
     }

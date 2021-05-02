@@ -3,10 +3,10 @@
       <div class="row">
         @if($products->count())
 
-          <div class="col-sm-2 bg-light">
+          <div class="col-md-3 bg-light">
             @include('theme::contents.product_list_sidebar_filters')
           </div><!-- /.col-sm-2 -->
-          <div class="col-sm-10" style="padding-left: 15px;">
+          <div class="col-md-9" style="padding-left: 15px;">
 
             @include('theme::contents.product_list')
 

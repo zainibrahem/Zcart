@@ -13,7 +13,7 @@
                     </div>
                 @endif
 
-                @include('theme::forms.address')
+                @include('partials.address_form')
 
                 <button type="submit" class='btn btn-default btn-sm flat pull-right'><i class="fas fa-save"></i> {{ trans('theme.button.save') }}</button>
             {!! Form::close() !!}

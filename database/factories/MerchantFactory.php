@@ -5,8 +5,11 @@ use Illuminate\Support\Str;
 use Faker\Generator as Faker;
 
 $factory->define(App\Merchant::class, function (Faker $faker) {
+
+    $created_at = Carbon::Now()->subDays(rand(0, 15));
+
     return [
-        'shop_id' => 2,
+        'shop_id' => 1,
         'role_id' => \App\Role::MERCHANT,
         'nice_name' => $faker->lastName,
         'name' => $faker->name,
@@ -18,7 +21,7 @@ $factory->define(App\Merchant::class, function (Faker $faker) {
         'active' => 1,
         // 'remember_token' => Str::random(10),
         // 'verification_token' => rand(0,1) == 1 ? Null : Str::random(10),
-        'created_at' => Carbon::Now()->subDays(rand(0, 15)),
-        'updated_at' => Carbon::Now()->subDays(rand(0, 15)),
+        'created_at' => $created_at,
+        'updated_at' => $created_at,
     ];
 });

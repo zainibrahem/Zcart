@@ -33,7 +33,7 @@ class Updated extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        if ($this->dispute->order->device_id !== null){
+        if ($this->reply->repliable->order->device_id !== null){
             HasNotifications::pushNotification(self::toArray($notifiable));
         }
         return ['mail', 'database'];
@@ -62,12 +62,12 @@ class Updated extends Notification implements ShouldQueue
     {
         return [
             'id' => $this->reply->repliable_id,
-            'device_id' => $this->dispute->order->device_id,
+            'device_id' => $this->reply->repliable->order->device_id,
             'status' => $this->reply->repliable->statusName(),
             'category' => $this->reply->repliable->dispute_type->detail,
-            'order_number' => $this->reply->repliable->order_number,
-            'subject' => trans('notifications.dispute_updated.subject', ['order_id' => $this->dispute->order->order_number]),
-            'message' => trans('notifications.dispute_updated.message', ['order_id' => $this->dispute->order->order_number]),
+            'order_number' => $this->reply->repliable->order->order_number,
+            'subject' => trans('notifications.dispute_updated.subject', ['order_id' => $this->reply->repliable->order->order_number]),
+            'message' => trans('notifications.dispute_updated.message', ['order_id' => $this->reply->repliable->order->order_number]),
         ];
     }
 }

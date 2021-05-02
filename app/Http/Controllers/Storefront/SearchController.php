@@ -35,39 +35,13 @@ class SearchController extends Controller
         $products->load([
                         'shop:id,slug,name,current_billing_plan,trial_ends_at,active',
                         'shop.config:shop_id,maintenance_mode',
-                        'shop.activeSubscription',
+                        'shop.currentSubscription',
                         'product:id,name,gtin,model_number'
                     ]);
 
         // Keep results only from active shops
         $products = $products->filter(function ($product) {
-            $tShop = $product->shop;
-
-            $result = $tShop && ($tShop->active == 1) && $tShop->hasAddress() &&
-                    $tShop->hasPaymentMethods() && ! $tShop->isDown();
-
-            if (! is_subscription_enabled()) {
-                return $result;
-            }
-
-            return $result &&
-                    ($tShop->current_billing_plan !== Null) &&
-                    (
-                        (
-                            ! $tShop->activeSubscription &&
-                            $tShop->trial_ends_at == Null ||
-                            $tShop->trial_ends_at > Carbon::now()
-                        ) ||
-                        (
-                            $tShop->activeSubscription &&
-                            (
-                                $tShop->activeSubscription->ends_at === Null ||
-                                $tShop->activeSubscription->ends_at > Carbon::now() ||
-                                $tShop->activeSubscription->trial_ends_at !== Null &&
-                                $tShop->activeSubscription->trial_ends_at > Carbon::now()
-                            )
-                        )
-                    );
+            return $product->shop->caGoLive();
         });
 
         // Filter variants from same vendor
@@ -77,17 +51,17 @@ class SearchController extends Controller
 
         $category = Null;
 
-        if($request->has('in')) {
+        if ($request->has('in')) {
             $category = Category::where('slug', $request->input('in'))->active()->firstOrFail();
             $listings = $category->listings()->available()->get();
             $products = $products->intersect($listings);
         }
-        else if($request->has('insubgrp') && ($request->input('insubgrp') != 'all')){
+        else if ($request->has('insubgrp') && ($request->input('insubgrp') != 'all')){
             $category = CategorySubGroup::where('slug', $request->input('insubgrp'))->active()->firstOrFail();
             $listings = prepareFilteredListings($request, $category);
             $products = $products->intersect($listings);
         }
-        else if($request->has('ingrp')){
+        else if ($request->has('ingrp')){
             $category = CategoryGroup::where('slug', $request->input('ingrp'))->active()->firstOrFail();
             $listings = prepareFilteredListings($request, $category);
             $products = $products->intersect($listings);
@@ -99,19 +73,19 @@ class SearchController extends Controller
         $brands = ListHelper::get_unique_brand_names_from_linstings($products);
         $priceRange = ListHelper::get_price_ranges_from_linstings($products);
 
-        if($request->has('free_shipping')) {
+        if ($request->has('free_shipping')) {
             $products = $products->where('free_shipping', 1);
         }
-        if($request->has('new_arrivals')) {
+        if ($request->has('new_arrivals')) {
             $products = $products->where('created_at', '>', Carbon::now()->subDays(config('system.filter.new_arrival', 7)));
         }
-        if($request->has('has_offers')) {
+        if ($request->has('has_offers')) {
             $products = $products->where('offer_price', '>', 0)
             ->where('offer_start', '<', Carbon::now())
             ->where('offer_end', '>', Carbon::now());
         }
 
-        if($request->has('sort_by')) {
+        if ($request->has('sort_by')) {
             switch ($request->get('sort_by')) {
                 case 'newest':
                     $products = $products->sortByDesc('created_at');
@@ -135,16 +109,16 @@ class SearchController extends Controller
             }
         }
 
-        if($request->has('condition')) {
+        if ($request->has('condition')) {
             $products = $products->whereIn('condition', array_keys($request->input('condition')));
         }
 
-        if($request->has('price')) {
+        if ($request->has('price')) {
             $price = explode('-', $request->input('price'));
             $products = $products->where('sale_price', '>=', $price[0])->where('sale_price', '<=', $price[1]);
         }
 
-        if($request->has('brand')) {
+        if ($request->has('brand')) {
             $products = $products->whereIn('brand', array_keys($request->input('brand')));
         }
 

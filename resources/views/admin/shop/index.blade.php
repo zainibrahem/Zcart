@@ -1,6 +1,10 @@
 @extends('admin.layouts.master')
 
 @section('content')
+	@php
+		$is_wallet_enabled = is_incevio_package_loaded('wallet');
+	@endphp
+
 	<div class="box">
 		<div class="box-header with-border">
 			<h3 class="box-title">{{ trans('app.shops') }}</h3>
@@ -37,6 +41,9 @@
 						@if(is_subscription_enabled())
 							<th>{{ trans('app.current_billing_plan') }}</th>
 						@endif
+						@if($is_wallet_enabled)
+							<th>{{ trans('wallet::lang.balance') }}</th>
+			          	@endif
 						<th>{{ trans('app.owner') }}</th>
 						<th>{{ trans('app.option') }}</th>
 					</tr>
@@ -86,6 +93,10 @@
 					          	</td>
 							@endif
 
+							@if($is_wallet_enabled)
+					          	<td>{{ get_formated_currency($shop->balance) }}</td>
+				          	@endif
+
 							<td>
 					            <img src="{{ get_avatar_src($shop->owner, 'tiny') }}" class="img-circle img-sm" alt="{{ trans('app.avatar') }}">
 								<p class="indent10">
@@ -100,6 +111,7 @@
 									@endunless
 								</p>
 							</td>
+
 							<td class="row-options">
 								@can('view', $shop)
 									<a href="javascript:void(0)" data-link="{{ route('admin.vendor.shop.show', $shop->id) }}"  class="ajax-modal-btn"><i data-toggle="tooltip" data-placement="top" title="{{ trans('app.detail') }}" class="fa fa-expand"></i></a>&nbsp;

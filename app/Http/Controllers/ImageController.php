@@ -46,10 +46,10 @@ class ImageController extends Controller
 	public function upload(Request $request)
 	{
 	    $fileBlob = 'fileBlob';		// the parameter name that stores the file blob
-	    if ($request->hasFile($fileBlob))
-	    {
-	        if (! $request->has('model_id') || !$request->has('model_name') )
+	    if($request->hasFile($fileBlob)) {
+	        if (! $request->has('model_id') || ! $request->has('model_name')) {
 	            return Response::json(['error' => trans('responses.model_not_defined')]);
+	        }
 
 	       	// Uploaded file info
 			$rawFile = $request->file($fileBlob);
@@ -74,20 +74,20 @@ class ImageController extends Controller
 	        $uniqFileName = uniqid() . '.' . $fileExtension;
 	        $targetFile = $targetDir . '/' . $uniqFileName;  			// The target file path
 
-	        if ($totalChunks > 1)	// create chunk files only if chunks are greater than 1
-	        {
-				if (! file_exists($tempDir)) 	// Make the temp directory if not exist
+	        if ($totalChunks > 1) {	// create chunk files only if chunks are greater than 1
+				if(! file_exists($tempDir)) {	// Make the temp directory if not exist
 					mkdir($tempDir, 0777, true);
+				}
 
 	            $chunkFile = $tempDir . "chunk_" . str_pad($index, 4, '0', STR_PAD_LEFT);
 
-		        if(move_uploaded_file($file, $chunkFile))
-		        {
+		        if(move_uploaded_file($file, $chunkFile)) {
 		            $chunks = glob($tempDir . "chunk_*");	// get list of all chunks uploaded so far to server
 		            $allChunksUploaded = count($chunks) == $totalChunks;	// all chunks were uploaded
 
-		            if (! $allChunksUploaded) // Return to procceed if all chunks are not uploaded yet
+		            if (! $allChunksUploaded) { // Return to procceed if all chunks are not uploaded yet
 			            return Response::json(['chunkIndex' => $index]);
+					}
 
 		            // All chunks are uploaded, combines all file chunks to one file
 	                $file = $tempDir.$uniqFileName;
@@ -95,12 +95,11 @@ class ImageController extends Controller
 	            }
 			}
 
-        	if ($totalChunks == 1 || ($totalChunks > 1 && $allChunksUploaded))
-        	{
-		        if( $this->disk->put($targetFile, file_get_contents($file)) )
-		        {
-					if (is_dir($tempDir)) 	// Delete the temp directory if exist
+        	if($totalChunks == 1 || ($totalChunks > 1 && $allChunksUploaded)) {
+		        if($this->disk->put($targetFile, file_get_contents($file))) {
+					if(is_dir($tempDir)) {	// Delete the temp directory if exist
 				        File::deleteDirectory($tempDir);
+					}
 
 		        	$model = get_qualified_model($model_name);
 		        	$attachable = (new $model)->find($model_id);
@@ -113,8 +112,9 @@ class ImageController extends Controller
 			        ];
 
 			        // Success
-					if( $attachable->images()->create($data) )
+					if($attachable->images()->create($data)) {
 			            return Response::json(['chunkIndex' => $index]);
+					}
 		        }
 
 	            return Response::json(['error' => trans('responses.error_uploading_file') . ' ' . $realName]);
@@ -138,8 +138,9 @@ class ImageController extends Controller
 	 */
 	public function download(Request $request, Image $image)
 	{
-	    if (Storage::exists($image->path))
+	    if (Storage::exists($image->path)) {
 	        return Storage::download($image->path, $image->name);
+	    }
 
 		return back()->with('error', trans('messages.file_not_exist'));
 	}
@@ -194,8 +195,9 @@ class ImageController extends Controller
 	 */
 	private function setConfigs(Request $request)
 	{
-		if (config('image.background_color'))
+		if(config('image.background_color')) {
 			$request->merge(['bg' => config('image.background_color')]);
+		}
 
 		return $request;
 	}

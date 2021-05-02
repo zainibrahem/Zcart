@@ -43,9 +43,8 @@ class AccountController extends Controller
     public function profile()
     {
         $profile = $this->profile->profile();
-        $intent = Auth::user()->shop->createSetupIntent();
 
-        return view('admin.account.index', compact('profile', 'intent'));
+        return view('admin.account.index', compact('profile'));
     }
 
     /**

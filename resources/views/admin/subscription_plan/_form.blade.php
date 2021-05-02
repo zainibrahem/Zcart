@@ -7,9 +7,9 @@
 
 <div class="form-group">
   {!! Form::label('plan_id', trans('app.form.subscription_plan_id').'*', ['class' => 'with-help']) !!}
-  <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" title="{{ trans('help.subscription_plan_id') }}"></i>
+  {{-- <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" title="{{ trans('help.subscription_plan_id') }}"></i> --}}
   {!! Form::text('plan_id', null, ['class' => 'form-control', 'placeholder' => trans('app.placeholder.subscription_plan_id'), 'required']) !!}
-  <div class="help-block with-errors"></div>
+  <div class="help-block with-errors"><small class="text-info"><i class="fa fa-info-circle"></i> {!! trans('help.subscription_plan_id') !!}</small></div>
 </div>
 
 <div class="row">
@@ -73,7 +73,7 @@
         {!! Form::number('marketplace_commission', null, ['class' => 'form-control', 'step' => 'any', 'placeholder' => trans('app.placeholder.marketplace_commission'), 'required']) !!}
         <span class="input-group-addon">{{ trans('app.percent') }}</span>
       </div>
-      <div class="help-block with-errors"></div>
+      <div class="help-block with-errors"><small class="text-warning"><i class="fa fa-warning"></i> {!! trans('help.this_will_overwrite_by_dynamic_commission') !!}</small></div>
     </div>
   </div>
   <div class="col-md-6 nopadding-left">
@@ -84,7 +84,7 @@
         <span class="input-group-addon">{{ config('system_settings.currency_symbol') ?: '$' }}</span>
         {!! Form::number('transaction_fee', null, ['class' => 'form-control', 'step' => 'any', 'placeholder' => trans('app.placeholder.transaction_fee'), 'required']) !!}
       </div>
-      <div class="help-block with-errors"></div>
+      <div class="help-block with-errors"><small class="text-warning"><i class="fa fa-warning"></i> {!! trans('help.transaction_fee_will_charge') !!}</small></div>
     </div>
   </div>
 </div>

@@ -18,10 +18,13 @@
                   <tr class="order-body">
                     <td>
                       <div class="product-img-wrap">
-                        <img src="{{ get_storage_file_url(optional($order->shop->image)->path, 'small') }}" class="img-circle" alt="{{ $order->shop->slug }}" title="{{ $order->shop->slug }}" />
+                        <img src="{{ get_storage_file_url(optional($order->shop->image)->path, 'small') }}" alt="{{ $order->shop->slug }}" title="{{ $order->shop->slug }}" />
                       </div>
                       <div class="product-info">
-                        <a href="{{ route('show.store', $order->shop->slug) }}" class="product-info-title">{{ $order->shop->name }}</a>
+                        <a href="{{ route('show.store', $order->shop->slug) }}" class="product-info-title">
+                          {{ $order->shop->name }}
+                        </a>
+
                         @if($order->shop->feedbacks->count())
                           @include('theme::layouts.ratings', ['ratings' => $order->shop->averageFeedback(), 'count' => $order->shop->feedbacks->count()])
                         @else

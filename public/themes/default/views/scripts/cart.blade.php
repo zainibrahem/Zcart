@@ -1,15 +1,17 @@
 <script type="text/javascript">
 "use strict";
 ;(function($, window, document) {
-    $(document).ready(function(){
+    $(document).ready(function() {
     	// Check if specific cart is given
     	var expressId = '{{ $expressId }}';
-    	if( '' != expressId ) {
+
+    	if ('' != expressId) {
 			apply_busy_filter('body');
-    		$('#cartId'+expressId)[0].scrollIntoView({ behavior: 'smooth', block: 'start', offsetTop: 50}); // Scroll screen to target element
-    	}
-    	// Auto Submit the cart If its express checkout
-    	if( '' != expressId ) {
+
+            // Scroll screen to target element
+    		$('#cartId'+expressId)[0].scrollIntoView({ behavior: 'smooth', block: 'start', offsetTop: 50});
+
+            // Auto Submit the cart If its express checkout
             $("form#formId"+expressId).submit();
         }
     });

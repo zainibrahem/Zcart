@@ -23,7 +23,7 @@
 			</ul>
 			<div class="tab-content">
 			    <div class="tab-pane {{ Request::has('tab') ? '' : 'active' }}" id="active_inventory_tab">
-					<table class="table table-hover table-2nd-no-sort">
+					<table class="table table-hover" id="active_inventory">
 						<thead>
 							<tr>
 								@can('massDelete', App\Inventory::class)
@@ -54,67 +54,12 @@
 							</tr>
 						</thead>
 				        <tbody id="massSelectArea">
-							@foreach($inventories->where('active', 1) as $inventory )
-								<tr class="{{ $inventory->isLowQtt() ? 'danger' : '' }}">
-								  	@can('massDelete', App\Inventory::class)
-										<td><input id="{{ $inventory->id }}" type="checkbox" class="massCheck"></td>
-								  	@endcan
-									<td>
-										<img src="{{ get_product_img_src($inventory, 'tiny') }}" class="img-sm" alt="{{ trans('app.image') }}">
-									</td>
-									<td>{{ $inventory->sku }}</td>
-									<td>{!! $inventory->title !!}</td>
-									<td>{{ $inventory->condition }}</td>
-									<td>
-										@if(($inventory->offer_price > 0) && ($inventory->offer_end > \Carbon\Carbon::now()))
-											@php
-												$offer_price_help =
-													trans('help.offer_starting_time') . ': ' .
-													$inventory->offer_start->diffForHumans() . ' ' . trans('app.and') . ' ' .
-													trans('help.offer_ending_time') . ': ' .
-													$inventory->offer_end->diffForHumans();
-											@endphp
-
-											<small class="text-muted">{{ $inventory->sale_price }}</small><br/>
-											{{ get_formated_currency($inventory->offer_price, true, 2) }}
-
-											<small class="text-muted" data-toggle="tooltip" data-placement="top" title="{{ $offer_price_help }}"><sup><i class="fa fa-question"></i></sup></small>
-										@else
-											{{ get_formated_currency($inventory->sale_price, true, 2) }}
-										@endif
-									</td>
-									<td>
-										@if(Gate::allows('update', $inventory))
-											<a href="javascript:void(0)" data-link="{{ route('admin.stock.inventory.editQtt', $inventory->id) }}" class="ajax-modal-btn qtt-{{$inventory->id}}" data-toggle="tooltip" data-placement="top" title="{{ trans('app.update') }}">
-												{{ ($inventory->stock_quantity > 0) ? $inventory->stock_quantity : trans('app.out_of_stock') }}
-											</a>
-										@else
-											{{ ($inventory->stock_quantity > 0) ? $inventory->stock_quantity : trans('app.out_of_stock') }}
-										@endif
-									</td>
-									<td class="row-options">
-										@can('view', $inventory)
-											<a href="javascript:void(0)" data-link="{{ route('admin.stock.inventory.show', $inventory->id) }}"  class="ajax-modal-btn"><i data-toggle="tooltip" data-placement="top" title="{{ trans('app.detail') }}" class="fa fa-expand"></i></a>&nbsp;
-										@endcan
-
-										@can('update', $inventory)
-											<a href="{{ route('admin.stock.inventory.edit', $inventory->id) }}"><i data-toggle="tooltip" data-placement="top" title="{{ trans('app.edit') }}" class="fa fa-edit"></i></a>&nbsp;
-										@endcan
-
-										@can('delete', $inventory)
-											{!! Form::open(['route' => ['admin.stock.inventory.trash', $inventory->id], 'method' => 'delete', 'class' => 'data-form']) !!}
-												{!! Form::button('<i class="fa fa-trash-o"></i>', ['type' => 'submit', 'class' => 'confirm ajax-silent', 'title' => trans('app.trash'), 'data-toggle' => 'tooltip', 'data-placement' => 'top']) !!}
-											{!! Form::close() !!}
-										@endcan
-									</td>
-								</tr>
-							@endforeach
 						</tbody>
 					</table>
 				</div>
 
 			    <div class="tab-pane {{ Request::input('tab') == 'inactive_listings' ? 'active' : '' }}" id="inactive_listings_tab">
-					<table class="table table-hover table-2nd-no-sort">
+					<table class="table table-hover " id="inactive_inventory">
 						<thead>
 							<tr>
 								@can('massDelete', App\Inventory::class)
@@ -145,63 +90,12 @@
 							</tr>
 						</thead>
 				        <tbody id="massSelectArea2">
-							@foreach($inventories->where('active', 0) as $inventory )
-								<tr class="{{ $inventory->isLowQtt() ? 'danger' : '' }}">
-								  	@can('massDelete', App\Inventory::class)
-										<td><input id="{{ $inventory->id }}" type="checkbox" class="massCheck"></td>
-								  	@endcan
-									<td>
-										<img src="{{ get_product_img_src($inventory, 'tiny') }}" class="img-sm" alt="{{ trans('app.image') }}">
-									</td>
-									<td>
-										{{ $inventory->sku }}
-										@if($inventory->inspection_status && $inventory->inInspection())
-											<br/>
-											{!! trans('inspector::lang.inspection') .': '. $inventory->getInspectionStatus() !!}
-										@endif
-									</td>
-									<td>{!! $inventory->title !!}</td>
-									<td>{{ $inventory->condition }}</td>
-									<td>
-										@if(($inventory->offer_price > 0) && ($inventory->offer_end > \Carbon\Carbon::now()))
-											<?php $offer_price_help =
-													trans('help.offer_starting_time') . ': ' .
-													$inventory->offer_start->diffForHumans() . ' and ' .
-													trans('help.offer_ending_time') . ': ' .
-													$inventory->offer_end->diffForHumans(); ?>
-
-											<small class="text-muted">{{ $inventory->sale_price }}</small><br/>
-											{{ get_formated_currency($inventory->offer_price, true, 2) }}
-
-											<small class="text-muted" data-toggle="tooltip" data-placement="top" title="{{ $offer_price_help }}"><sup><i class="fa fa-question"></i></sup></small>
-										@else
-											{{ get_formated_currency($inventory->sale_price, true, 2) }}
-										@endif
-									</td>
-									<td>{{ ($inventory->stock_quantity > 0) ? $inventory->stock_quantity : trans('app.out_of_stock') }}</td>
-									<td class="row-options">
-										@can('view', $inventory)
-											<a href="javascript:void(0)" data-link="{{ route('admin.stock.inventory.show', $inventory->id) }}"  class="ajax-modal-btn"><i data-toggle="tooltip" data-placement="top" title="{{ trans('app.detail') }}" class="fa fa-expand"></i></a>&nbsp;
-										@endcan
-
-										@can('update', $inventory)
-											<a href="{{ route('admin.stock.inventory.edit', $inventory->id) }}"><i data-toggle="tooltip" data-placement="top" title="{{ trans('app.edit') }}" class="fa fa-edit"></i></a>&nbsp;
-										@endcan
-
-										@can('delete', $inventory)
-											{!! Form::open(['route' => ['admin.stock.inventory.trash', $inventory->id], 'method' => 'delete', 'class' => 'data-form']) !!}
-												{!! Form::button('<i class="fa fa-trash-o"></i>', ['type' => 'submit', 'class' => 'confirm ajax-silent', 'title' => trans('app.trash'), 'data-toggle' => 'tooltip', 'data-placement' => 'top']) !!}
-											{!! Form::close() !!}
-										@endcan
-									</td>
-								</tr>
-							@endforeach
 						</tbody>
 					</table>
 				</div>
 
 			    <div class="tab-pane {{ Request::input('tab') == 'out_of_stock' ? 'active' : '' }}" id="stock_out_tab">
-					<table class="table table-hover table-2nd-no-sort">
+					<table class="table table-hover" id="outOfStock_inventory">
 						<thead>
 							<tr>
 								@can('massDelete', App\Inventory::class)
@@ -232,65 +126,13 @@
 							</tr>
 						</thead>
 						<tbody id="massSelectArea3">
-							@foreach($inventories->where('stock_quantity', '<=', 0) as $inventory )
-								<tr>
-								  	@can('massDelete', App\Inventory::class)
-										<td><input id="{{ $inventory->id }}" type="checkbox" class="massCheck"></td>
-								  	@endcan
-									<td>
-										<img src="{{ get_product_img_src($inventory, 'tiny') }}" class="img-sm" alt="{{ trans('app.image') }}">
-									</td>
-									<td>{{ $inventory->sku }}</td>
-									<td>{!! $inventory->title !!}</td>
-									<td>{{ $inventory->condition }}</td>
-									<td>
-										@if(($inventory->offer_price > 0) && ($inventory->offer_end > \Carbon\Carbon::now()))
-											<?php $offer_price_help =
-													trans('help.offer_starting_time') . ': ' .
-													$inventory->offer_start->diffForHumans() . ' and ' .
-													trans('help.offer_ending_time') . ': ' .
-													$inventory->offer_end->diffForHumans(); ?>
-
-											<small class="text-muted">{{ $inventory->sale_price }}</small><br/>
-											{{ get_formated_currency($inventory->offer_price, true, 2) }}
-
-											<small class="text-muted" data-toggle="tooltip" data-placement="top" title="{{ $offer_price_help }}"><sup><i class="fa fa-question"></i></sup></small>
-										@else
-											{{ get_formated_currency($inventory->sale_price, true, 2) }}
-										@endif
-									</td>
-									<td>
-										@if(Gate::allows('update', $inventory))
-											<a href="javascript:void(0)" data-link="{{ route('admin.stock.inventory.editQtt', $inventory->id) }}" class="ajax-modal-btn qtt-{{$inventory->id}}" data-toggle="tooltip" data-placement="top" title="{{ trans('app.update') }}">
-												{{ ($inventory->stock_quantity > 0) ? $inventory->stock_quantity : trans('app.out_of_stock') }}
-											</a>
-										@else
-											{{ ($inventory->stock_quantity > 0) ? $inventory->stock_quantity : trans('app.out_of_stock') }}
-										@endif
-									</td>
-									<td class="row-options">
-										@can('view', $inventory)
-											<a href="javascript:void(0)" data-link="{{ route('admin.stock.inventory.show', $inventory->id) }}"  class="ajax-modal-btn"><i data-toggle="tooltip" data-placement="top" title="{{ trans('app.detail') }}" class="fa fa-expand"></i></a>&nbsp;
-										@endcan
-
-										@can('update', $inventory)
-											<a href="{{ route('admin.stock.inventory.edit', $inventory->id) }}"><i data-toggle="tooltip" data-placement="top" title="{{ trans('app.edit') }}" class="fa fa-edit"></i></a>&nbsp;
-										@endcan
-
-										@can('delete', $inventory)
-											{!! Form::open(['route' => ['admin.stock.inventory.trash', $inventory->id], 'method' => 'delete', 'class' => 'data-form']) !!}
-												{!! Form::button('<i class="fa fa-trash-o"></i>', ['type' => 'submit', 'class' => 'confirm ajax-silent', 'title' => trans('app.trash'), 'data-toggle' => 'tooltip', 'data-placement' => 'top']) !!}
-											{!! Form::close() !!}
-										@endcan
-									</td>
-								</tr>
-							@endforeach
 						</tbody>
 					</table>
 				</div>
 			</div>
 		</div> <!-- /.box-body -->
 	</div> <!-- /.box -->
+
 
 	<div class="box collapsed-box">
 		<div class="box-header with-border">

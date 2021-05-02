@@ -851,46 +851,6 @@ class ListHelper
     }*/
 
     /**
-     * Get Flash Deals
-     * @return array
-     */
-    public static function get_flash_deal()
-    {
-        if (is_incevio_package_loaded('flashdeal')){
-            $items = get_from_option_table('flashdeal_items', []);
-            $flash_deals = [];
-
-            if (! empty($items['products'])){
-                $flash_deals['products'] = Inventory::whereIn('id', $items['products'])
-                    ->with([
-                        'feedbacks:rating,feedbackable_id,feedbackable_type',
-                        'image:path,imageable_id,imageable_type',
-                        'product:id,slug',
-                        'product.image:path,imageable_id,imageable_type'
-                    ])
-                    ->groupBy('product_id')
-                    ->get();
-            }
-
-            if (! empty($items['featured'])){
-                $flash_deals['featured'] = Inventory::whereIn('id', $items['featured'])
-                    ->with([
-                        'feedbacks:rating,feedbackable_id,feedbackable_type',
-                        'image:path,imageable_id,imageable_type',
-                        'product:id,slug',
-                        'product.image:path,imageable_id,imageable_type'
-                    ])
-                    ->groupBy('product_id')
-                    ->get();
-            }
-
-            return array_merge($items, $flash_deals);
-        }
-
-        return Null;
-    }
-
-    /**
      * Get featured products list for dropdown
      * @return array
      */

@@ -18,5 +18,7 @@ interface PaymentServiceContract
 
 	public function setConfig();
 
-	public function setOrderInfo(Order $order);
+	public function setOrderInfo($order);
+
+	public function getOrderId();
 }

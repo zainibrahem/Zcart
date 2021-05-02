@@ -21,17 +21,17 @@ trait Billable
      *
      * @return bool
      */
-    public function hasBillingProvider()
-    {
-        return $this->stripe_id || $this->braintree_id;
-    }
+    // public function hasBillingProvider()
+    // {
+    //     return $this->stripe_id;
+    // }
 
     /**
      * Get all of the subscription for the user.
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function activeSubscription()
+    public function currentSubscription()
     {
         return $this->hasOne(Subscription::class)->orderBy('created_at', 'desc');
     }
@@ -62,7 +62,7 @@ trait Billable
      */
     public function newSubscription(SubscriptionPlan $subscriptionPlan)
     {
-        if(SystemConfig::isBillingThroughWallet()){
+        if (SystemConfig::isBillingThroughWallet()) {
             $subscription = new \Incevio\Package\Subscription\SubscriptionBuilder($this, $subscriptionPlan->name, $subscriptionPlan->plan_id);
 
             $subscription->setSubscriptionFee($subscriptionPlan->cost);
@@ -74,13 +74,19 @@ trait Billable
     }
 
     /**
-     * Determine if the Stripe model is on a "generic" trial at the model level.
+     * Check if the billable model has an active subscription.
      *
      * @return bool
      */
-    public function onGenericTrial()
+    public function hasActiveSubscription()
     {
-        return $this->trial_ends_at && $this->trial_ends_at->isFuture();
+       return $this->currentSubscription &&
+        (
+            $this->currentSubscription->ends_at === Null ||
+            $this->currentSubscription->ends_at->isFuture() ||
+            $this->currentSubscription->trial_ends_at !== Null &&
+            $this->currentSubscription->trial_ends_at->isFuture()
+        );
     }
 
     /**

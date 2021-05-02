@@ -28,7 +28,7 @@ trait CanCreateStripeCustomer
 			return;
 		}
 
-        $address = $customer->billingAddress ?? $customer->address();
+        $address = $customer->billingAddress ?? $customer->address;
 
         \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
         $stripeCustomer = \Stripe\Customer::create([
@@ -40,10 +40,18 @@ trait CanCreateStripeCustomer
 
         // Save cart info for future use
         $customer->stripe_id = $stripeCustomer->id;
-        if(count($stripeCustomer->sources->data) > 0) {
+        //Old Code
+        /*if(count($stripeCustomer->sources->data) > 0) {
             $customer->card_brand = $stripeCustomer->sources->data[0]->brand;
             $customer->card_holder_name = $stripeCustomer->sources->data[0]->name;
             $customer->card_last_four = $stripeCustomer->sources->data[0]->last4;
+        }*/
+        //New Code
+        $source = \Stripe\Customer::createSource($stripeCustomer->id, ['source' => 'tok_amex']);
+        if (count($source) > 0 ){
+            $customer->card_brand = $source->brand;
+            $customer->card_holder_name = $source->name;
+            $customer->card_last_four =$source->last4;
         }
         $customer->save();
 

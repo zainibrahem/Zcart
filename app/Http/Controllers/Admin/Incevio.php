@@ -59,17 +59,17 @@ class Incevio extends Controller
 	public function clear($all = false)
 	{
         Artisan::call('optimize:clear');
-    	$out = '<info>✔</info> '. Artisan::output() .'<br/>';
+    	$out = '<info>✔</info> '. Artisan::output() .'<br/><br/>';
 
         if($all){
             Artisan::call('incevio:clear-cache');
-        	$out .= '<info>✔</info> '. Artisan::output() .'<br/>';
+        	$out .= '<info>✔</info> '. Artisan::output() .'<br/><br/>';
         }
 
         Artisan::call('incevio:boost');
-        $out .= '<info>✔</info> '. Artisan::output() .'<br/>';
+        $out .= Artisan::output() .'<br/><br/>';
 
-       return $out;
+        return $out . '<h3 style="text-align: center;"><a href="' . url()->previous() . '">' . trans('app.back') . '</a></h3>';
 	}
 
 

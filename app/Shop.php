@@ -97,6 +97,8 @@ class Shop extends BaseModel
                     'card_brand',
                     'card_last_four',
                     'trial_ends_at',
+                    'custom_subscription_fee',
+                    'commission_rate',
                     'hide_trial_notice',
                     'active',
                     'payment_verified',
@@ -134,8 +136,7 @@ class Shop extends BaseModel
      */
     public function plan()
     {
-        return $this->belongsTo(SubscriptionPlan::class, 'current_billing_plan', 'plan_id')
-        ->withDefault();
+        return $this->belongsTo(SubscriptionPlan::class, 'current_billing_plan', 'plan_id')->withDefault();
     }
 
     /**
@@ -507,38 +508,44 @@ class Shop extends BaseModel
      */
     public function scopeActive($query)
     {
-        $result = $query->approved()->whereHas('paymentMethods')->whereHas('addresses')
-            ->whereHas('config', function ($q) {
-                $q->live();
-            });
+        $query = $query->approved()->whereHas('addresses')
+        ->whereHas('config', function ($q) {
+            $q->live();
+        });
 
-        if (! is_subscription_enabled()) {
-            return $result;
+        // Vendor has to configure payment method when get paid directly
+        if (vendor_get_paid_directly()) {
+            return $query->whereHas('paymentMethods');
         }
 
-        return $result->where(
-            function($q) {
-                $q->whereNotNull('current_billing_plan')
-                ->where(
-                    function($x) {
-                        $x->doesntHave('subscriptions')
-                        ->whereNull('trial_ends_at')
-                        ->orWhere('trial_ends_at', '>', Carbon::now());
-                    }
-                )
-                ->orWhere(
-                    function($r){
-                        $r->whereHas('subscriptions', function ($s) {
-                            $s->whereNested(function ($t) {
-                                $t->whereNull('ends_at')
-                                    ->orWhere('ends_at', '>', Carbon::now())
-                                    ->orWhereNotNull('trial_ends_at')
-                                    ->where('trial_ends_at', '>', Carbon::today());
-                            });
+         if (! is_subscription_enabled()) {
+             return $query;
+         }
+
+        $query = $query->where(function($q) {
+            $q->whereNotNull('current_billing_plan')
+            ->where(
+                function($x) {
+                    $x->doesntHave('subscriptions')
+                    ->whereNull('trial_ends_at')
+                    ->orWhere('trial_ends_at', '>', Carbon::now());
+                }
+            )
+            ->orWhere(
+                function($r){
+                    $r->whereHas('subscriptions', function ($s) {
+                        $s->whereNested(function ($t) {
+                            $t->whereNull('ends_at')
+                                ->orWhere('ends_at', '>', Carbon::now())
+                                ->orWhereNotNull('trial_ends_at')
+                                ->where('trial_ends_at', '>', Carbon::today());
                         });
-                    }
-                );
-            });
+                    });
+                }
+            );
+        });
+
+        return $query;
     }
 
     /**
@@ -548,7 +555,7 @@ class Shop extends BaseModel
      */
     public function getNextBillingDate()
     {
-        if($this->onGenericTrial()) {
+        if ($this->onGenericTrial()) {
             return trans('app.on_generic_trial');
         }
 
@@ -563,10 +570,10 @@ class Shop extends BaseModel
 
     public function getVerificationStatus()
     {
-        if($this->id_verified && $this->phone_verified && $this->address_verified) {
+        if ($this->id_verified && $this->phone_verified && $this->address_verified) {
             return trans('app.verified');
         }
-        elseif($this->id_verified || $this->phone_verified || $this->address_verified) {
+        else if ($this->id_verified || $this->phone_verified || $this->address_verified) {
             return trans('app.partially_verified');
         }
 
@@ -662,23 +669,11 @@ class Shop extends BaseModel
      */
     public function hasExpiredPlan()
     {
-        $subscription = $this->subscriptions->first();
-
-        if ($subscription) {
-            return ! is_null($subscription->ends_at) && Carbon::now()->gt($subscription->ends_at);
+        if ($subscription = $this->currentSubscription) {
+            return $subscription->ends_at && $subscription->ends_at->isPast();
         }
 
-        return $this->hasExpiredOnGenericTrial();
-    }
-
-    /**
-     * Check if the user has outrange generic plan
-     *
-     * @return bool
-     */
-    public function hasExpiredOnGenericTrial()
-    {
-        return ! $this->activeSubscription && $this->trial_ends_at && $this->trial_ends_at->isPast();
+        return Null;
     }
 
     /**
@@ -689,6 +684,27 @@ class Shop extends BaseModel
     public function isDown()
     {
         return $this->config->maintenance_mode;
+    }
+
+   /**
+     * Check if the vendor has eerything setup
+     *
+     * @return bool
+     */
+    public function caGoLive()
+    {
+        $result = ! $this->isDown() && $this->isActive() && $this->hasAddress();
+
+        // Vendor has to configure payment method when get paid directly
+        if (vendor_get_paid_directly()) {
+            $result = $this->hasPaymentMethods();
+        }
+
+        if (! is_subscription_enabled()) {
+            return $result;
+        }
+
+        return $result && $this->onGenericTrial() || $this->hasActiveSubscription();
     }
 
     public function getName()

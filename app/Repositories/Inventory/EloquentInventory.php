@@ -21,13 +21,28 @@ class EloquentInventory extends EloquentRepository implements BaseRepository, In
 		$this->model = $inventory;
 	}
 
-    public function all()
+    public function all($status = null)
     {
-        if (! Auth::user()->isFromPlatform()) {
-            return $this->model->mine()->with('product', 'image')->get();
+        $inventory = $this->model->with('product', 'image');
+        switch ($status){
+            case "active":
+                $inventory = $inventory->where('active', 1);
+                break;
+
+            case "inactive":
+                $inventory = $inventory->where('active', 0);
+                break;
+
+            case "outOfStock":
+                $inventory = $inventory->where('stock_quantity', '<=', 0);
+                break;
         }
 
-        return $this->model->with('product', 'image')->get();
+        if (! Auth::user()->isFromPlatform()) {
+            return $inventory->mine()->get();
+        }
+
+        return $inventory->get();
     }
 
     public function trashOnly()
@@ -39,7 +54,7 @@ class EloquentInventory extends EloquentRepository implements BaseRepository, In
         return $this->model->onlyTrashed()->with('product', 'image')->get();
     }
 
-    public function checkInveoryExist($productId)
+    public function checkInventoryExist($productId)
     {
         return $this->model->mine()->where('product_id', $productId)->first();
     }

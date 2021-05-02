@@ -30,7 +30,7 @@ class ShopsSeeder extends BaseSeeder
         $shipping_zones = [];
 
         if (is_subscription_enabled()) {
-            $plan_id = 'price_1H1HW7JewI4n8wVFl8Ukknoz';
+            $plan_id = 'price_1GyyRyJewI4n8wVFSRWlMSHy';
             $trial_ends_at = $now->addDays(13);
         }
 
@@ -55,6 +55,16 @@ class ShopsSeeder extends BaseSeeder
                         'created_at' => $now,
                         'updated_at' => $now,
                     ]);
+
+            $subscriptions[] = [
+                'shop_id' => $shop_id,
+                'name' => 'Business',
+                'stripe_plan' => $plan_id,
+                'quantity' => 1,
+                'trial_ends_at' => $trial_ends_at,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
 
             $addresses[] = [
                 'address_type' => 'Primary',
@@ -84,31 +94,30 @@ class ShopsSeeder extends BaseSeeder
             ];
 
             $shipping_zones[] = [
-                    'shop_id' => $shop_id,
-                    'name' => 'Domestic',
-                    'tax_id' => 1,
-                    'country_ids' => serialize($country_ids),
-                    'state_ids' => serialize($state_ids),
-                    'rest_of_the_world' => false,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
+                'shop_id' => $shop_id,
+                'name' => 'Domestic',
+                'tax_id' => 1,
+                'country_ids' => serialize($country_ids),
+                'state_ids' => serialize($state_ids),
+                'rest_of_the_world' => false,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+
             $shipping_zones[] = [
-                    'shop_id' => $shop_id,
-                    'name' => 'Worldwide',
-                    'tax_id' => 1,
-                    'country_ids' => null,
-                    'state_ids' => null,
-                    'rest_of_the_world' => true,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
+                'shop_id' => $shop_id,
+                'name' => 'Worldwide',
+                'tax_id' => 1,
+                'country_ids' => null,
+                'state_ids' => null,
+                'rest_of_the_world' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
 
             if (File::isDirectory($this->demo_dir)) {
                 $logos = glob($this->demo_dir . '/logos/*.png');
 
-                // $name = "shop_logo_{$shop_id}.png";
-                // $targetFile = $this->dir . DIRECTORY_SEPARATOR . $name;
                 $file = $logos[array_rand($logos)];
                 $ext = pathinfo($file, PATHINFO_EXTENSION);
 
@@ -132,6 +141,7 @@ class ShopsSeeder extends BaseSeeder
         }
 
         // Insert all data at once
+        \DB::table('subscriptions')->insert($subscriptions);
         \DB::table('addresses')->insert($addresses);
         \DB::table('configs')->insert($configs);
         \DB::table('shipping_zones')->insert($shipping_zones);

@@ -412,7 +412,6 @@ return array (
     'your_feedback_saved' => 'আপনার প্রতিক্রিয়ার জন্য ধন্যবাদ!',
     'you_will_be_redirected_to_paystack' => 'আপনাকে পেস্ট্যাকে পুনঃনির্দেশিত করা হবে।',
     'you_will_be_redirected_to_instamojo' => 'আপনাকে ইনস্টামোজোতে পুনঃনির্দেশিত করা হবে।',
-    'all_seller_doesnt_ship' => 'সমস্ত বিক্রেতা আপনার নির্বাচিত দেশ / অঞ্চলে সরবরাহ করে না। শিপিং ঠিকানা পরিবর্তন করুন বা আপনার অঞ্চলে শিপিং করা অন্য বিক্রেতাদের সন্ধান করুন।',
   ),
   'input_label' => 
   array (
@@ -659,7 +658,6 @@ return array (
   'shop_now' => 'এখনই কিনুন',
   'add_to_cart' => 'কার্ট যোগ করুন',
   'item_added_to_wishlist' => 'আইটেমটি ইচ্ছামত তালিকায় যুক্ত হয়েছে',
-  'single_checkout' => 'সমস্ত চেকআউট',
   'flash_deal_days' => 'দিন',
   'hrs' => 'ঘন্টা',
   'mins' => 'মিনিট',
@@ -671,4 +669,10 @@ return array (
   'vendors' => 'বিক্রেতারা',
   'all_brands' => 'সমস্ত ব্র্যান্ড',
   'all_shops' => 'সমস্ত বিক্রেতা',
+  'sale_over' => 'দুঃখিত! আপনি বিক্রয় মিস করেছেন!',
+  'categories' => 'বিভাগ',
+  'messages' => 'বার্তা',
+  'sell' => 'বিক্রি করুন',
+  'cart_update_failed' => 'কার্ট আপডেট ব্যর্থ হয়েছে!',
+  'cart_count' => 'কার্ট গণনা',
 );

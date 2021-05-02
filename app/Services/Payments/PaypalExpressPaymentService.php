@@ -2,136 +2,21 @@
 
 namespace App\Services\Payments;
 
-use Auth;
-use App\Order;
 use Paypalpayment;
 use Illuminate\Http\Request;
-use App\Contracts\PaymentServiceContract;
 
-class PaypalExpressPaymentService implements PaymentServiceContract
+class PaypalExpressPaymentService extends PaymentService
 {
-	public $request;
-	public $payee;
-	public $receiver;
-	public $stripe_account_id;
-	public $token;
-	public $order = Null;
-	public $amount = Null;
-	public $fee = 0;
-	public $description;
-	public $meta;
 	public $redirectUrls;
 	public $transaction;
-	public $success;
 	public $response;
 
     public function __construct(Request $request)
 	{
-		$this->request = $request;
-
-        // Get payee model
-        if (Auth::guard('customer')->check()) {
-        	$this->setPayee(Auth::guard('customer')->user());
-        }
-        elseif(Auth::guard('web')->check() && Auth::user()->isMerchant()) {
-            $this->setPayee(Auth::user()->owns);
-        }
+		parent::__construct($request);
 	}
 
 	public function setConfig()
-	{
-		$this->setPayPalConfig();
-
-		return $this;
-	}
-
-    public function charge()
-    {
-        $payment = Paypalpayment::payment();
-        $payment->setIntent("sale")
-        ->setPayer($this->payee)
-        ->setTransactions([$this->transaction])
-        ->setRedirectUrls($this->redirectUrls);
-
-        $payment->create(Paypalpayment::apiContext());
-
-        return redirect()->to($payment->getApprovalLink());
-    }
-
-	public function paymentExecution($paymentId, $payerID)
-	{
-       $payment = Paypalpayment::getById($paymentId, Paypalpayment::apiContext());
-
-        // Execute the payment;
-        try {
-	        $paymentExecution = Paypalpayment::paymentExecution();
-	        $paymentExecution->setPayerId($payerID);
-	        $payment->execute($paymentExecution, Paypalpayment::apiContext());
-
-            $this->success = TRUE;
-            $this->response = $payment;
-
-	        return $this;
-        }
-        catch (\PPConnectionException $ex) {
-            return $ex;
-        }
-	}
-
-	public function setPayee($payee)
-	{
-		$this->payee = $payee;
-
-		return $this;
-	}
-
-	public function setAmount($amount)
-	{
-		$this->amount = format_price_for_paypal($amount);
-
-		return $this;
-	}
-
-	public function setDescription($description = '')
-	{
-		$this->description = $description;
-
-		return $this;
-	}
-
-	public function setReceiver($receiver = 'platform')
-	{
-		$this->receiver = $receiver;
-
-		return $this;
-	}
-
-	public function setOrderInfo(Order $order)
-	{
-		$this->order = $order;
-
-		// $this->meta = [
-            // 'order_number' => $order->order_number,
-            // 'shipping_address' => strip_tags($order->shipping_address),
-            // 'buyer_note' => $order->buyer_note
-		// ];
-
-		return $this;
-	}
-
-    private function setPayPalItem($title, $unit_price, $quantity = 1, $description = '')
-    {
-        $tempItem = Paypalpayment::item();
-
-        return $tempItem->setName($title)
-        ->setDescription($description)
-        ->setQuantity($quantity)
-        ->setCurrency(get_currency_code())
-        ->setTax($this->order ? format_price_for_paypal($this->order->taxrate): 0)
-        ->setPrice(format_price_for_paypal($unit_price));
-    }
-
-    private function setPayPalConfig()
     {
     	if ($this->receiver == 'merchant') {
 		    // Get the vendor configs
@@ -211,5 +96,59 @@ class PaypalExpressPaymentService implements PaymentServiceContract
         ->setItemList($itemList);
         // ->setInvoiceNumber($this->order->order_number)
         // ->setDescription($this->description);
+
+		return $this;
+	}
+
+    public function charge()
+    {
+        $payment = Paypalpayment::payment();
+        $payment->setIntent("sale")
+        ->setPayer($this->payee)
+        ->setTransactions([$this->transaction])
+        ->setRedirectUrls($this->redirectUrls);
+
+        $payment->create(Paypalpayment::apiContext());
+
+        return redirect()->to($payment->getApprovalLink());
+    }
+
+	public function paymentExecution($paymentId, $payerID)
+	{
+       $payment = Paypalpayment::getById($paymentId, Paypalpayment::apiContext());
+
+        // Execute the payment;
+        try {
+	        $paymentExecution = Paypalpayment::paymentExecution();
+	        $paymentExecution->setPayerId($payerID);
+	        $payment->execute($paymentExecution, Paypalpayment::apiContext());
+
+            $this->success = TRUE;
+            $this->response = $payment;
+
+	        return $this;
+        }
+        catch (\PPConnectionException $ex) {
+            return $ex;
+        }
+	}
+
+	public function setAmount($amount)
+	{
+		$this->amount = format_price_for_paypal($amount);
+
+		return $this;
+	}
+
+    private function setPayPalItem($title, $unit_price, $quantity = 1, $description = '')
+    {
+        $tempItem = Paypalpayment::item();
+
+        return $tempItem->setName($title)
+        ->setDescription($description)
+        ->setQuantity($quantity)
+        ->setCurrency(get_currency_code())
+        ->setTax($this->order ? format_price_for_paypal($this->order->taxrate): 0)
+        ->setPrice(format_price_for_paypal($unit_price));
     }
 }

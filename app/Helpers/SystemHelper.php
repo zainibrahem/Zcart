@@ -24,22 +24,49 @@ if (! function_exists('getPlatformFeeForOrder'))
      */
     function getPlatformFeeForOrder($order)
     {
-        if (! $order instanceof Order ) {
+        if (! $order instanceof Order) {
             $order = Order::findOrFail($order);
         }
-
-        $plan = $order->shop->plan;
 
         // Return zero is on trial period
         if($order->shop->onTrial()) {
             return 0;
         }
 
-        $commission = ($plan->marketplace_commission > 0) ?
-                            ($order->total * $plan->marketplace_commission)/100
-                            : 0;
+        $plan = $order->shop->plan;
 
-        return ($commission + $plan->transaction_fee );
+        // Dynamic commission
+        if (is_incevio_package_loaded('dynamicCommission')) {
+            // Check if custom commission for the shop
+            if ($order->shop->commission_rate !== Null) {
+                $commission = $order->shop->commission_rate > 0 ? ($order->shop->commission_rate/100) * $order->total : 0;
+
+                return ($commission + $plan->transaction_fee);
+            }
+
+            // Get the dynamic commission amount
+            $dynamicCommissions = get_from_option_table('dynamicCommission_milestones');
+
+            // Sort decs milestones mased on amount
+            usort($dynamicCommissions, function ($a, $b) { return $b['milestone'] - $a['milestone']; });
+
+            // Dynamic commission calculation via milestone amount:
+            if ($dynamicCommissions) {
+                // Get total sold amount
+                $sold_amount = $order->shop->periodic_sold_amount;
+
+                foreach ($dynamicCommissions as $commission) {
+                    if ($sold_amount >= $commission['milestone']) {
+                        return ($commission['commission']/100) * $order->total + $plan->transaction_fee;
+                    }
+                }
+            }
+        }
+
+        // Get commissions from the subscription plan
+        $commission = $plan->marketplace_commission > 0 ? ($plan->marketplace_commission/100) * $order->total : 0;
+
+        return ($commission + $plan->transaction_fee);
     }
 }
 
@@ -292,149 +319,139 @@ if (! function_exists('setAdditionalCartInfo'))
     }
 }
 
-if (! function_exists('saveOrderFromCart'))
-{
-    /**
-     * Create a new order from the cart
-     *
-     * @param  Request $request
-     * @param  App\Cart $cart
-     *
-     * @return App\Order
-     */
-    function saveOrderFromCart($request, $cart)
-    {
-        // Set shipping_rate_id and handling cost to NULL if its free shipping
-        if($cart->is_free_shipping()) {
-            $cart->shipping_rate_id = Null;
-            $cart->handling = Null;
-        }
-        // Save the order
-        $order = new Order;
+// if (! function_exists('saveOrderFromCart'))
+// {
+//     function saveOrderFromCart($request, $cart)
+//     {
+//         // Set shipping_rate_id and handling cost to NULL if its free shipping
+//         if($cart->is_free_shipping()) {
+//             $cart->shipping_rate_id = Null;
+//             $cart->handling = Null;
+//         }
+//         // Save the order
+//         $order = new Order;
 
-        $order->fill(
-            array_merge($cart->toArray(), [
-                'customer_id' => $cart->customer_id,
-                'grand_total' => $cart->grand_total(),
-                'order_number' => get_formated_order_number($cart->shop_id),
-                'carrier_id' => $cart->carrier() ? $cart->carrier->id : NULL,
-                'shipping_address' => $request->shipping_address ?? $cart->shipping_address,
-                'billing_address' => $request->shipping_address ?? $cart->shipping_address,
-                'email' => $request->email ?? $cart->email,
-                'buyer_note' => $request->buyer_note
-            ])
-        );
+//         $order->fill(
+//             array_merge($cart->toArray(), [
+//                 'customer_id' => $cart->customer_id,
+//                 'payment_method_id' => $request->payment_method_id ?? $cart->payment_method_id,
+//                 'grand_total' => $cart->grand_total(),
+//                 'order_number' => get_formated_order_number($cart->shop_id),
+//                 'carrier_id' => $cart->carrier() ? $cart->carrier->id : NULL,
+//                 'shipping_address' => $request->shipping_address ?? $cart->shipping_address,
+//                 'billing_address' => $request->shipping_address ?? $cart->shipping_address,
+//                 'email' => $request->email ?? $cart->email,
+//                 'buyer_note' => $request->buyer_note,
+//                 'payment_instruction' => $order->menualPaymentInstructions(),
+//             ])
+//         )
+//         ->save();
 
-        //Set Payment Instruction:
-        $order->forceFill(['payment_instruction' => $order->menualPaymentInstructions()]);
+//         // Add order item into pivot table
+//         $cart_items = $cart->inventories->pluck('pivot');
+//         $order_items = [];
+//         foreach ($cart_items as $item) {
+//             $order_items[] = [
+//                 'order_id'          => $order->id,
+//                 'inventory_id'      => $item->inventory_id,
+//                 'item_description'  => $item->item_description,
+//                 'quantity'          => $item->quantity,
+//                 'unit_price'        => $item->unit_price,
+//                 'created_at'        => $item->created_at,
+//                 'updated_at'        => $item->updated_at,
+//             ];
+//         }
 
-        $order->save();
+//         \DB::table('order_items')->insert($order_items);
 
-        // Add order item into pivot table
-        $cart_items = $cart->inventories->pluck('pivot');
-        $order_items = [];
-        foreach ($cart_items as $item) {
-            $order_items[] = [
-                'order_id'          => $order->id,
-                'inventory_id'      => $item->inventory_id,
-                'item_description'  => $item->item_description,
-                'quantity'          => $item->quantity,
-                'unit_price'        => $item->unit_price,
-                'created_at'        => $item->created_at,
-                'updated_at'        => $item->updated_at,
-            ];
-        }
+//          // Sync up the inventory. Decrease the stock of the order items from the listing
+//         foreach ($order->inventories as $item) {
+//             $item->decrement('stock_quantity', $item->pivot->quantity);
+//         }
 
-        \DB::table('order_items')->insert($order_items);
+//         // Reduce the coupone in use
+//         if ($order->coupon_id) {
+//             Coupon::find($order->coupon_id)->decrement('quantity');
+//         }
 
-         // Sync up the inventory. Decrease the stock of the order items from the listing
-        foreach ($order->inventories as $item) {
-            $item->decrement('stock_quantity', $item->pivot->quantity);
-        }
+//         return $order;
+//     }
+// }
 
-        // Reduce the coupone in use
-        if ($order->coupon_id) {
-            Coupon::find($order->coupon_id)->decrement('quantity');
-        }
+// if (! function_exists('moveAllItemsToCartAgain'))
+// {
+//     /**
+//      * Revert order to cart
+//      *
+//      * @param  App\Order $Order
+//      *
+//      * @return App\Cart
+//      */
+//     function moveAllItemsToCartAgain($order, $revert = false)
+//     {
+//         if(!$order instanceOf Order ) {
+//             $order = Order::find($order);
+//         }
 
-        return $order;
-    }
-}
+//         if (! $order) return;
 
-if (! function_exists('moveAllItemsToCartAgain'))
-{
-    /**
-     * Revert order to cart
-     *
-     * @param  App\Order $Order
-     *
-     * @return App\Cart
-     */
-    function moveAllItemsToCartAgain($order, $revert = false)
-    {
-        if(!$order instanceOf Order ) {
-            $order = Order::find($order);
-        }
+//         // echo "<pre>"; print_r($order->items->toArray()); echo "<pre>"; exit('end!');
 
-        if (! $order) return;
+//         // Save the cart
+//         $cart = Cart::create([
+//                     'shop_id' => $order->shop_id,
+//                     'customer_id' => $order->customer_id,
+//                     'ship_to' => $order->ship_to,
+//                     'shipping_zone_id' => $order->shipping_zone_id,
+//                     'shipping_rate_id' => $order->shipping_rate_id,
+//                     'packaging_id' => $order->packaging_id,
+//                     'item_count' => $order->item_count,
+//                     'quantity' => $order->quantity,
+//                     'taxrate' => $order->taxrate,
+//                     'shipping_weight' => $order->shipping_weight,
+//                     'total' => $order->total,
+//                     'shipping' => $order->shipping,
+//                     'packaging' => $order->packaging,
+//                     'handling' => $order->handling,
+//                     'taxes' => $order->taxes,
+//                     'grand_total' => $order->grand_total,
+//                     'email' => $order->email,
+//                     'ip_address' => request()->ip(),
+//                 ]);
 
-        // echo "<pre>"; print_r($order->items->toArray()); echo "<pre>"; exit('end!');
+//         // Add order item into cart pivot table
+//         $cart_items = [];
+//         foreach ($order->inventories as $item) {
+//             $cart_items[] = [
+//                 'cart_id'           => $cart->id,
+//                 'inventory_id'      => $item->pivot->inventory_id,
+//                 'item_description'  => $item->pivot->item_description,
+//                 'quantity'          => $item->pivot->quantity,
+//                 'unit_price'        => $item->pivot->unit_price,
+//                 'created_at'        => $item->pivot->created_at,
+//                 'updated_at'        => $item->pivot->updated_at,
+//             ];
 
-        // Save the cart
-        $cart = Cart::create([
-                    'shop_id' => $order->shop_id,
-                    'customer_id' => $order->customer_id,
-                    'ship_to' => $order->ship_to,
-                    'shipping_zone_id' => $order->shipping_zone_id,
-                    'shipping_rate_id' => $order->shipping_rate_id,
-                    'packaging_id' => $order->packaging_id,
-                    'item_count' => $order->item_count,
-                    'quantity' => $order->quantity,
-                    'taxrate' => $order->taxrate,
-                    'shipping_weight' => $order->shipping_weight,
-                    'total' => $order->total,
-                    'shipping' => $order->shipping,
-                    'packaging' => $order->packaging,
-                    'handling' => $order->handling,
-                    'taxes' => $order->taxes,
-                    'grand_total' => $order->grand_total,
-                    'email' => $order->email,
-                    'ip_address' => request()->ip(),
-                ]);
+//             // Sync up the inventory. Increase the stock of the order items from the listing
+//             if($revert) {
+//                 $item->increment('stock_quantity', $item->pivot->quantity);
+//             }
+//         }
 
-        // Add order item into cart pivot table
-        $cart_items = [];
-        foreach ($order->inventories as $item) {
-            $cart_items[] = [
-                'cart_id'           => $cart->id,
-                'inventory_id'      => $item->pivot->inventory_id,
-                'item_description'  => $item->pivot->item_description,
-                'quantity'          => $item->pivot->quantity,
-                'unit_price'        => $item->pivot->unit_price,
-                'created_at'        => $item->pivot->created_at,
-                'updated_at'        => $item->pivot->updated_at,
-            ];
+//         \DB::table('cart_items')->insert($cart_items);
 
-            // Sync up the inventory. Increase the stock of the order items from the listing
-            if($revert) {
-                $item->increment('stock_quantity', $item->pivot->quantity);
-            }
-        }
+//         if($revert){
+//             // Increment the coupone in use
+//             if ($order->coupon_id) {
+//                 Coupon::find($order->coupon_id)->increment('quantity');
+//             }
 
-        \DB::table('cart_items')->insert($cart_items);
+//             $order->forceDelete();   // Delete the order
+//         }
 
-        if($revert){
-            // Increment the coupone in use
-            if ($order->coupon_id) {
-                Coupon::find($order->coupon_id)->increment('quantity');
-            }
-
-            $order->forceDelete();   // Delete the order
-        }
-
-        return $cart;
-    }
-}
+//         return $cart;
+//     }
+// }
 
 if (! function_exists('prepareFilteredListings'))
 {
@@ -534,7 +551,12 @@ if (! function_exists('crosscheckAndUpdateOldCartInfo'))
         }
 
         // Shipping
-        if($request->shipping_rate_id) {
+        if($request->shipping_rate_id == 0) { // When free shipping
+            $shipping = 0;
+            $handling = 0;
+            $cart->shipping_rate_id = Null;
+        }
+        elseif($request->shipping_rate_id) {
             $shippingRate = ShippingRate::select('rate')->where([
                 ['id', '=', $request->shipping_rate_id],
                 ['shipping_zone_id', '=', $request->zone_id]
@@ -587,11 +609,10 @@ if (! function_exists('crosscheckAndUpdateOldCartInfo'))
             }
         }
 
-        if ($request->payment_method) {
-            $code = $request->payment_method == 'saved_card' ? 'stripe' : $request->payment_method;
-
-            $cart->payment_method_id = get_id_of_model('payment_methods', 'code', $code);
-        }
+        // if ($request->payment_method) {
+        //     $code = $request->payment_method == 'saved_card' ? 'stripe' : $request->payment_method;
+        //     $cart->payment_method_id = get_id_of_model('payment_methods', 'code', $code);
+        // }
 
         // Set customer_id if not set yet
         if(! $cart->customer_id && Auth::guard('customer')->check()) {
@@ -754,7 +775,7 @@ if (! function_exists('get_payment_config_info'))
                     $config = $shop->config->stripe ? TRUE : FALSE;
                 }
                 else {
-                    $config = config('services.cybersource');
+                    $config = config('services.stripe');
                 }
 
                 return [

@@ -9,7 +9,7 @@
         <div class="modal-body">
             <div class="form-group">
               {!! Form::label('featured_categories[]', trans('app.form.categories').'*') !!}
-              {!! Form::select('featured_categories[]', $category , array_keys($featured_categories), ['class' => 'form-control select2-normal', 'multiple' => 'multiple', 'required']) !!}
+              {!! Form::select('featured_categories[]', $categories , array_keys($featured_categories), ['class' => 'form-control select2-normal', 'multiple' => 'multiple', 'required']) !!}
               <div class="help-block with-errors"></div>
             </div>
         </div>

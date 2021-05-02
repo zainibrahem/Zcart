@@ -102,7 +102,7 @@
 			//Toggle chat and links
 			function toggleFchat() {
 				$('.chat-icon').toggleClass('fa-comment');
-				$('.chat-icon').toggleClass('fa-close');
+				$('.chat-icon').toggleClass('fa-times');
 				$('.chat-icon').toggleClass('is-active');
 				$('.chat-icon').toggleClass('is-visible');
 				$('#chatbox').toggleClass('is-float');

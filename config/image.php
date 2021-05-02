@@ -165,7 +165,7 @@ return [
         */
         'logo' => [
             'w' => 140,
-            'h' => 50,
+            'h' => 60,
             'fit' => 'contain'
         ],
         'logo_lg' => [

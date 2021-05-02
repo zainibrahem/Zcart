@@ -31,7 +31,7 @@
                 </div>
                 <div class="footer__content">
                     <div class="row">
-                        <div class="col-lg-3 col-md-4  col-sm-6 col-12">
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-12">
                             <div class="footer__content-box">
                                 <div class="footer__content-box-inner">
                                     <div class="footer__content-box-logo">
@@ -71,9 +71,6 @@
                                     </div>
                                     <div class="footer__content-box-links">
                                         <ul>
-                                            <li>
-                                                <a href="{{ url('admin/dashboard') }}" rel="nofollow">@lang('theme.nav.merchant_dashboard')</a>
-                                            </li>
                                             <li>
                                                 <a href="{{ route('account', 'dashboard') }}" rel="nofollow">@lang('theme.nav.your_account')</a>
                                             </li>
@@ -181,3 +178,6 @@
         </div>
     </div>
 </footer>
+
+<!-- COPYRIGHT AREA -->
+@include('theme::nav.copyright')

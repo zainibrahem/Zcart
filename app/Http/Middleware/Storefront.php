@@ -34,7 +34,10 @@ class Storefront
             View::share('featured_categories', ListHelper::hot_categories());
             View::share('pages', ListHelper::pages(\App\Page::VISIBILITY_PUBLIC));
             View::share('promotional_tagline', get_from_option_table('promotional_tagline', []));
-            session(['global_announcement' => ListHelper::activeAnnouncement()]);
+            session([
+                'global_announcement' => ListHelper::activeAnnouncement(),
+                'cart_item_count' => cart_item_count(),
+            ]);
 
             // $languages = \App\Language::orderBy('order', 'asc')->active()->get();
         }

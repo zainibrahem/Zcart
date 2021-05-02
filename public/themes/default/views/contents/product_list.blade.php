@@ -2,7 +2,7 @@
 
 <div class="row product-list">
     @foreach($products as $item)
-        <div class="col-sm-4 col-md-3">
+        <div class="col-sm-6 col-md-6 col-lg-4">
             <div class="product product-grid-view sc-product-item">
                 <ul class="product-info-labels">
 

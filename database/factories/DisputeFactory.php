@@ -9,7 +9,7 @@ $factory->define(App\Dispute::class, function (Faker $faker) {
     return [
         'dispute_type_id' => rand(1, 7),
         'shop_id' => $order->shop_id,
-        'customer_id' => 1,
+        'customer_id' => $order->customer_id,
         'order_id' => $order->id,
         'description' => $faker->text(100),
         'return_goods' => $faker->boolean,

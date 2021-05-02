@@ -21,6 +21,22 @@
 				</div>
 			{!! Form::close() !!}
 	    </div>
+
+	    <div class="clearfix spacer30"></div>
+        <p>
+        	<div>
+	        	<i class="fa fa-building-o"></i>
+
+	        	@if(Auth::user()->isSuperAdmin())
+	               {{ trans('app.super_admin') }}
+	            @else
+	                {{ Auth::user()->role->name }}
+	            @endif
+        	</div>
+
+        	<i class="fa fa-clock-o"></i>
+	        {{ trans('app.member_since') . ' ' . Auth::user()->created_at->diffForHumans() }}
+        </p>
   	</div>
 
   	<div class="col-md-6">

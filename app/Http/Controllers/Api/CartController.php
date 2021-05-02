@@ -152,7 +152,7 @@ class CartController extends Controller
         $cart->handling = $old_cart ? $old_cart->handling : getShopConfig($item->shop_id, 'order_handling_cost');
         $cart->total = $old_cart ? ($old_cart->total + ($qtt * $unit_price)) : ($qtt * $unit_price);
         $cart->packaging_id = $old_cart ? $old_cart->packaging_id : \App\Packaging::FREE_PACKAGING_ID;
-        $cart->grand_total = $cart->grand_total();
+        $cart->grand_total = $cart->calculate_grand_total();
 
         // All items need to have shipping_weight to calculate shipping
         // If any one the item missing shipping_weight set null to cart shipping_weight
@@ -262,7 +262,7 @@ class CartController extends Controller
         if($cart->updated_at < Carbon::now()->subHour(24))
             $cart->handling = getShopConfig($cart->shop_id, 'order_handling_cost');
 
-        $cart->grand_total = $cart->grand_total();
+        $cart->grand_total = $cart->calculate_grand_total();
 
         $cart->save();
 
@@ -343,7 +343,7 @@ class CartController extends Controller
         $cart->ship_to = $request->country_id;
         $cart->shipping_address = $address;
         $cart->email = $request->email;
-        $cart->grand_total = $cart->grand_total();
+        $cart->grand_total = $cart->calculate_grand_total();
         $cart->save();
 
         return response()->json([
@@ -417,7 +417,7 @@ class CartController extends Controller
         // Update the cart with coupon value
         $cart->discount = $disc_amnt < $cart->total ? $disc_amnt : $cart->total; // Discount the amount or the cart total
         $cart->coupon_id = $coupon->id;
-        $cart->grand_total = $cart->grand_total();
+        $cart->grand_total = $cart->calculate_grand_total();
         $cart->save();
 
         return response()->json([

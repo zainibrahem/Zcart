@@ -16,14 +16,14 @@
               <div class="help-block with-errors"></div>
           </div>
           <div class="row">
-            <div class="col-xs-7">
+            <div class="col-7">
               <div class="form-group">
                 <label>
                   <input name="remeber" id="remeber" class="i-check-blue" type="checkbox"/> {{ trans('theme.remember_me') }}
                 </label>
               </div>
             </div>
-            <div class="col-xs-5">
+            <div class="col-5">
                 <input class="btn btn-block btn-lg flat btn-primary" type="submit" value="{{ trans('theme.button.login') }}">
             </div>
           </div>
@@ -36,11 +36,11 @@
 
         <div class="social-auth-links text-center">
           <div class="row">
-            <div class="col-xs-6 nopadding-right">
-              <a href="{{ route('customer.login.social', 'facebook') }}" class="btn btn-block btn-social btn-facebook btn-lg flat"><i class="fas fa-facebook"></i> {{ trans('theme.button.login_with_fb') }}</a>
+            <div class="col-6 nopadding-right">
+              <a href="{{ route('customer.login.social', 'facebook') }}" class="btn btn-block btn-social btn-facebook btn-lg flat"><i class="fab fa-facebook-f"></i> {{ trans('theme.button.login_with_fb') }}</a>
             </div>
-            <div class="col-xs-6 nopadding-left">
-              <a href="{{ route('customer.login.social', 'google') }}" class="btn btn-block btn-social btn-google btn-lg flat"><i class="fas fa-google"></i> {{ trans('theme.button.login_with_g') }}</a>
+            <div class="col-6 nopadding-left">
+              <a href="{{ route('customer.login.social', 'google') }}" class="btn btn-block btn-social btn-google btn-lg flat"><i class="fab fa-google"></i> {{ trans('theme.button.login_with_g') }}</a>
             </div>
           </div>
         </div>
@@ -89,7 +89,7 @@
             </div>
           @endif
           <div class="row">
-            <div class="col-xs-7">
+            <div class="col-7">
               <div class="form-group">
                 <label>
                   <input name="agree" class="i-check-blue" type="checkbox" required/> {!! trans('theme.input_label.i_agree_with_terms', ['url' => route('page.open', \App\Page::PAGE_TNC_FOR_CUSTOMER)]) !!}
@@ -97,7 +97,7 @@
                 <div class="help-block with-errors"></div>
               </div>
             </div>
-            <div class="col-xs-5">
+            <div class="col-5">
               <input class="btn btn-block btn-lg flat btn-primary" type="submit" value="{{ trans('theme.create_account') }}" />
             </div>
           </div>
@@ -109,11 +109,11 @@
 
         <div class="social-auth-links text-center">
           <div class="row">
-            <div class="col-xs-6 nopadding-right">
-              <a href="{{ route('customer.login.social', 'facebook') }}" class="btn btn-block btn-social btn-facebook btn-lg flat"><i class="fas fa-facebook"></i> {{ trans('theme.button.login_with_fb') }}</a>
+            <div class="col-6 nopadding-right">
+              <a href="{{ route('customer.login.social', 'facebook') }}" class="btn btn-block btn-social btn-facebook btn-lg flat"><i class="fab fa-facebook-f"></i> {{ trans('theme.button.login_with_fb') }}</a>
             </div>
-            <div class="col-xs-6 nopadding-left">
-              <a href="{{ route('customer.login.social', 'google') }}" class="btn btn-block btn-social btn-google btn-lg flat"><i class="fas fa-google"></i> {{ trans('theme.button.login_with_g') }}</a>
+            <div class="col-6 nopadding-left">
+              <a href="{{ route('customer.login.social', 'google') }}" class="btn btn-block btn-social btn-google btn-lg flat"><i class="fab fa-google"></i> {{ trans('theme.button.login_with_g') }}</a>
             </div>
           </div>
         </div>

@@ -2,6 +2,10 @@
 	// Package
     Route::get('packages', 'PackagesController@index')->name('packages');
 
+	Route::get('package/upload', 'PackagesController@upload')->name('package.upload');
+
+	Route::post('package/upload', 'PackagesController@save')->name('package.save');
+
 	Route::get('package/{package}/initiate', 'PackagesController@initiate')->name('package.initiate');
 
 	Route::post('package/{package}/install', 'PackagesController@install')->name('package.install');

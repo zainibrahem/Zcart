@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests\Validations;
 
-use App\Customer;
 use Auth;
+use App\Address;
+use App\Customer;
 use App\Services\NewCustomer;
 use App\Http\Requests\Request;
 use App\Common\CanCreateStripeCustomer;
@@ -19,7 +20,11 @@ class CheckoutCartRequest extends Request
      */
     public function authorize()
     {
-        return crosscheckCartOwnership($this, $this->route('cart'));
+        if ($this->route('cart')) {
+            return crosscheckCartOwnership($this, $this->route('cart'));
+        }
+
+        return true;
     }
 
     /**
@@ -36,7 +41,7 @@ class CheckoutCartRequest extends Request
         )
         {
             $customer = (new NewCustomer)->save($this);
-            $this->merge(['customer_id' => $customer]); //Set customer
+            $this->merge(['customer_id' => $customer]); // Set customer
         }
 
        // Create Stripe Customer for future use
@@ -45,10 +50,25 @@ class CheckoutCartRequest extends Request
             $this->has('remember_the_card') &&
             $this->input('payment_method') == 'stripe'
         ) {
-            $this->merge([
-                'payee' => $this->createStripeCustomer(),
-            ]);
+            $this->merge(['payee' => $this->createStripeCustomer()]); // Set Payee
         }
+
+        // Get payment method id
+        if ($this->payment_method) {
+            $code = $this->payment_method == 'saved_card' ? 'stripe' : $this->payment_method;
+
+            $this->merge(['payment_method_id' => get_id_of_model('payment_methods', 'code', $code)]); // Set payment method id
+        }
+
+        // Get shipping address
+        if(is_numeric($this->ship_to)) {
+            $address = Address::find($this->ship_to)->toHtml('<br/>', False);
+        }
+        else {
+            $address = get_address_str_from_request_data($this);
+        }
+
+        $this->merge(['shipping_address' => $address]);  // Set Address
 
         $rules = [];
         if (! Auth::guard('customer')->check()) {

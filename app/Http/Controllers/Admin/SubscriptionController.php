@@ -53,13 +53,14 @@ class SubscriptionController extends Controller
 
             // If the merchant already has any subscription then just swap to new plan
             $currentPlan = $merchant->getCurrentPlan();
+
             if ($currentPlan) {
                 if(! $this->validateSubscriptionSwap($subscription)) {
                     return redirect()->route('admin.account.billing')
                     ->with('error', trans('messages.using_more_resource', ['plan' => $subscription->name]));
                 }
 
-                $currentPlan->swap($plan)->update([ 'name' => $subscription->name ]);
+                $currentPlan->swap($plan)->update(['name' => $subscription->name]);
 
                 $merchant->shop->forceFill([
                     'current_billing_plan' => $plan
@@ -241,11 +242,7 @@ class SubscriptionController extends Controller
             'inventories' => Statistics::shop_inventories_count(),
         ];
 
-        if($resources['users'] > $plan->team_size || $resources['inventories'] > $plan->inventory_limit) {
-            return False;
-        }
-
-        return True;
+        return $resources['users'] <= $plan->team_size && $resources['inventories'] <= $plan->inventory_limit;
     }
 
     public function invoice(Request $request, $invoiceId)

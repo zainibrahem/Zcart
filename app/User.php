@@ -378,23 +378,13 @@ class User extends Authenticatable
             return false;
         }
 
-        $subscription = $this->shop->subscriptions->first();
+        $subscription = $this->shop->currentSubscription;
 
         if($subscription && ! is_null($subscription->ends_at)) {
             return \Carbon\Carbon::now()->gt($subscription->ends_at);
         }
 
         return false;
-    }
-
-    /**
-     * Check if the user has outrange generic plan
-     *
-     * @return bool
-     */
-    public function hasExpiredOnGenericTrial()
-    {
-        return $this->shop->hasExpiredOnGenericTrial();
     }
 
     /**
@@ -412,11 +402,11 @@ class User extends Authenticatable
      */
     public function isSubscribed()
     {
-        if($this->isFromPlatform() || ! $this->merchantId()) {
+        if(! $this->isFromMerchant()) {
             return False;
         }
 
-        $subscription = optional($this->shop->subscriptions)->first();
+        $subscription = $this->shop->currentSubscription;
 
         return $subscription && $subscription->valid() || $this->isOnGenericTrial();
     }
@@ -438,7 +428,7 @@ class User extends Authenticatable
      */
     public function isOnTrial()
     {
-        $subscription = $this->shop->subscriptions->first();
+        $subscription = $this->shop->currentSubscription;
 
         return $subscription && $subscription->onTrial();
     }
@@ -450,7 +440,12 @@ class User extends Authenticatable
      */
     public function isOnGracePeriod()
     {
-        $subscription = $this->shop->subscriptions->first();
+        $subscription = $this->shop->currentSubscription;
+
+        // Wallet subscription doesn't have GracePeriod
+        if ($subscription && $subscription->provider == 'wallet') {
+            return False;
+        }
 
         return $subscription && $subscription->onGracePeriod();
     }

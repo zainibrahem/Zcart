@@ -9,8 +9,13 @@
 <div class="row">
   <div class="col-md-8 nopadding-right">
     <div class="form-group">
-      {!! Form::select('country_id', $countries , isset($address) ? Null : ( isset($cart) ? $cart->ship_to_country_id : config('system_settings.address_default_country') ), ['id' => 'address_country_id', 'class' => 'form-control flat', 'placeholder' => trans('theme.country'), 'required']) !!}
-      <div class="help-block with-errors"></div>
+      @if(isset($one_checkout_form))
+        {!! Form::text('country_id', $cart->country->name, ['class' => 'form-control', 'disabled' => 'true']) !!}
+        <div class="help-block with-errors small text-warning">{{ trans('checkout::lang.make_changes_on_cart_page') }}</div>
+      @else
+        {!! Form::select('country_id', $countries , isset($address) ? Null : ( isset($cart) ? $cart->ship_to_country_id : config('system_settings.address_default_country') ), ['id' => 'address_country_id', 'class' => 'form-control flat', 'placeholder' => trans('theme.country'), 'required']) !!}
+        <div class="help-block with-errors"></div>
+      @endif
     </div>
   </div>
   <div class="col-md-4 nopadding-left">
@@ -40,8 +45,13 @@
   </div>
   <div class="col-md-6 nopadding-left">
     <div class="form-group">
-      {!! Form::select('state_id', isset($states) ? $states : [], isset($cart) ? $cart->ship_to_state_id : ( isset($address) ? Null : config('system_settings.address_default_state') ), ['id' => 'address_state_id', 'class' => 'form-control flat', 'placeholder' => trans('theme.placeholder.state'), empty($states) ? '' : 'required']) !!}
-      <div class="help-block with-errors"></div>
+      @if(isset($one_checkout_form))
+        {!! Form::text('state_id', $cart->state->name, ['class' => 'form-control', 'disabled' => 'true']) !!}
+        <div class="help-block with-errors small text-warning">{{ trans('checkout::lang.make_changes_on_cart_page') }}</div>
+      @else
+        {!! Form::select('state_id', isset($states) ? $states : [], isset($cart) ? $cart->ship_to_state_id : ( isset($address) ? Null : config('system_settings.address_default_state') ), ['id' => 'address_state_id', 'class' => 'form-control flat', 'placeholder' => trans('theme.placeholder.state'), empty($states) ? '' : 'required']) !!}
+        <div class="help-block with-errors"></div>
+      @endif
     </div>
   </div>
 </div>

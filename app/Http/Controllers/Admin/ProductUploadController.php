@@ -8,6 +8,7 @@ use App\Category;
 use App\Manufacturer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Support\MessageBag;
 use App\Http\Requests\Validations\ExportCategoryRequest;
@@ -41,7 +42,7 @@ class ProductUploadController extends Controller
 		$records = array_map('str_getcsv', file($path));
 
 	    // Validations check for csv_import_limit
-	    if( (count($records) - 1) > get_csv_import_limit() ){
+	    if (count($records) > get_csv_import_limit()){
 	    	$err = (new MessageBag)->add('error', trans('validation.upload_rows', ['rows' => get_csv_import_limit()]));
 
 	    	return back()->withErrors($err);
@@ -87,24 +88,25 @@ class ProductUploadController extends Controller
 		{
 			$data = unserialize($row);
 
-			if( ! is_array($data) ) { // Invalid data
+			if (! is_array($data)) { // Invalid data
 				continue;
 			}
 
 			// Ignore if required info is not given
-			if( ! verifyRequiredDataForBulkUpload($data, 'product') ){
+			if (! verifyRequiredDataForBulkUpload($data, 'product') ){
 				$this->pushIntoFailed($data, trans('help.missing_required_data'));
 				continue;
 			}
 
 			// If the slug is not given the make it
-			if( ! $data['slug'] ) {
+			if (! $data['slug'] ) {
     			$data['slug'] = convertToSlugString($data['name'], $data['gtin']);
 			}
 
 			// Ignore if the slug is exist in the database
-			$product = Product::select('slug')->where('slug', $data['slug'])->first();
-			if( $product ){
+			$product = Product::select('slug')->where('slug', $data['slug'])->withTrashed()->first();
+
+			if ($product ){
 				$this->pushIntoFailed($data, trans('help.slug_already_exist'));
 				continue;
 			}
@@ -112,7 +114,7 @@ class ProductUploadController extends Controller
 			// Find categories and make the category_list. Ignore the row if category not found
 			$data['category_list'] = Category::whereIn('slug', explode(',', $data['categories']))->pluck('id')->toArray();
 
-			if( empty($data['category_list']) ){
+			if (empty($data['category_list']) ){
 				$this->pushIntoFailed($data, trans('help.invalid_category'));
 				continue;
 			}
@@ -120,7 +122,7 @@ class ProductUploadController extends Controller
 			$data['shop_id'] = $shop_id; //Set added by info
 
 			// Create the product and get it, If failed then insert into the ignored list
-			if( ! $this->createProduct($data) ){
+			if (! $this->createProduct($data) ){
 				$this->pushIntoFailed($data, trans('help.input_error'));
 				continue;
 			}
@@ -130,7 +132,7 @@ class ProductUploadController extends Controller
 
         $failed_rows = $this->getFailedList();
 
-		if(!empty($failed_rows)) {
+		if(! empty($failed_rows)) {
 	        return view('admin.product.import_failed', compact('failed_rows'));
 		}
 
@@ -150,28 +152,30 @@ class ProductUploadController extends Controller
 		}
 
 		if($data['manufacturer']) {
-			$manufacturer = Manufacturer::firstOrCreate(['name' => $data['manufacturer']]);
+			$manufacturer = Manufacturer::firstOrCreate(
+			    ['name' => $data['manufacturer']],
+                ['slug' => Str::slug($data['manufacturer'])]
+            );
 		}
 
 		// Create the product
 		$product = Product::create([
-						'shop_id' => $data['shop_id'],
-						'name' => $data['name'],
-						'slug' => $data['slug'],
-						'model_number' => $data['model_number'],
-						'description' => $data['description'],
-						'gtin' => $data['gtin'],
-						'gtin_type' => $data['gtin_type'],
-						'mpn' => $data['mpn'],
-						'brand' => $data['brand'],
-						'origin_country' => isset($origin_country) ? $origin_country->id : Null,
-						'manufacturer_id' => isset($manufacturer) ? $manufacturer->id : Null,
-						'min_price' => ($data['minimum_price'] && $data['minimum_price'] > 0) ? $data['minimum_price'] : 0,
-						'max_price' => ($data['maximum_price'] && $data['maximum_price'] > $data['minimum_price']) ? $data['maximum_price'] : Null,
-						'model_number' => $data['model_number'],
-						'requires_shipping' => strtoupper($data['requires_shipping']) == 'TRUE' ? 1 : 0,
-						'active' => strtoupper($data['active']) == 'TRUE' ? 1 : 0,
-					]);
+					'shop_id' => $data['shop_id'],
+					'name' => $data['name'],
+					'slug' => $data['slug'],
+					'model_number' => $data['model_number'],
+					'description' => $data['description'],
+					'gtin' => $data['gtin'],
+					'gtin_type' => $data['gtin_type'],
+					'mpn' => $data['mpn'],
+					'brand' => $data['brand'],
+					'origin_country' => isset($origin_country) ? $origin_country->id : Null,
+					'manufacturer_id' => isset($manufacturer) ? $manufacturer->id : Null,
+					'min_price' => ($data['minimum_price'] && $data['minimum_price'] > 0) ? $data['minimum_price'] : 0,
+					'max_price' => ($data['maximum_price'] && $data['maximum_price'] > $data['minimum_price']) ? $data['maximum_price'] : Null,
+					'requires_shipping' => strtoupper($data['requires_shipping']) == 'TRUE' ? 1 : 0,
+					'active' => strtoupper($data['active']) == 'TRUE' ? 1 : 0,
+				]);
 
 		// Sync categories
 		if($data['category_list']) {
@@ -214,7 +218,6 @@ class ProductUploadController extends Controller
 
 		return response()->download($pathToFile);
 	}
-
 
 	/**
 	 * [downloadFailedRows]

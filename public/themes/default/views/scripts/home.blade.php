@@ -1,9 +1,7 @@
 <script type="text/javascript">
 "use strict";
-
 ;(function($, window, document) {
     $(document).ready(function(){
-
         let endTime = "{{$endTime}}"
 
         const second = 1000,
@@ -37,10 +35,6 @@
                 }
                 //seconds
             }, 0);
-
-
-
-        //Timer Two
 
         // timer 2
         (function () {
@@ -79,48 +73,47 @@
 
         // timer 3
         (function () {
-        const second = 1000,
-         minute = second * 60,
-         hour = minute * 60,
-         day = hour * 24;
+            const second = 1000,
+             minute = second * 60,
+             hour = minute * 60,
+             day = hour * 24;
 
-        let birthday = "mar 7, 2021 02:30:00",
-        countDown = new Date(endTime).getTime(),
-        x = setInterval(function() {
+            let birthday = "mar 7, 2021 02:30:00",
+            countDown = new Date(endTime).getTime(),
+            x = setInterval(function() {
 
-         let now = new Date().getTime(),
-             distance = countDown - now;
+             let now = new Date().getTime(),
+                 distance = countDown - now;
 
-         document.getElementById("days2").innerText = Math.floor(distance / (day)),
-         document.getElementById("hours2").innerText = Math.floor((distance % (day)) / (hour)),
-         document.getElementById("minutes2").innerText = Math.floor((distance % (hour)) / (minute)),
-         document.getElementById("seconds2").innerText = Math.floor((distance % (minute)) / second);
+             document.getElementById("days2").innerText = Math.floor(distance / (day)),
+             document.getElementById("hours2").innerText = Math.floor((distance % (day)) / (hour)),
+             document.getElementById("minutes2").innerText = Math.floor((distance % (hour)) / (minute)),
+             document.getElementById("seconds2").innerText = Math.floor((distance % (minute)) / second);
 
-         //do something later when date is reached
-         if (distance < 0) {
-           let headline2 = document.getElementById("headline2"),
-               countdown2 = document.getElementById("countdown2"),
-               content2 = document.getElementById("content2");
+             //do something later when date is reached
+             if (distance < 0) {
+               let headline2 = document.getElementById("headline2"),
+                   countdown2 = document.getElementById("countdown2"),
+                   content2 = document.getElementById("content2");
 
-           headline2.innerText = "Sorry sale over";
-           countdown2.style.display = "none";
-           content2.style.display = "block";
+               headline2.innerText = "Sorry sale over";
+               countdown2.style.display = "none";
+               content2.style.display = "block";
 
-           clearInterval(x);
-         }
-         //seconds
-        }, 0)
+               clearInterval(x);
+             }
+             //seconds
+            }, 0)
         }());
 
-        $('.main-menu').mobileMegaMenu({
-           changeToggleText: false,
-           enableWidgetRegion: true,
-           prependCloseButton: true,
-           stayOnActive: true,
-           // toogleTextOnClose: 'Close Menu',
-           menuToggle: 'main-menu-toggle'
-        });
-
+        // $('.main-menu').mobileMegaMenu({
+        //    changeToggleText: false,
+        //    enableWidgetRegion: true,
+        //    prependCloseButton: true,
+        //    stayOnActive: true,
+        //    // toogleTextOnClose: 'Close Menu',
+        //    menuToggle: 'main-menu-toggle'
+        // });
 });
 }(window.jQuery, window, document));
 </script>

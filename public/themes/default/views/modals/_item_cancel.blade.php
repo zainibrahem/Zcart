@@ -52,7 +52,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-xs-7">
+                    <div class="col-7">
                         <div class="help-block">
                             <span data-toggle="tooltip" data-title="{!! trans('theme.order_'.$action.'_msg') !!}" data-placement="top">
                                 <i class="fas fa-warning"></i>
@@ -60,7 +60,7 @@
                             </span>
                         </div>
                     </div>
-                    <div class="col-xs-5">
+                    <div class="col-5">
                         <button type="submit" class="btn btn-block flat btn-primary">{{ trans('theme.send_request') }}</button>
                     </div>
                 </div>

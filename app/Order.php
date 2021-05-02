@@ -112,7 +112,8 @@ class Order extends BaseModel
                         'approved',
                         'feedback_id',
                         'disputed',
-                        'email'
+                        'email',
+                        'device_id'
                     ];
 
     /**
@@ -248,7 +249,8 @@ class Order extends BaseModel
      */
     public function paymentMethod()
     {
-        return $this->belongsTo(PaymentMethod::class)->withDefault();
+        return $this->belongsTo(PaymentMethod::class, 'payment_method_id');
+        // ->withDefault();
     }
 
     /**
@@ -534,7 +536,7 @@ class Order extends BaseModel
      */
     public function cancellationFeeApplicable()
     {
-        return $this->isPaid() && ! vendor_get_paid_directly() && is_incevio_package_loaded(['wallet']) &&
+        return $this->isPaid() && can_set_cancellation_fee() &&
                 (
                     ! config('system_settings.vendor_order_cancellation_fee') ||
                     config('system_settings.vendor_order_cancellation_fee') > 0
@@ -562,6 +564,7 @@ class Order extends BaseModel
      */
     public function canTrack()
     {
+        return false; // Because the plagin not working
         return $this->isFulfilled() && $this->tracking_id && ! $this->isDelivered();
     }
 
@@ -749,28 +752,25 @@ class Order extends BaseModel
 
         $this->save();
 
-        if (! vendor_get_paid_directly() && is_incevio_package_loaded('wallet')) {
-            // Deposit the order amount into vendor's wallet
-            $meta = [
-                'type' => trans('app.for_sale_of', ['order' => $this->order_number]),
-                'description' => trans('app.order_number') . ': ' . $this->order_number,
-                'order_id' => $this->id
-            ];
+        // Update shop's periodic sold amount
+        if ($this->shop->periodic_sold_amount) {
+            $this->shop->periodic_sold_amount += $this->total;
+            $this->shop->save();
+        }
 
-            $this->shop->deposit($this->grand_total, $meta, true);
+        if (! vendor_get_paid_directly() && is_incevio_package_loaded('wallet')) {
 
             $fee = getPlatformFeeForOrder($this);
 
-            // Charge the application fee
-            if ($fee > 0) {
-                $meta = [
-                    'type' => trans('app.platform_fee', ['for' => $this->order_number]),
-                    'description' => trans('app.order_number') . ': ' . $this->order_number,
-                    'order_id' => $this->id
-                ];
+            // Deposit the order amount into vendor's wallet
+            $meta = [
+                'type' => trans('app.sale'),
+                'description' => trans('app.for_sale_of', ['order' => $this->order_number]),
+                'fee' => $fee,
+                'order_id' => $this->id
+            ];
 
-                $this->shop->withdraw($fee, $meta, true);
-            }
+            $this->shop->deposit($this->grand_total - $fee, $meta, true);
         }
 
         event(new OrderPaid($this));
@@ -794,27 +794,17 @@ class Order extends BaseModel
         $this->save();
 
         if (! vendor_get_paid_directly()) {
+            $fee = getPlatformFeeForOrder($this);
+
             // Deposit the order amount into vendor's wallet
             $meta = [
-                'type' => trans('app.reversal_for_sale_of', ['order' => $this->order_number]),
-                'description' => trans('app.order_number') . ': ' . $this->order_number,
+                'type' => trans('app.reversal'),
+                'description' => trans('app.reversal_for_sale_of', ['order' => $this->order_number]),
+                'fee' => $fee,
                 'order_id' => $this->id
             ];
 
-            $this->shop->withdraw($this->grand_total, $meta, true);
-
-            $fee = getPlatformFeeForOrder($this);
-
-            // Charge the application fee
-            if ($fee > 0) {
-                $meta = [
-                    'type' => trans('app.reversal_platform_fee', ['for' => $this->order_number]),
-                    'description' => trans('app.order_number') . ': ' . $this->order_number,
-                    'order_id' => $this->id
-                ];
-
-                $this->shop->deposit($fee, $meta, true);
-            }
+            $this->shop->withdraw($this->grand_total - $fee, $meta, true);
         }
 
         event(new OrderUpdated($this));

@@ -11,7 +11,7 @@
                         <div class="banner__content-{{$slider['text_position'] == 'right' ? 'left' : 'right'}}"></div>
 
                         <div class="banner__content-{{$slider['text_position'] ?? 'right'}}">
-                            <div class="banner__content-sub-title">
+                            <div class="banner__content-sub-title ">
                                 <h3 style="color: {{ $slider['sub_title_color'] }}">{!! $slider['sub_title']!!}</h3>
                             </div>
                             <div class="banner__content-title">
@@ -33,13 +33,11 @@
 
         <ul class="ei-slider-thumbs">
             <li class="ei-slider-element">Current</li>
+
             @foreach($sliders as $slider)
                 <li>
                     <a href="javascript:void(0)">Slide {{ $loop->count }}</a>
-                    <img src="{{ isset($slider['images'][0]['path']) ?
-                        get_storage_file_url($slider['images'][0]['path'], 'slider_thumb') :
-                        get_storage_file_url($slider['feature_image']['path'], 'slider_thumb') }}" alt="thumbnail {{ $loop->count }}"
-                    />
+                    <img src="{{ isset($slider['images'][0]['path']) ? get_storage_file_url($slider['images'][0]['path'], 'slider_thumb') : get_storage_file_url($slider['feature_image']['path'], 'slider_thumb') }}" alt="thumbnail {{ $loop->count }}"/>
                 </li>
             @endforeach
         </ul>

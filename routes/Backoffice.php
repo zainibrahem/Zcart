@@ -8,7 +8,7 @@ include('admin/Auth.php');
 Route::group(['middleware' => ['auth'], 'namespace' => 'Admin', 'as' => 'admin.', 'prefix' => 'admin'], function()
 {
 	include('admin/Package.php');
-	include('admin/Promotions.php');
+	include('admin/promotions.php');
 
 	// Markerplace Admin only routes
 	Route::middleware(['admin'])->group(function ()

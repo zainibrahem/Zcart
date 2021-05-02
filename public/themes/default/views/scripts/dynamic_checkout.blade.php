@@ -1,20 +1,18 @@
 <script type="text/javascript">
 "use strict";
 ;(function($, window, document) {
-    $(document).ready(function()
-    {
-    	$('.shopping-cart-table-wrap').each(function(e){
+    $(document).ready(function() {
+    	$('.shopping-cart-table-wrap').each(function(e) {
 			var cart = $(this).data('cart');
 	        var shop = $('#shop-id'+cart).val();
-			// var shippingOptions = $("#shipping-options"+cart).data('options');
 			var shippingOptions = getShippingOptions(cart);
 
-			if(! shop || ! shippingOptions){
+			if (! shop || ! shippingOptions) {
 				disableCartCheckout(cart);
 			}
-			else{
+			else {
 				var shippingRateId = Number($('#shipping-rate-id'+cart).val());
-				var shippingRate = $.grep(shippingOptions, function(el){
+				var shippingRate = $.grep(shippingOptions, function(el) {
 					return el.id === shippingRateId;
 				})[0];
 
@@ -27,11 +25,8 @@
 			}
     	});
 
-		// NEW CODE //////////////////////////
-
 		//ONLY CHECKOUT PAGE CODE
-		if ($("#checkout-id").length == 1)
-		{
+		if ($("#checkout-id").length == 1) {
 			// Disable checkout if seller has no payment option
 			if ($('.payment-option').length == 0) {
 				disableCartPayment('{{ trans('theme.notify.seller_has_no_payment_method') }}');
@@ -40,13 +35,12 @@
 
 	    	// Reset the shipping option if any addess selected
 			var address = $('input[type="radio"].ship-to-address:checked');
-			if(address.val()) {
+			if (address.val()) {
 	            setShippingZone($("#checkout-id").val(), address.data('country'), address.data('state'));
-				// checkShippingZone(selected_address.data('country'), selected_address.data('state'));
 			}
 
 			// Alter shipping address
-			$('.customer-address-list .address-list-item').on('click', function(){
+			$('.customer-address-list .address-list-item').on('click', function() {
 				var radio = $(this).find('input[type="radio"].ship-to-address');
 				$('.address-list-item').removeClass('selected has-error');
 				$(this).addClass('selected');
@@ -54,30 +48,29 @@
 				$('#ship-to-error-block').text('');
 
 	            setShippingZone($("#checkout-id").val(), radio.data('country'), radio.data('state'));
-				// checkShippingZone(radio.data('country'), radio.data('state'));
 			});
 
-			$("select#address_country_id").on('change', function(){
+			$("select#address_country_id").on('change', function() {
 				// Show shipping charge may change msg if zone changes
 				$(this).next('.help-block').html('<small>{{ trans('theme.notify.shipping_cost_may_change') }}</small>');
 		    });
 
 	        $("select#address_state_id").on('change', function(e) {
-	        	if(! $("select#address_country_id").next('.help-block').text())
+	        	if (! $("select#address_country_id").next('.help-block').text()) {
 					$(this).next('.help-block').html('<small>{{ trans('theme.notify.shipping_cost_may_change') }}</small>');
+	        	}
 
 	          	var state_id = $(this).val();
 				var country_id = $('#address_country_id').val();
 		        var cart = $("#checkout-id").val();
 
 		        // Reset the shipping options if the state is changed or have no state in the zone
-		        if(state_id || $(this).children('option').length < 2) {
+		        if (state_id || $(this).children('option').length < 2) {
 		            setShippingZone(cart, country_id, state_id);
 		        }
 	        });
 		};
 		//END ONLY CHECKOUT PAGE CODE
-
 
 	    // Open the form
 	    $(".ship_to").on("click", function(e) {
@@ -94,7 +87,7 @@
 	        $('#shipTo_country').selectBoxIt(); //Initialise the selectBoxIt
 
 	        // Populate states field if required
-	        if(state && $("#state_id_select_wrapper").hasClass('hidden')) {
+	        if (state && $("#state_id_select_wrapper").hasClass('hidden')) {
 	            populateStateSelect(country, state);
 	        }
 
@@ -103,7 +96,7 @@
 	    });
 
 	    // Submit
-	    $("#shipToForm").on("submit", function(e){
+	    $("#shipToForm").on("submit", function(e) {
 	        e.preventDefault();
 
 	        var data = $('form#shipToForm').serialize();
@@ -113,7 +106,7 @@
 	        var state_id = $("#shipTo_state").val();
 
 	        // Check if the state is selected if exist
-	        if(state_id || $("#state_id_select_wrapper").hasClass('hidden')) {
+	        if (state_id || $("#state_id_select_wrapper").hasClass('hidden')) {
 	            // Set the ship to text
 	            var text = state_id ? "#shipTo_state" : "#shipTo_country";
 	            $("#shipTo"+cart).text($(text+" option:selected").html());
@@ -127,10 +120,12 @@
 	            // TEMPO
 	            setShippingZone(cart, country_id, state_id);
 
-				// // Set shipping options for the zone
+	            updateCartOnServerside(cart);
+
+				// Set shipping options for the zone
 				// setShippingOptions(cart);
 
-				// // Remove the discount if the zone changes as discount can be depends on zone
+				// Remove the discount if the zone changes as discount can be depends on zone
 				// resetDiscount(cart);
 	        }
 	    });
@@ -147,7 +142,7 @@
 	        $("#shipTo").attr('data-state', $(this).val());
 	    });
 
-	    $("#login_to_shipp_btn").on('click', function(e){
+	    $("#login_to_shipp_btn").on('click', function(e) {
 	        e.preventDefault();
 
 	        $('#shipToModal').modal('hide');
@@ -163,12 +158,12 @@
 	            success: function(result)
 	            {
 	                $("#shipTo_state").empty().selectBoxIt("refresh");
-	                if(result.length === 0){
+	                if (result.length === 0) {
 	                    // $("#shipTo").attr('data-state', null);
 	                    // $("#shipTo_state").empty().selectBoxIt("refresh");
 	                    $("#state_id_select_wrapper").removeClass('show').addClass('hidden').removeAttr('required');
 	                }
-	                else{
+	                else {
 	                    $("#state_id_select_wrapper").removeClass('hidden').addClass('show');
 	                    $("#shipTo_state").empty().attr('required', 'required').selectBoxIt("refresh");
 
@@ -180,7 +175,7 @@
 	                    $("#shipTo_state").append(options);
 
 	                    // Pre select the state
-	                    if(state)
+	                    if (state)
 	                        $('#shipTo_state option[value="'+state+'"]').attr("selected", "selected");
 
 	                    $("#shipTo_state").selectBoxIt("refresh");
@@ -203,12 +198,12 @@
             var zone = getFromPHPHelper('get_shipping_zone_of', [shop_id, country_id, state_id]);
             zone = JSON.parse(zone);
 
-            if($.isEmptyObject(zone)){
+            if ($.isEmptyObject(zone)) {
                 @include('theme::layouts.notification', ['message' => trans('theme.notify.seller_doesnt_ship'), 'type' => 'warning', 'icon' => 'times-circle'])
             }
 
             // Skip and return if the zone is still the same
-            if(zone.id == zone_id) return;
+            if (zone.id == zone_id) return;
 
 			$("#zone-id"+cart).val(zone.id);
 			$("#tax-id"+cart).val(zone.tax_id);
@@ -224,7 +219,6 @@
 
 			return;
 	    }
-		// END NEW CODE //////////////////////////
 
         // Update Item total on qty change
         $(".product-info-qty-input").on('change', function(e) {
@@ -251,7 +245,7 @@
     	});
 
     	// Item remove from the cart
-    	$('.cart-item-remove').on('click', function(e){
+    	$('.cart-item-remove').on('click', function(e) {
             e.preventDefault();
             var node = $(this);
 	        var cart = $(this).data('cart');
@@ -263,16 +257,21 @@
 			    data: {'cart':cart,'item':item},
 			    dataType: 'JSON',
 			    complete: function (xhr, textStatus) {
-			    	if(200 == xhr.status){
+			    	if (200 == xhr.status) {
 		                @include('theme::layouts.notification', ['message' => trans('theme.notify.item_removed_from_cart'), 'type' => 'success', 'icon' => 'check-circle'])
 
 			    		node.parents('tr.cart-item-tr').remove();
 
 			    		// Remove the cart if it has no items
-			    		if($('#table'+cart+' tbody').children().length == 0){
+			    		if ($('#table'+cart+' tbody').children().length == 0) {
 							$('#cartId'+cart).remove();
+
+							// Check if no cart is there
+				    		if ($('.shopping-cart-table-wrap').length == 0) {
+								location.reload();
+				    		}
 			    		}
-			    		else{
+			    		else {
 							// Set shipping options for the zone
 							setShippingOptions(cart);
 
@@ -282,7 +281,7 @@
 			    		// Decrease global cart item count by 1
 			    		decreaseCartItem(1);
 			    	}
-			    	else{
+			    	else {
 		                @include('theme::layouts.notification', ['message' => trans('theme.notify.failed'), 'type' => 'warning', 'icon' => 'times-circle'])
 			    	}
 			    },
@@ -290,7 +289,7 @@
     	});
 
     	// Coupon
-    	$('.apply_seller_coupon').on('click', function(e){
+    	$('.apply_seller_coupon').on('click', function(e) {
             e.preventDefault();
 	        var cart = $(this).data('cart');
 	        var coupon = $('#coupon'+cart).val();
@@ -299,19 +298,19 @@
 			// var totalPrice  = getOrderTotal(cart);
 			coupon = coupon.trim();
 
-	        if(coupon){
+	        if (coupon) {
 				$.ajax({
 				    url: '{{ route('validate.coupon') }}',
 				    type: 'POST',
 				    data: {'coupon':coupon,'shop':shop,'cart':cart,'zone':zone},
 				    dataType: 'JSON',
 				    success: function (data, textStatus, xhr) {
-				    	// if(200 == xhr.status){
-							// if(data.min_order_amount && totalPrice < data.min_order_amount){
+				    	// if (200 == xhr.status) {
+							// if (data.min_order_amount && totalPrice < data.min_order_amount) {
 				   {{-- //              @include('theme::layouts.notification', ['message' => trans('theme.notify.coupon_min_order_value'), 'type' => 'danger', 'icon' => 'times-circle']) --}}
 							// 	resetDiscount(cart);
 							// }
-							// else{
+							// else {
 					    		setDiscount(cart, data);
 			                    {{-- @include('theme::layouts.notification', ['message' => trans('theme.notify.coupon_applied'), 'type' => 'success', 'icon' => 'check-circle']) --}}
 							// }
@@ -319,25 +318,25 @@
 				    }
 				})
 				.fail(function(response) {
-			        if (401 === response.status){
+			        if (401 === response.status) {
 						$('#loginModal').modal('show');
 			        }
-			        else if (500 === response.status){
+			        else if (500 === response.status) {
 				        // console.log(response);
 			        }
-			        else if (403 === response.status){
+			        else if (403 === response.status) {
 	                    @include('theme::layouts.notification', ['message' => trans('theme.notify.coupon_not_valid'), 'type' => 'warning', 'icon' => 'times-circle'])
 			        }
-			        else if (404 === response.status){
+			        else if (404 === response.status) {
 	                    @include('theme::layouts.notification', ['message' => trans('theme.notify.coupon_not_exist'), 'type' => 'danger', 'icon' => 'times-circle'])
 			        }
-			        else if (443 === response.status){
+			        else if (443 === response.status) {
 	                    @include('theme::layouts.notification', ['message' => trans('theme.notify.coupon_not_valid_for_zone'), 'type' => 'warning', 'icon' => 'times-circle'])
 			        }
-			        else if (444 === response.status){
+			        else if (444 === response.status) {
 	                    @include('theme::layouts.notification', ['message' => trans('theme.notify.coupon_limit_expired'), 'type' => 'warning', 'icon' => 'times-circle'])
 			        }
-			        else{
+			        else {
 	                    @include('theme::layouts.notification', ['message' => trans('theme.notify.failed'), 'type' => 'danger', 'icon' => 'times-circle'])
 			        }
 
@@ -347,7 +346,7 @@
     	});
 
     	// Popover
-	  	$('[data-toggle="popover"]').on('click', function(){
+	  	$('[data-toggle="popover"]').on('click', function() {
 	        $('.popover').not(this).popover('hide');
 	  	});
 
@@ -359,12 +358,12 @@
 	        var nodeId = node.attr('id');
 	        var cart = node.data('cart');
 
-	        switch(nodeId){
+	        switch(nodeId) {
 	          	case 'shipping-options-popover':
 		            var shipping = node.find('input[name=shipping_option]:checked');
 		            var name = shipping.attr('id') == 'custom_shipping' ? '{{ trans('theme.custom_shipping') }}' : shipping.attr('id');
 		            var id = shipping.parent('label').attr('id');
-		            setShippingCost(cart, name, shipping.val(), id);
+		            setShippingCostThenSave(cart, name, shipping.val(), id);
 		            break;
 
 	          	case 'packaging-options-popover':
@@ -385,7 +384,7 @@
 		$('a.packaging-options').popover({
 			html: true,
 			placement:'bottom',
-			content: function(){
+			content: function() {
 				var cart = $(this).data('cart');
 				var current = getPackagingName(cart);
 				var preChecked = String(current) == String('{{ trans('theme.basic_packaging') }}') ? 'checked' : '';
@@ -394,7 +393,7 @@
 				'<tr><td><div class="radio"><label id="1"><input type="radio" name="packaging_option" id="{{ trans('theme.basic_packaging') }}" value="'+ getFormatedValue(0) +'" '+ preChecked +'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ trans('theme.basic_packaging') }}</label></div></td>' +
 				'<td><span>{{ get_currency_prefix() }}'+ getFormatedValue(0) +'{{ get_currency_suffix() }}</span></td></tr>';
 
-				$(this).data('options').forEach( function (item){
+				$(this).data('options').forEach( function (item) {
 				  	preChecked = String(current) == String(item.name) ? 'checked' : '';
 
 				  	options += '<tr><td><div class="radio"><label id="'+ item.id +'"><input type="radio" name="packaging_option" id="'+ item.name +'" value="'+ getFormatedValue(item.cost) +'" '+ preChecked +'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+ item.name +'</label></div></td>' +
@@ -424,7 +423,7 @@
 		$('a.dynamic-shipping-rates').popover({
 			html: true,
 			placement:'bottom',
-			content: function(){
+			content: function() {
 				var cart = $(this).data('cart');
 				var current = getShippingName(cart);
 				var preChecked = String(current) == String('{{ trans('theme.free_shipping') }}') ? 'checked' : '';
@@ -433,19 +432,19 @@
 				var free_shipping = isFreeShipping(cart);
 				var handlingCost = $('#handling-cost'+cart).val();
 
-				if($.isEmptyObject(filtered)){
+				if ($.isEmptyObject(filtered)) {
 					var options = '<p class="space10"><span class="space10"></span>{{ trans('theme.seller_doesnt_ship') }}</p>';
 				}
-				else{
+				else {
 					var options = '<table class="table table-striped" id="checkout-options-table">';
 
-					if(free_shipping){
+					if (free_shipping) {
 						options += '<tr><td><div class="radio"><label id="0"><input type="radio" name="shipping_option" id="{{ trans('theme.free_shipping') }}" value="'+ getFormatedValue(0) +'" '+ preChecked +'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ trans('theme.free_shipping') }}</label></div></td>' +
 						'<td>&nbsp;</td><td>&nbsp;</td>' +
 						'<td><span>{{ get_currency_prefix() }}'+ getFormatedValue(0) +'{{ get_currency_suffix() }}</span></td></tr>';
 					}
 
-					filtered.forEach( function (item){
+					filtered.forEach( function (item) {
 				  		preChecked = String(current) == String(item.name) ? 'checked' : '';
 				  		var shippingRate = Number(item.rate) + Number(handlingCost);
 
@@ -506,9 +505,9 @@
 			}
 
 			var filtered = shippingOptions.filter(function (el) {
-			  	var result = el.based_on == 'price' && el.minimum <= totalPrice && (el.maximum >= totalPrice || !el.maximum);
+			  	var result = el.based_on == 'price' && el.minimum <= totalPrice && (! el.maximum || el.maximum >= totalPrice);
 
-			  	if(cartWeight) {
+			  	if (cartWeight) {
 			    	result = result || (el.based_on == 'weight' && el.minimum <= cartWeight && el.maximum >= cartWeight);
 			  	}
 
@@ -525,7 +524,7 @@
 
 			var tax = (total * taxrate)/100;
 
-			if(tax > 0) {
+			if (tax > 0) {
 				$("#tax-section-li"+cart).show();
 			}
 			else {
@@ -541,7 +540,7 @@
 		function calculateCartTotal(cart)
 		{
 			var total = 0;
-	    	$('.item-total'+cart).each(function(){
+	    	$('.item-total'+cart).each(function() {
 				total += Number($(this).text());
 	    	});
 
@@ -566,11 +565,9 @@
 
 			// Cart page
 	      	var cartWeight = 0;
-	        $(".itemWeight"+cart).each(function()
-	        	{
-	              cartWeight += ($(this).val() * 1);
-	            }
-	        );
+	        $(".itemWeight"+cart).each(function() {
+             	cartWeight += ($(this).val() * 1);
+	        });
 
 	        return cartWeight;
 		}
@@ -578,7 +575,7 @@
       	function getTotalAmount(cart)
       	{
 	        var total = getOrderTotal(cart);
-	        if(! total) {
+	        if (! total) {
 	          return total;
 	        }
 
@@ -643,6 +640,7 @@
 	        $('#packaging-id'+cart).val(id);
 
 	        calculateTax(cart);
+			updateCartOnServerside(cart);
 	        return;
       	}
 
@@ -650,24 +648,30 @@
 		{
 			var filtered = getShippingOptions(cart);
 
-			if(! $.isEmptyObject(filtered)){
-				filtered.sort(function(a, b){return a.rate - b.rate});
+			if (! $.isEmptyObject(filtered)) {
+				filtered.sort(function(a, b) { return a.rate - b.rate });
 
-				if(isFreeShipping(cart)) {
-		            setShippingCost(cart, '{{ trans('theme.free_shipping') }}', 0, 0);
+				if (isFreeShipping(cart)) {
+		            setShippingCostThenSave(cart, '{{ trans('theme.free_shipping') }}', 0, 0);
 				}
 				else {
-		            setShippingCost(cart, filtered[0].name, filtered[0].rate, filtered[0].id);
+		            setShippingCostThenSave(cart, filtered[0].name, filtered[0].rate, filtered[0].id);
 				}
 
 	            enableCartCheckout(cart);
 			}
-			else{
-	            setShippingCost(cart);
+			else {
+	            setShippingCostThenSave(cart);
 				disableCartCheckout(cart);
 			}
 
     		setTaxes(cart);
+		}
+
+		function setShippingCostThenSave(cart, name = '', value = 0, id = '')
+		{
+            setShippingCost(cart, name, value, id);
+			updateCartOnServerside(cart);
 		}
 
 		function setShippingCost(cart, name = '', value = 0, id = '')
@@ -686,7 +690,7 @@
 			var totalPrice  = getOrderTotal(cart);
 			var tax_id = getTaxId(cart);
 
-			if(! tax_id){
+			if (! tax_id) {
 				$('#summary-taxrate'+cart).text(0);
 				calculateTax(cart);
 				return;
@@ -695,7 +699,7 @@
 			$.ajax({
 				url: "{{ route('ajax.getTaxRate') }}",
 			    data: {'ID':tax_id},
-				success: function(result){
+				success: function(result) {
 			    	$('#summary-taxrate'+cart).text(result);
 			   	 	$('#cart-taxrate'+cart).val(result);
 
@@ -708,7 +712,7 @@
 
 		function setDiscount(cart, coupon = null)
 		{
-			if(coupon == null){
+			if (coupon == null) {
                 @include('theme::layouts.notification', ['message' => trans('theme.notify.coupon_not_valid'), 'type' => 'danger', 'icon' => 'times-circle'])
 				resetDiscount(cart);
 				return;
@@ -718,18 +722,18 @@
 			var name = coupon.name;
 			var totalPrice  = getOrderTotal(cart);
 
-			if(coupon.min_order_amount && totalPrice < coupon.min_order_amount){
+			if (coupon.min_order_amount && totalPrice < coupon.min_order_amount) {
                 @include('theme::layouts.notification', ['message' => trans('theme.notify.coupon_min_order_value'), 'type' => 'danger', 'icon' => 'times-circle'])
 				resetDiscount(cart);
 				return;
 			}
 
-			if('percent' == coupon.type){
+			if ('percent' == coupon.type) {
 				value = ( coupon.value * (totalPrice/100) );
 			 	name += coupon.name + '(' + getFormatedValue(coupon.value) + '%)';
 			}
 
-			if(value > 0) {
+			if (value > 0) {
 				$("#discount-section-li"+cart).show();
 			}
 			else {
@@ -751,7 +755,7 @@
 		{
 			$("#discount-section-li"+cart).hide();
 
-			if($('#discount-id'+cart).val()){
+			if ($('#discount-id'+cart).val()) {
 				$('#summary-discount'+cart).text(getFormatedValue(0));
 				$('#summary-discount-name'+cart).text('');
 				$('#discount-id'+cart).val('');
@@ -767,12 +771,16 @@
       		$('#checkout-btn'+cart).attr("disabled", "disabled");
       		$('#table'+cart+' > tfoot').addClass('hidden');
 
+			// Disanle all checkout option
+      		$('#allCheckoutBtn').attr("disabled", "disabled");
+     		$('#allCheckoutDisable').removeClass('hidden');
+
 	        var shop = $('#shop-id'+cart).val();
-	        if(! shop){
+	        if (! shop) {
  	     		$('#store-unavailable-notice'+cart).removeClass('hidden');
  	     		$('#table'+cart+' td, #cart-summary'+cart).addClass('text-disable');
 	        }
- 	     	else{
+ 	     	else {
  	     		$('#shipping-notice'+cart).removeClass('hidden');
  	     	}
       	}
@@ -784,6 +792,24 @@
       		$('#checkout-btn'+cart).removeAttr("disabled");
       		$('#table'+cart+' > tfoot').removeClass('hidden');
      		$('#shipping-notice'+cart).addClass('hidden');
+
+			// For oneCheckout option
+			let all_clear = true;
+
+			// Check if any cart is disabled
+	    	$('.shopping-cart-table-wrap').each(function(e) {
+				var temp = $(this).data('cart');
+				if ($('#checkout-btn'+temp).is('[disabled=disabled]')) {
+					all_clear = false;
+					return false; // Skip the loop
+				}
+	      	});
+
+			// Enable all check
+			if (all_clear) {
+	      		$('#allCheckoutBtn').removeAttr("disabled");
+	     		$('#allCheckoutDisable').addClass('hidden');
+			}
       	}
 
 	  	function disableCartPayment(msg = '')
@@ -798,6 +824,30 @@
 			$("#checkout-notice").hide();
 	        $('#pay-now-btn, #paypal-express-btn').show();
 	  	}
+
+	  	// Update cart info on server side
+		function updateCartOnServerside(cart)
+		{
+			// console.log('called for: ' + cart);
+			let temproute = "{{ route('cart.update', '_CART_') }}";
+			let formdata = $("form#formId"+cart).serializeArray();
+
+			$.ajax({
+				url: temproute.replace('_CART_', cart),
+		  		type: 'PUT',
+			    data: formdata,
+				success: function(result) {
+					// console.log(result);
+				}
+			})
+			.fail(function(response) {
+				console.log(response.responseText);
+                @include('theme::layouts.notification', ['message' => trans('theme.cart_update_failed'), 'type' => 'warning', 'icon' => 'times-circle'])
+	        });
+
+			return;
+		}
+
     });
 }(window.jQuery, window, document));
 </script>

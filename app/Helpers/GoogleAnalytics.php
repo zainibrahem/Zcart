@@ -11,11 +11,15 @@ class GoogleAnalytics
 
     public static function fetchTotalVisitorsSessionsAndPageViews(Period $period, $dimension = 'month'): Collection
     {
-        $response = Analytics::performQuery(
-            $period,
-            'ga:users,ga:sessions,ga:pageviews,ga:sessionDuration,ga:bounces',
-            ['dimensions' => 'ga:'.$dimension]
-        );
+        // try {
+            $response = Analytics::performQuery(
+                $period,
+                'ga:users,ga:sessions,ga:pageviews,ga:sessionDuration,ga:bounces',
+                ['dimensions' => 'ga:'.$dimension]
+            );
+        // } catch (\Google\Service\Exception $e) {
+        //     echo "<pre>"; print_r($e->getMessage()); echo "<pre>"; exit('end!');
+        // }
 
         return collect($response['rows'] ?? [])->map(function (array $dateRow) {
             return [

@@ -88,7 +88,7 @@
         @foreach($brands as $brand)
             <div class="checkbox">
                 <label>
-                    <input name="brand[{{str_replace(' ', '%20', $brand)}}]" class="i-check filter_opt_checkbox" type="checkbox" {{ Request::has('brand.'.$brand) ? 'checked' : '' }}> {{ $brand }}
+                    <input name="brand[{{str_replace(' ', '%20', $brand)}}]" class="i-check filter_opt_checkbox" type="checkbox" {{ Request::has('brand.'.$brand) ? 'checked' : '' }}> {{ \Str::title(\Str::limit($brand, 21)) }}
                 </label>
             </div>
         @endforeach

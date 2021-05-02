@@ -1,9 +1,7 @@
-<div class="clearfix space20"></div>
 <section>
   	<div class="container">
     	<div class="row">
       		<div class="col-md-12">
-
 				@if($products->count())
 
 		        	@include('theme::contents.product_list')

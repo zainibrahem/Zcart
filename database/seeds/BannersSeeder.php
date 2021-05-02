@@ -21,10 +21,10 @@ class BannersSeeder extends BaseSeeder
             'columns' => 6,
             'group_id' => 'group_2'
         ]);
-        factory(App\Banner::class)->create([
-            'columns' => 12,
-            'group_id' => 'group_3'
-        ]);
+        // factory(App\Banner::class)->create([
+        //     'columns' => 12,
+        //     'group_id' => 'group_3'
+        // ]);
         factory(App\Banner::class, 2)->create([
             'columns' => 6,
             'group_id' => 'group_4'

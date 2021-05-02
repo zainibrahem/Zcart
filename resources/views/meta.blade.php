@@ -198,5 +198,5 @@
 
 <title>{!! $SEOtitle !!}</title>
 <link rel="icon" href="{{ get_storage_file_url('icon.png', 'full') }}" type="image/x-icon" />
-<link rel="manifest" href="{{ asset('site.webmanifest') }}"/>
+{{-- <link rel="manifest" href="{{ asset('site.webmanifest') }}"/> --}}
 <link rel="apple-touch-icon" href="{{ get_storage_file_url('icon.png', 'full') }}"/>

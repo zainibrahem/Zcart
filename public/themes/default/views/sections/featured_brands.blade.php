@@ -1,5 +1,5 @@
 @if(count($featured_brands))
-  <section>
+  <section class="mb-3">
      <div class="feature-brand">
          <div class="container">
              <div class="feature-brand__inner">
@@ -16,17 +16,13 @@
                  <div class="feature-brand-content">
                      <div class="row">
                          @foreach($featured_brands as $brand)
-                             @if(isset($brand) && Storage::exists(optional($brand->featureImage)->path))
-                                 <div class="col-lg-4 col-12">
-                                     <div class="feature-brand__img">
-                                         <a href="{{ route('show.brand', $brand->slug) }}">
-
-                                              <img src="{{ get_storage_file_url($brand->featureImage->path, 'full') }} }}"  alt="{{ $brand->name }}">
-
-                                         </a>
-                                     </div>
+                             <div class="col-lg-4 col-12">
+                                 <div class="feature-brand__img mb-3">
+                                    <a href="{{ route('show.brand', $brand->slug) }}">
+                                        <img src="{{ get_storage_file_url(optional($brand->featureImage)->path, 'full') }}" alt{{ $brand->name }}">
+                                    </a>
                                  </div>
-                             @endif
+                             </div>
                          @endforeach
                      </div>
                  </div>

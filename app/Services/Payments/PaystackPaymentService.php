@@ -2,81 +2,23 @@
 
 namespace App\Services\Payments;
 
-use Auth;
-use App\Order;
 use Illuminate\Http\Request;
-use App\Contracts\PaymentServiceContract;
 use Yabacon\Paystack\Exception\ApiException;
 
-class PaystackPaymentService implements PaymentServiceContract
+class PaystackPaymentService extends PaymentService
 {
-	public $success;
-	public $request;
-	public $payee;
-	public $receiver;
-	public $order;
-	public $amount;
-	public $fee;
-	public $description;
-	public $meta;
-	public $sandbox;
+	public $tranx;
 	public $redirectUrl;
 
-   public function __construct(Request $request)
+    public function __construct(Request $request)
 	{
-		$this->request = $request;
-
-        // Get payee model
-        if ($this->request->has('payee')){
-	        $this->setPayee($this->request->payee);
-        }
-        elseif(Auth::guard('customer')->check()) {
-        	$this->setPayee(Auth::guard('customer')->user());
-        }
-        elseif(Auth::guard('web')->check() && Auth::user()->isMerchant()) {
-            $this->setPayee(Auth::user()->owns);
-        }
+        parent::__construct($request);
 	}
 
     public function charge()
     {
         return redirect()->to($this->tranx->data->authorization_url);
     }
-
-	public function setPayee($payee)
-	{
-		$this->payee = $payee;
-
-		return $this;
-	}
-
-	public function setAmount($amount)
-	{
-		$this->amount = $amount;
-
-		return $this;
-	}
-
-	public function setDescription($description = '')
-	{
-		$this->description = $description;
-
-		return $this;
-	}
-
-	public function setReceiver($receiver = 'platform')
-	{
-		$this->receiver = $receiver;
-
-		return $this;
-	}
-
-	public function setOrderInfo(Order $order)
-	{
-		$this->order = $order;
-
-		return $this;
-	}
 
 	public function setConfig()
 	{
@@ -94,26 +36,36 @@ class PaystackPaymentService implements PaymentServiceContract
     		$this->sandbox = config('services.paystack.sandbox');
     	}
 
-        $meta = $this->order ? [
-                'order_number' => $this->order->order_number,
-                'custom_fields'=> [
-                    [
-                        'display_name'=> "Order Number",
-                        'variable_name'=> "order_number",
-                        'value'=> $this->order->order_number
-                    ],[
-                        'display_name'=> "Shipping Address",
-                        'variable_name'=> "shipping_address",
-                        'value'=> $this->order->order_number
-                    ]
-                ]
-            ] : [];
+        $meta = [];
+        $quantity = 1;
+
+        if ($this->order) {
+            if(is_array($this->order)) {
+                $quantity = array_sum(array_column($this->order, 'quantity'));
+            }
+            else {
+                $quantity = $this->order->quantity;
+
+                $meta = [
+                        'order_number' => $this->order->order_number,
+                        'custom_fields'=> [[
+                                'display_name'=> "Order Number",
+                                'variable_name'=> "order_number",
+                                'value'=> $this->order->order_number
+                            ],[
+                                'display_name'=> "Shipping Address",
+                                'variable_name'=> "shipping_address",
+                                'value'=> $this->order->shipping_address
+                            ]]
+                    ];
+            }
+        }
 
         $data = [
             'email' => $this->request->email ?? $this->payee->email,
             'amount' => get_cent_from_doller($this->amount),
-            'quantity' => $this->order ? $this->order->quantity : 1,
-            'orderID' => $this->order ? $this->order->id : Null,
+            'quantity' => $quantity,
+            'orderID' => $this->order ? $this->getOrderId() : Null,
             'callback_url' => $this->redirectUrl,
             'metadata'=>json_encode($meta)
         ];
@@ -132,9 +84,13 @@ class PaystackPaymentService implements PaymentServiceContract
 
     private function setCallbackUrl()
     {
-    	$this->redirectUrl = $this->order ?
-    				route('payment.success', ['order' => $this->order, 'gateway' => $this->order->paymentMethod->code]) :
-    				route('wallet.deposit.paystack.success');
+        if (! $this->order) {
+            return route('wallet.deposit.paystack.success');
+        }
+
+        $paymentMethod = is_array($this->order) ? $this->order[0]->paymentMethod : $this->order->paymentMethod;
+
+        $this->redirectUrl = route('payment.success', ['gateway' => $paymentMethod->code, 'order' => $this->getOrderId()]);
 	}
 
     /**

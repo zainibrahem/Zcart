@@ -1,4 +1,4 @@
-<section style="margin-bottom: 0px;">
+<section style="margin-bottom: 0px;" class="d-none d-sm-block">
   <div class="container">
     <header class="page-header">
       <div class="row">

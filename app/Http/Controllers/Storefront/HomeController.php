@@ -62,6 +62,9 @@ class HomeController extends Controller
 
         //best deal under some amount:
         $deals_under = ListHelper::best_find_under(get_from_option_table('best_finds_under',99));
+
+        $flashdeals = is_incevio_package_loaded('flashdeal') ? get_flash_deals() : Null;
+
         // dd($featured_brands);
         //best Selling now:
         // $best_selling = ListHelper::random_items(18);
@@ -73,7 +76,7 @@ class HomeController extends Controller
 
         return view('theme::index', compact(
             'banners', 'sliders', 'daily_popular','weekly_popular', 'monthly_popular',
-            'recent', 'additional_items', 'trending_categories',
+            'recent', 'additional_items', 'trending_categories', 'flashdeals',
             'deal_of_the_day', 'deals_under', 'featured_category', 'featured_brands'
         ));
     }
@@ -281,7 +284,7 @@ class HomeController extends Controller
      */
     public function all_brands()
     {
-        $brands = Manufacturer::select('id','slug','name')->with('logoImage')->paginate(24);
+        $brands = Manufacturer::select('id','slug','name')->active()->with('logoImage')->paginate(24);
 
         return view('theme::brand_lists', compact('brands'));
     }
@@ -294,7 +297,7 @@ class HomeController extends Controller
     public function all_shops()
     {
         $shops = Shop::select('id','slug','name','id_verified','phone_verified','address_verified')
-        ->with('logoImage')->paginate(24);
+        ->active()->with('logoImage')->paginate(24);
 
         return view('theme::shop_lists', compact('shops'));
     }

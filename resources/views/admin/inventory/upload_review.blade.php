@@ -59,12 +59,12 @@
 			        			<td>
 		        					@if($row['offer_price'])
 				        				<dl>
-					        				{{ get_formated_currency($row['offer_price'], true, 2) }}
-					        				<strike>{{ get_formated_currency($row['price'], true, 2) }}</strike>
+					        				{{ get_formated_currency((float)$row['offer_price'],  2) }}
+					        				<strike>{{ get_formated_currency((float)$row['price'], 2) }}</strike>
 					        				<p class="small">({{ $row['offer_starts'] . ' - ' . $row['offer_ends']}})</p>
 				        				</dl>
 									@else
-				        				{{ get_formated_currency($row['price'], true, 2) }}
+				        				{{ get_formated_currency((float)$row['price'], 2) }}
 									@endif
 			        			</td>
 			        			<td>

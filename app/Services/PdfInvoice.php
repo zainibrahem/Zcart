@@ -9,8 +9,8 @@ use FPDF;
 class PdfInvoice extends FPDF
 {
     const ICONV_CHARSET_INPUT = 'UTF-8';
-    const ICONV_CHARSET_OUTPUT_A = 'ISO-8859-1//TRANSLIT';
-    const ICONV_CHARSET_OUTPUT_B = 'windows-1252//TRANSLIT';
+    const ICONV_CHARSET_OUTPUT_A = 'ISO-8859-1//TRANSLIT//IGNORE';
+    const ICONV_CHARSET_OUTPUT_B = 'windows-1252//TRANSLIT//IGNORE';
 
     public $angle           = 0;
     public $font            = 'helvetica';        /* Font Name : See inc/fpdf/font for all supported fonts */
@@ -203,7 +203,7 @@ class PdfInvoice extends FPDF
         $this->display_tofrom = false;
     }
 
-	public function hideToFromHeaders()
+    public function hideToFromHeaders()
     {
         $this->displayToFromHeaders = false;
     }
@@ -240,19 +240,15 @@ class PdfInvoice extends FPDF
 
     public function price($price)
     {
-        return get_formated_price($price);
+        $amount = get_formated_decimal($price, false, 2);
+        $currency = get_currency_code();
+        $space = config('system_settings.show_space_after_symbol') ? ' ' : '';
 
-        // $decimalPoint = $this->referenceformat[0];
-        // $thousandSeparator = $this->referenceformat[1];
-        // $alignment = isset($this->referenceformat[2]) ? strtolower($this->referenceformat[2]) : 'left';
-        // $spaceBetweenCurrencyAndAmount = isset($this->referenceformat[3]) ? (bool) $this->referenceformat[3] : true;
-        // $space = $spaceBetweenCurrencyAndAmount ? ' ' : '';
+        if (config('system_settings.currency.symbol_first')) {
+            return $currency . $space . $amount;
+        }
 
-        // if ('right' == $alignment) {
-        //     return number_format($price, 2, $decimalPoint, $thousandSeparator) . $space . $this->currency;
-        // } else {
-        //     return $this->currency . $space . number_format($price, 2, $decimalPoint, $thousandSeparator);
-        // }
+        return $amount . $space . $currency;
     }
 
     // public function addItem($item, $description = "", $quantity, $vat, $price, $discount = 0, $total)
@@ -571,8 +567,7 @@ class PdfInvoice extends FPDF
 
                 }
                 $this->Cell($this->columnSpacing, $cHeight, '', 0, 0, 'L', 0);
-                $this->Cell($width_other, $cHeight, iconv(self::ICONV_CHARSET_INPUT, self::ICONV_CHARSET_OUTPUT_B,
-                    $this->price($item['price'])), 0, 0, 'C', 1);
+                $this->Cell($width_other, $cHeight, iconv(self::ICONV_CHARSET_INPUT, self::ICONV_CHARSET_OUTPUT_B, $this->price($item['price'])), 0, 0, 'C', 1);
                 if (isset($this->discountField)) {
                     $this->Cell($this->columnSpacing, $cHeight, '', 0, 0, 'L', 0);
                     if (isset($item['discount'])) {
@@ -583,8 +578,7 @@ class PdfInvoice extends FPDF
                     }
                 }
                 $this->Cell($this->columnSpacing, $cHeight, '', 0, 0, 'L', 0);
-                $this->Cell($width_other, $cHeight, iconv(self::ICONV_CHARSET_INPUT, self::ICONV_CHARSET_OUTPUT_B,
-                    $this->price($item['total'])), 0, 0, 'C', 1);
+                $this->Cell($width_other, $cHeight, iconv(self::ICONV_CHARSET_INPUT, self::ICONV_CHARSET_OUTPUT_B, $this->price($item['total'])), 0, 0, 'C', 1);
                 $this->Ln();
                 $this->Ln($this->columnSpacing);
             }

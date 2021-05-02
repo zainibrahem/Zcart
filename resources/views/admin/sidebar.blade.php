@@ -222,16 +222,16 @@
           </li>
         @endif
 
-        @if((Auth::user()->isMerchant() || Auth::user()->isAdmin()) && is_incevio_package_loaded('wallet'))
-          <li class="treeview {{ Request::is('merchant/account*') || Request::is('admin/account*') || Request::is('admin/payout/requests*') ? 'active' : '' }}">
-            <a href="javascript:void(0)">
-              <i class="fa fa-money"></i>
-              <span>{{ trans('wallet::lang.wallet') }}</span>
-              <i class="fa fa-angle-left pull-right"></i>
-            </a>
-            <ul class="treeview-menu">
-              @if(Auth::user()->isAdmin())
+        @if(is_incevio_package_loaded('wallet'))
+          @if(Auth::user()->isAdmin())
 
+            <li class="treeview {{ Request::is('admin/account*') || Request::is('admin/payout/requests*') ? 'active' : '' }}">
+              <a href="javascript:void(0)">
+                <i class="fa fa-money"></i>
+                <span>{{ trans('wallet::lang.wallet') }}</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
                 <li class="{{ Request::is('admin/payout/requests*') ? 'active' : '' }}">
                   <a href="{{ url('admin/payout/requests') }}">
                     <i class="fa fa-angle-double-right"></i> {{ trans('wallet::lang.payout_requests') }}
@@ -243,18 +243,18 @@
                     <i class="fa fa-angle-double-right"></i> {{ trans('wallet::lang.payouts') }}
                   </a>
                 </li>
+              </ul>
+            </li>
 
-              @else
+          @elseif(Auth::user()->isMerchant())
 
-                <li class="{{ Request::is('account/wallet*') ? 'active' : '' }}">
-                  <a href="{{ route(config('wallet.routes.wallet')) }}">
-                    <i class="fa fa-angle-double-right"></i> {{ trans('wallet::lang.transactions') }}
-                  </a>
-                </li>
+            <li class="{{ Request::is('account/wallet*') ? 'active' : '' }}">
+              <a href="{{ route(config('wallet.routes.wallet')) }}">
+                <i class="fa fa-money"></i> <span>{{ trans('wallet::lang.wallet') }}</span>
+              </a>
+            </li>
 
-              @endif
-            </ul>
-          </li>
+          @endif
         @endif
 
         @if(Gate::allows('index', \App\Carrier::class) || Gate::allows('index', \App\Packaging::class))
@@ -293,32 +293,32 @@
         @endif
 
         {{-- temporarily hidden from super admin --}}
-        @if(! Auth::user()->isSuperAdmin())
-        @if(Gate::allows('index', \App\Coupon::class) || Gate::allows('index', \App\GiftCard::class))
-          <li class="treeview {{ Request::is('admin/promotion*') ? 'active' : '' }}">
-            <a href="javascript:void(0)">
-              <i class="fa fa-paper-plane"></i>
-              <span>{{ trans('nav.promotions') }}</span>
-              <i class="fa fa-angle-left pull-right"></i>
-            </a>
-            <ul class="treeview-menu">
-              @can('index', \App\Coupon::class)
-                <li class="{{ Request::is('admin/promotion/coupon*') ? 'active' : '' }}">
-                  <a href="{{ url('admin/promotion/coupon') }}">
-                    <i class="fa fa-angle-double-right"></i> {{ trans('nav.coupons') }}
-                  </a>
-                </li>
-              @endcan
-              {{-- @can('index', \App\GiftCard::class)
-                <li class="{{ Request::is('admin/promotion/giftCard*') ? 'active' : '' }}">
-                  <a href="{{ url('admin/promotion/giftCard') }}">
-                    <i class="fa fa-angle-double-right"></i> {{ trans('nav.gift_cards') }}
-                  </a>
-                </li>
-              @endcan --}}
-            </ul>
-          </li>
-        @endif
+        @if(Auth::user()->isFromMerchant())
+          @if(Gate::allows('index', \App\Coupon::class) || Gate::allows('index', \App\GiftCard::class))
+            <li class="treeview {{ Request::is('admin/promotion*') ? 'active' : '' }}">
+              <a href="javascript:void(0)">
+                <i class="fa fa-paper-plane"></i>
+                <span>{{ trans('nav.promotions') }}</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                @can('index', \App\Coupon::class)
+                  <li class="{{ Request::is('admin/promotion/coupon*') ? 'active' : '' }}">
+                    <a href="{{ url('admin/promotion/coupon') }}">
+                      <i class="fa fa-angle-double-right"></i> {{ trans('nav.coupons') }}
+                    </a>
+                  </li>
+                @endcan
+                {{-- @can('index', \App\GiftCard::class)
+                  <li class="{{ Request::is('admin/promotion/giftCard*') ? 'active' : '' }}">
+                    <a href="{{ url('admin/promotion/giftCard') }}">
+                      <i class="fa fa-angle-double-right"></i> {{ trans('nav.gift_cards') }}
+                    </a>
+                  </li>
+                @endcan --}}
+              </ul>
+            </li>
+          @endif
         @endif
 
         @if(Gate::allows('index', \App\Message::class) || Gate::allows('index', \App\Ticket::class) || Gate::allows('index', \App\Dispute::class) || Gate::allows('index', \App\Refund::class))
@@ -409,7 +409,7 @@
           </li>
         @endif
 
-          {{--Flash deal merge into promotions--}}
+        {{--Flash deal merge into promotions--}}
         @if(Auth::user()->isAdmin())
           <li class="treeview {{ Request::is('admin/promotions*') || Request::is('admin/flashdeal*') ? 'active' : '' }}">
             <a href="javascript:void(0)">
@@ -418,25 +418,22 @@
               <i class="fa fa-angle-left pull-right"></i>
             </a>
             <ul class="treeview-menu">
-
               <li class="{{ Request::is('admin/promotions*') ? 'active' : '' }}">
                   <a href="{{ url('admin/promotions') }}">
                       <i class="fa fa-angle-double-right"></i> <span>{{ trans('nav.promotions') }}</span>
                   </a>
               </li>
 
-                @if(Auth::user()->isAdmin() && is_incevio_package_loaded('flashdeal'))
-                    <li class="{{ Request::is('admin/flashdeal*') ? 'active' : '' }}">
-                        <a href="{{ route('admin.flashdeal') }}">
-                            <i class="fa fa-angle-double-right"></i> {{ trans('flashdeal::lang.flashdeal') }}
-                        </a>
-                    </li>
-                @endif
-
+              @if(Auth::user()->isAdmin() && is_incevio_package_loaded('flashdeal'))
+                  <li class="{{ Request::is('admin/flashdeal*') ? 'active' : '' }}">
+                      <a href="{{ route('admin.flashdeal') }}">
+                          <i class="fa fa-angle-double-right"></i> {{ trans('flashdeal::lang.flashdeal') }}
+                      </a>
+                  </li>
+              @endif
             </ul>
           </li>
         @endif
-
 
         @if(Auth::user()->isAdmin())
           <li class="{{ Request::is('admin/packages*') ? 'active' : '' }}">
@@ -461,6 +458,14 @@
                   </a>
                 </li>
               @endcan
+            @endif
+
+            @if(Auth::user()->isSuperAdmin() && is_incevio_package_loaded('dynamicCommission'))
+              <li class="{{ Request::is('admin/setting/dynamicCommission*') ? 'active' : '' }}">
+                <a href="{{ route(config('dynamicCommission.routes.settings')) }}">
+                  <i class="fa fa-angle-double-right"></i> {{ trans('dynamicCommission::lang.commissions_settings') }}
+                </a>
+              </li>
             @endif
 
             @can('index', \App\Role::class)
@@ -526,7 +531,6 @@
             @endif
 
             @if(Auth::user()->isAdmin())
-
               <li class="{{ Request::is('admin/setting/country*') ? 'active' : '' }}">
                 <a href="{{ url('admin/setting/country') }}">
                   <i class="fa fa-angle-double-right"></i> {{ trans('nav.countries') }}
@@ -569,6 +573,15 @@
                 </a>
               </li>
             @endif
+
+            @if(Auth::user()->isSuperAdmin() && is_incevio_package_loaded('dynamicCommission'))
+                <li class="{{ Request::is('admin/setting/dynamicCommission*') ? 'active' : '' }}">
+                    <a href="{{ route(config('dynamicCommission.routes.settings')) }}">
+                        <i class="fa fa-angle-double-right"></i> {{ trans('dynamicCommission::lang.commission') }}
+                    </a>
+                </li>
+            @endif
+
           </ul>
         </li>
 
@@ -624,7 +637,6 @@
             </a>
             <ul class="treeview-menu">
               @if(Auth::user()->isAdmin())
-
                 @if(is_incevio_package_loaded('wallet'))
                     <li class="{{ Request::is('admin/report/wallet/payout/report*') ? 'active' : '' }}">
                         <a href="{{ route('admin.wallet.payout.report') }}">
@@ -667,7 +679,6 @@
                         </li>
                     </ul>
                 </li>
-
               @elseif(Auth::user()->isMerchant())
                 <li class="{{ Request::is('admin/shop/report/kpi*') ? 'active' : '' }}">
                   <a href="{{ route('admin.shop-kpi') }}">
@@ -692,6 +703,5 @@
         </li>
         -->
       </ul>
-  </section>
-  <!-- /.sidebar -->
+  </section>  <!-- /.sidebar -->
 </aside>

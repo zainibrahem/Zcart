@@ -5,8 +5,11 @@ use Faker\Generator as Faker;
 
 $factory->define(App\Shop::class, function (Faker $faker) {
     $company = $faker->unique->company;
+    $merchnats = \DB::table('users')->where('role_id', \App\Role::MERCHANT)->where('id', '>', 4)->pluck('id')->toArray();
+    $created_at = Carbon::Now()->subDays(rand(0, 15));
+
     return [
-        'owner_id' => $faker->randomElement(\DB::table('users')->where('role_id', 3)->where('id', '!=', 3)->pluck('id')->toArray()),
+        'owner_id' => empty($merchnats) ? Null : $faker->randomElement($merchnats),
         'name' => $company,
         'legal_name' => $company,
         'slug' => $faker->slug,
@@ -15,7 +18,7 @@ $factory->define(App\Shop::class, function (Faker $faker) {
         'external_url' => $faker->url,
         'timezone_id' => $faker->randomElement(\DB::table('timezones')->pluck('id')->toArray()),
         'active' => $faker->boolean,
-        'created_at' => Carbon::Now()->subDays(rand(0, 15)),
-        'updated_at' => Carbon::Now()->subDays(rand(0, 15)),
+        'created_at' => $created_at,
+        'updated_at' => $created_at,
     ];
 });

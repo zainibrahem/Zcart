@@ -141,6 +141,8 @@ class Customer extends Authenticatable
         $array['dob'] = $this->dob;
         $array['active'] = $this->active;
         $array['billing_address'] = Null;
+        $array['addresses'] = Null;
+        $array['address'] = Null;
 
         return $array;
     }
@@ -315,5 +317,11 @@ class Customer extends Authenticatable
     public function scopeActive($query)
     {
         return $query->where('active', 1);
+    }
+
+    //Get address
+    public function address()
+    {
+        return $this->morphOne(Address::class, 'addressable');
     }
 }

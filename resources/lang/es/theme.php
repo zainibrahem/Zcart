@@ -412,7 +412,6 @@ return array (
     'your_feedback_saved' => '¡Gracias por tus comentarios!',
     'you_will_be_redirected_to_paystack' => 'Serás redirigido a Paystack.',
     'you_will_be_redirected_to_instamojo' => 'Serás redirigido a Instamojo.',
-    'all_seller_doesnt_ship' => 'Todos los vendedores no realizan envíos a su país / región seleccionados. Cambie la dirección de envío o busque otros vendedores que realicen envíos a su área.',
   ),
   'input_label' => 
   array (
@@ -659,7 +658,6 @@ return array (
   'shop_now' => 'Compra ahora',
   'add_to_cart' => 'Añadir al carrito',
   'item_added_to_wishlist' => 'Artículo agregado a la lista de deseos',
-  'single_checkout' => 'Pagar todo',
   'flash_deal_days' => 'dias',
   'hrs' => 'horas',
   'mins' => 'minutos',
@@ -671,4 +669,10 @@ return array (
   'vendors' => 'Vendedores',
   'all_brands' => 'Todas las marcas',
   'all_shops' => 'Todos los proveedores',
+  'sale_over' => '¡Lo siento! ¡Has perdido la venta!',
+  'categories' => 'Categorías',
+  'messages' => 'Mensajes',
+  'sell' => 'Vender',
+  'cart_update_failed' => 'Actualización del carro falló!',
+  'cart_count' => 'Recuento de carros',
 );

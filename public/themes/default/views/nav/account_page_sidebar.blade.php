@@ -1,6 +1,7 @@
 <div class="section-title">
     <h4>@lang('theme.manage_your_account')</h4>
 </div>
+
 <ul class="account-sidebar-nav">
     <li class="{{ $tab == 'dashboard' ? 'active' : '' }}">
     	<a href="{{ route('account', 'dashboard') }}"><i class="fas fa-tachometer-alt"></i> @lang('theme.nav.dashboard')</a>

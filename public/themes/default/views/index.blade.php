@@ -11,9 +11,9 @@
           }
         }
     </style>
+
     <!-- MAIN SLIDER -->
-    @include('theme::sliders.old')
-    {{-- @include('theme::sliders.main') --}}
+    @include('theme::sections.slider')
 
     <!-- banner grp one -->
     @if(! empty($banners['group_1']))
@@ -40,12 +40,10 @@
     @endif
 
     <!-- Featured category stat -->
-     @include('theme::sections.featured_category')
-    <!-- Featured category end -->
+    @include('theme::sections.featured_category')
 
     <!-- Popular Product type start -->
     @include('theme::sections.popular')
-    <!-- Product type end -->
 
     <!-- banner grp three -->
     @if(! empty($banners['group_4']))
@@ -54,15 +52,12 @@
 
     <!-- Bundle start -->
     {{--@include('theme::sections.bundle_offer')--}}
-    <!-- Bundle end -->
 
     <!-- feature-brand start -->
     @include('theme::sections.featured_brands')
-    <!-- feature-brand end -->
 
     <!-- Recently Added -->
     @include('theme::sections.recently_added')
-    <!-- neckbands end -->
 
     <!-- banner grp four -->
     @if(! empty($banners['group_5']))
@@ -89,12 +84,11 @@
 
 @section('scripts')
     <script src="{{ theme_asset_url('js/eislideshow.js') }}"></script>
-
     <script type="text/javascript">
         // Main slider
         $('#ei-slider').eislideshow({
             animation : 'center',
-            autoplay : true,
+            autoplay : false,
             slideshow_interval : 5000,
         });
 
@@ -116,5 +110,39 @@
           });
         });
 
+        // Flashdeal
+        let endTime = "{{isset($flashdeals) ? $flashdeals['end_time'] : 'NaN'}}";
+
+        if (endTime) {
+            const second = 1000,
+                minute = second * 60,
+                hour = minute * 60,
+                day = hour * 24;
+
+            let countDown = new Date(endTime).getTime(),
+                x = setInterval(function() {
+                    let now = new Date().getTime(),
+                        distance = countDown - now;
+
+                    $('.deal-counter-days').text(Math.floor(distance / (day)));
+                    $('.deal-counter-hours').text(Math.floor((distance % (day)) / (hour)));
+                    $('.deal-counter-minutes').text(Math.floor((distance % (hour)) / (minute)));
+                    $('.deal-counter-seconds').text(Math.floor((distance % (minute)) / second));
+
+                    //do something later when date is reached
+                    if (distance < 0) {
+                        let headline = document.getElementById("headline"),
+                            countdown = document.getElementById("countdown"),
+                            content = document.getElementById("content");
+
+                        headline.innerText = "{{trans('theme.sale_over')}}";
+                        countdown.style.display = "none";
+                        content.style.display = "block";
+
+                        clearInterval(x);
+                    }
+                    //seconds
+                }, 0);
+        }
     </script>
 @endsection

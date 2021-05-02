@@ -512,7 +512,7 @@ class Inventory extends BaseModel
                 return $builder->where('zip_code', session('zipcode_default'));
             });
         }
+
         return $query;
     }
-
 }

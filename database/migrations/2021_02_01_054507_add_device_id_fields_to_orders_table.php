@@ -14,8 +14,8 @@ class AddDeviceIdFieldsToOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            if (! Schema::hasColumn('orders','device_id')) {
-                $table->char('device_id', 40)->nullable()->after('email');
+            if (! Schema::hasColumn('orders', 'device_id')) {
+                $table->char('device_id', 40)->nullable()->after('feedback_id');
             }
         });
     }
@@ -28,7 +28,7 @@ class AddDeviceIdFieldsToOrdersTable extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            //$table->dropColumn('vendor_order_cancellation_fee');
+            // $table->dropColumn('device_id');
         });
     }
 }

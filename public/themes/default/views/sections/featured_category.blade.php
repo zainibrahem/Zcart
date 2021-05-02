@@ -15,7 +15,7 @@
                 <div class="product-cat__list">
                     <div class="row">
                         @foreach($featured_category as $item)
-                            <div class="col-lg-3 col-sm-6 pr-2 pl-2">
+                            <div class="col-6 col-md-3 col-sm-4 px-1">
                                 <div class="product-cat__list-item">
                                     <a class="product-cat__list-box" href="{{route('category.browse', $item->slug)}}">
                                         <img src="{{ get_storage_file_url(optional($item->featureImage)->path, 'full') }} }}"  alt="{{ $item->name }}">

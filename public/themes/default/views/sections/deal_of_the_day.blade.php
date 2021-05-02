@@ -28,7 +28,7 @@
                                         </div>
                                         <div class="week-deal__details">
                                             <div class="week-deal__details-name">
-                                                <a href="{{ route('show.product', $deal_of_the_day->slug) }}">{{ $deal_of_the_day->title }}</a>
+                                                <a href="{{ route('show.product', $deal_of_the_day->slug) }}">{!! strip_tags($deal_of_the_day->title) !!}</a>
                                             </div>
                                             <div class="week-deal__details-price">
                                                 <p>
@@ -37,11 +37,11 @@
                                                 </p>
                                             </div>
                                             <div class="week-deal__details-description">
-                                                <p>{{substr($deal_of_the_day->description, 0, 100)}}</p>
+                                                <p>{{ substr(strip_tags($deal_of_the_day->description), 0, 100) }}</p>
                                             </div>
                                             <div class="week-deal__details-list">
                                                 <ul>
-                                                    @if(count($feature = unserialize($deal_of_the_day->key_features))> 0)
+                                                    @if($feature = unserialize($deal_of_the_day->key_features))
                                                         @for($i = 0 ; $i < 3; $i++ )
                                                             <li><i class="fal fa-check"></i> <span>{{(!empty($feature[$i]) ? $feature[$i] : null)}}</span></li>
                                                         @endfor

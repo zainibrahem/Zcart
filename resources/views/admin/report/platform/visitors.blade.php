@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
 
 @section('content')
-    @if(\App\SystemConfig::isGgoogleAnalyticEnabled() && \App\SystemConfig::isGgoogleAnalyticConfigured())
+    @if(\App\SystemConfig::isGgoogleAnalyticReady())
       	<div class="box">
 	        <div class="nav-tabs-custom" style="box-shadow: none;">
 	          	<ul class="nav nav-tabs nav-justified">
@@ -83,7 +83,7 @@
 @endsection
 
 @section('page-script')
-    @if(\App\SystemConfig::isGgoogleAnalyticEnabled() && \App\SystemConfig::isGgoogleAnalyticConfigured())
+    @if(\App\SystemConfig::isGgoogleAnalyticReady())
 		@include('plugins.chart')
 
 		{!! $chartVisitors->script() !!}

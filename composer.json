@@ -10,7 +10,7 @@
     "require": {
         "php": "^7.2",
         "ahkmunna/paypalpayment": ">=3.0",
-        "algolia/algoliasearch-client-php": "^2.5",
+        "algolia/algoliasearch-client-php": "^1.27",
         "authorizenet/authorizenet": "^2.0",
         "aws/aws-sdk-php": "^3.127",
         "brick/math": "~0.8",

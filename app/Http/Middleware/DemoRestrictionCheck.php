@@ -15,10 +15,10 @@ class DemoRestrictionCheck
      */
     public function handle($request, Closure $next)
     {
-        if( config('app.demo') == true ) {
+        if(config('app.demo') == true) {
             return $request->ajax() ?
-                                    response(['message' => trans('messages.demo_restriction')], 444) :
-                                    back()->with('warning', trans('messages.demo_restriction'));
+                response(['message' => trans('messages.demo_restriction')], 444) :
+                back()->with('warning', trans('messages.demo_restriction'));
         }
 
         return $next($request);

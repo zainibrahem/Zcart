@@ -12,6 +12,10 @@
             <div class="box-header with-border">
                 <h3 class="box-title">{{ trans('app.available_packages') }}</h3>
                 <div class="box-tools pull-right">
+                    {{-- <a href="javascript:void(0)" data-link="{{ route('admin.package.upload') }}" class="ajax-modal-btn btn btn-new btn-flat">
+                        <i class="fa fa-upload"></i>
+                        {{ trans('app.upload_package') }}
+                    </a> --}}
                 </div>
             </div> <!-- /.box-header -->
             <div class="box-body">
@@ -103,13 +107,39 @@
         </div>
     @endif
 
-    <div class="panel panel-success">
-        <div class="panel-heading">
-            <i class="fa fa-rocket"></i>
-            Looking for a custom packages?
-        </div>
-        <div class="panel-body">
-            Send us an email for any kind of modification or custom work as we know the code better than everyone.
-        </div>
-    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <i class="fa fa-rocket"></i>
+                    More Packages Available!
+                </div>
+                <div class="panel-body">
+                    We're developing more and more packages with useful functionality extensions.
+                    <br/><br/>
+                    <a href="https://incevio.com/plugins" class="btn btn-primary" target="_blank">
+                        All Available Packages
+                        <i class="fa fa-external-link"></i>
+                    </a>
+                </div>
+            </div>
+        </div> <!-- /.col-md-6 -->
+
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-rocket"></i>
+                    Looking for a custom packages?
+                </div>
+                <div class="panel-body">
+                    Send us an email for any kind of modification or custom work as we know the code better than everyone.
+                    <br/><br/>
+                    <a href="https://incevio.com/contact" class="btn btn-default" target="_blank">
+                        Contact Us
+                        <i class="fa fa-external-link"></i>
+                    </a>
+                </div>
+            </div>
+        </div> <!-- /.col-md-6 -->
+    </div> <!-- /.row -->
 @endsection

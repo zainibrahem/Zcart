@@ -6,6 +6,7 @@ use DB;
 use Auth;
 use App\Cart;
 use App\Order;
+use App\Address;
 use App\PaymentMethod;
 use Illuminate\Http\Request;
 use App\Events\Order\OrderCreated;
@@ -18,8 +19,11 @@ use App\Http\Requests\Validations\ConfirmGoodsReceivedRequest;
 use App\Contracts\PaymentServiceContract as PaymentService;
 use App\Services\Payments\PaypalExpressPaymentService;
 
+use App\Common\ShoppingCart;
+
 class OrderController extends Controller
 {
+    use ShoppingCart;
 
     // private $orderConfirmed;
 
@@ -33,23 +37,12 @@ class OrderController extends Controller
     {
         $cart = crosscheckAndUpdateOldCartInfo($request, $cart);
 
-        // Get shipping address
-        if(is_numeric($request->ship_to)) {
-            $address = \App\Address::find($request->ship_to)->toHtml('<br/>', False);
-        }
-        else {
-            $address = get_address_str_from_request_data($request);
-        }
-
-        // Push shipping address into the request
-        $request->merge(['shipping_address' => $address]);
-
         // Start transaction!
         DB::beginTransaction();
 
         try {
             // Create the order
-            $order = saveOrderFromCart($request, $cart);
+            $order = $this->saveOrderFromCart($request, $cart);
 
             $receiver = vendor_get_paid_directly() ? 'merchant' : 'platform';
 
@@ -61,21 +54,19 @@ class OrderController extends Controller
                 ->charge();
 
             // Check if the result is a RedirectResponse of Paypal and some other gateways
-            if($response instanceof RedirectResponse) {
+            if ($response instanceof RedirectResponse) {
                 // Everything is fine. Now commit the transaction
                 DB::commit();
 
                 // Delete the cart
-                $cart->forceDelete();
+                // $cart->forceDelete();
 
                 return $response;
             }
             // Payment succeed
-            else if($response->success) {
+            else if ($response->success) {
                 // Order confirmed
-                // $this->orderConfirmed = True;
-
-                if($order->paymentMethod->type !== PaymentMethod::TYPE_MANUAL) {
+                if ($order->paymentMethod->type !== PaymentMethod::TYPE_MANUAL) {
                     // Order has been paid
                     $order->markAsPaid();
                 }
@@ -84,7 +75,7 @@ class OrderController extends Controller
                 DB::commit();
 
                 // Delete the cart
-                $cart->forceDelete();
+                // $cart->forceDelete();
 
                 // Trigger the Event
                 event(new OrderCreated($order));
@@ -97,22 +88,29 @@ class OrderController extends Controller
         catch (\Exception $e) {
             DB::rollback(); // rollback the transaction and log the error
 
-            \Log::error('Payment failed:: '.$e->getMessage());
+            \Log::error($request->payment_method . ' Payment failed:: '.$e->getMessage());
 
             DB::rollback(); // rollback the transaction
 
             return redirect()->back()->with('error', $e->getMessage())->withInput();
-            // return redirect()->back()->with('error', trans('theme.notify.order_creation_failed'))->withInput();
         }
     }
 
     /**
+     * Return from payment gateways with payment success
      *
+     * @param  \Illuminate\Http\Request $request
+     * @param  App\Order $order
+     * @param  str $gateway Payment gateway code
+     *
+     * @return \Illuminate\Http\Response
      */
-    public function paymentGatewaySuccessResponse(Request $request, $order, $gateway)
+    public function paymentGatewaySuccessResponse(Request $request, $gateway, $order)
     {
-        if ($this->verifyPaymentGatewayCalls($request, $gateway))
-        {
+        $orders = explode('-', $order);
+        $order = count($orders) > 1 ? $orders : $order;
+
+        if ($this->verifyPaymentGatewayCalls($request, $gateway)) {
             if ($gateway == 'paypal-express') {
                 try {
                     $paymentService = new PaypalExpressPaymentService($request);
@@ -124,23 +122,31 @@ class OrderController extends Controller
                     }
                 }
                 catch (\Exception $e) {
-                    \Log::error('Payment failed on paypalPaymentSuccess method:: ');
+                    \Log::error('Paypal payment failed on execution step:: ');
                     \Log::info($e->getMessage());
                 }
-
             }
 
-            if(! $order instanceOf Order) {
-                $order = Order::findOrFail($order);
+            // Order has been paid
+            if (is_array($order)) {
+                foreach($order as $id) {
+                    $temp = Order::findOrFail($id);
+
+                    $temp->markAsPaid();
+                }
+
+                $order = $temp;
             }
+            else {
+                if (! $order instanceOf Order) {
+                    $order = Order::findOrFail($order);
+                }
 
-            // Order confirmed
-            // $this->orderConfirmed = True;
+                $order->markAsPaid();
 
-            $order->markAsPaid();
-
-            // Trigger the Event
-            event(new OrderCreated($order));
+                // Trigger the Event
+                event(new OrderCreated($order));
+            }
 
             return view('theme::order_complete', compact('order'))->with('success', trans('theme.notify.order_placed'));
         }
@@ -150,84 +156,26 @@ class OrderController extends Controller
 
     public function paymentFailed(Request $request, $order)
     {
-        $cart = moveAllItemsToCartAgain($order, true);
+        if (is_array($order)) {
+            $cart = [];
+            foreach ($order as $temp) {
+                $cart[] = $this->moveAllItemsToCartAgain($temp, true);
+            }
+        }
+        else {
+            $cart = $this->moveAllItemsToCartAgain($order, true);
+        }
 
-        return redirect()->route('cart.checkout', $cart)->with('error', trans('theme.notify.payment_failed'))->withInput();
+        $route = is_array($cart) ? route('oneCheckout') : route('cart.checkout', $cart);
+
+        return redirect()->$route->with('error', trans('theme.notify.payment_failed'))->withInput();
     }
-
-    /**
-     * Confirm the order
-     */
-    // private function markOrderAsConfirmed($order)
-    // {
-    //     if(! $order instanceOf Order) {
-    //         $order = Order::find($order);
-    //     }
-
-    //     if($order->order_status_id < Order::STATUS_CONFIRMED) {
-    //         $order->order_status_id = Order::STATUS_CONFIRMED;
-    //         $order->save();
-    //     }
-
-    //     if (! vendor_get_paid_directly()) {
-    //         $fee = getPlatformFeeForOrder($order);
-
-    //         // Charge the application fee
-    //         if ($fee > 0) {
-    //             $meta = [
-    //                 'type' => trans('app.platform_fee', ['for' => $order->order_number]),
-    //                 'description' => trans('app.order_number') . ': ' . $order->order_number,
-    //                 'order_id' => $order->id
-    //             ];
-
-    //             $order->shop->withdraw($fee, $meta, true);
-    //         }
-    //     }
-
-    //     // Trigger the Event
-    //     event(new OrderCreated($order));
-
-    //     return $order;
-    // }
-
-    /**
-     * MarkOrderAsPaid
-     */
-    // private function markOrderAsPaid($order)
-    // {
-    //     if(! $order instanceOf Order) {
-    //         $order = Order::find($order);
-    //     }
-
-        // $order->payment_status = Order::PAYMENT_STATUS_PAID;
-        // $order->save();
-
-        // if (! vendor_get_paid_directly()) {
-        //     // Deposit the order amount into vendor's wallet
-        //     $meta = [
-        //         'type' => trans('app.for_sale_of', ['order' => $order->order_number]),
-        //         'description' => trans('app.order_number') . ': ' . $order->order_number,
-        //         'order_id' => $order->id
-        //     ];
-
-
-        //     $order->shop->deposit($order->grand_total, $meta, true);
-        // }
-
-        // if ($this->orderConfirmed) {
-        //     $this->markOrderAsConfirmed($order);
-        // }
-
-        // event(new OrderPaid($order));
-
-        // return $order->markAsPaid();
-    // }
 
     /**
      * Display order detail page.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  App\Order   $order
+     * @param  \Illuminate\Http\Request $request
+     * @param  App\Order $order
      *
      * @return \Illuminate\Http\Response
      */
@@ -242,7 +190,7 @@ class OrderController extends Controller
      * Buyer confirmed goods received
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  App\Order   $order
+     * @param  App\Order $order
      *
      * @return \Illuminate\Http\Response
      */
@@ -284,7 +232,7 @@ class OrderController extends Controller
      */
     public function again(Request $request, Order $order)
     {
-        $cart = moveAllItemsToCartAgain($order);
+        $cart = $this->moveAllItemsToCartAgain($order);
 
         return redirect()->route('cart.checkout', $cart)->with('success', trans('theme.notify.cart_updated'));
     }

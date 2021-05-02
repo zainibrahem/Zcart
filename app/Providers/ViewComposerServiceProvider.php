@@ -111,7 +111,7 @@ class ViewComposerServiceProvider extends ServiceProvider
 
         $this->composeRefundInitiationForm();
 
-        if(SystemConfig::isGgoogleAnalyticEnabled() && SystemConfig::isGgoogleAnalyticConfigured()) {
+        if(SystemConfig::isGgoogleAnalyticReady()) {
             $this->composeReportAboutVisitors();
         }
 
@@ -536,11 +536,15 @@ class ViewComposerServiceProvider extends ServiceProvider
 
             function($view)
             {
-                $view->with('plans', \DB::table('subscription_plans')->where('deleted_at', Null)->orderBy('order', 'asc')->select( 'plan_id', 'name', 'cost')->get());
+                $view->with('plans', \DB::table('subscription_plans')
+                ->where('deleted_at', Null)->orderBy('order', 'asc')
+                ->select('plan_id', 'name', 'cost')->get());
+
                 $view->with('current_plan', Auth::user()->getCurrentPlan());
+
                 $view->with('billable', Auth::user()->shop->hasPaymentMethod() ? Auth::user()->shop : Null);
 
-                if (SystemConfig::isPaymentConfigured('stripe')) {
+                if(SystemConfig::isPaymentConfigured('stripe')) {
                     $view->with('intent', Auth::user()->shop->createSetupIntent());
                 }
             }

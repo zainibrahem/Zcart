@@ -10,35 +10,33 @@
 @endphp
 
 <section>
-	<div class="container">
+	<div class="container mb-3">
 		<div class="row sc-product-item" id="single-product-wrapper">
-		  	<div class="col-md-5 col-sm-6">
+		  	<div class="col-md-5 col-sm-12">
 		  		@include('theme::layouts.jqzoom', ['item' => $item, 'variants' => $variants])
 		  	</div><!-- /.col-md-5 col-sm-6 -->
 
-		  	<div class="col-md-7 col-sm-6">
-		  		<div class="row">
-				  	<div class="col-md-7 col-sm-6 nopadding">
+		  	<div class="col-md-7 col-sm-12">
+		  		<div class="row mb-4">
+				  	<div class="col-md-7 col-sm-12 nopadding">
 				      	<div class="product-single">
 					  		@include('theme::layouts.product_info', ['item' => $item])
 
-			              	<div class="space20"></div>
-
-				          	<div class="product-info-options space10">
+				          	<div class="product-info-options my-4">
 				              	<div class="select-box-wrapper">
 				              		@foreach($attributes as $attribute)
 					                  	<div class="row product-attribute">
-										  	<div class="col-sm-3 col-xs-4">
+										  	<div class="col-sm-3 col-4">
 					    	              		<span class="info-label" id="attr-{{Str::slug($attribute->name)}}" >{{ $attribute->name }}:</span>
 											</div>
-										  	<div class="col-sm-9 col-xs-8 nopadding-left">
+										  	<div class="col-sm-9 col-8 nopadding-left">
 							                    <select class="product-attribute-selector {{$attribute->css_classes}}" id="attribute-{{$attribute->id}}" required="required">
 								              		@foreach($attribute->attributeValues as $option)
 						                          		<option value="{{ $option->id }}" data-color="{{ $option->color ?? $option->value }}" {{ in_array($option->id, $item_attrs) ? 'selected' : '' }}>{{ $option->value }}</option>
 								              		@endforeach
 						                      	</select>
 												<div class="help-block with-errors"></div>
-							              	</div><!-- /.col-sm-9 .col-xs-6 -->
+							              	</div><!-- /.col-sm-9 .col-6 -->
 						              	</div><!-- /.row -->
 				              		@endforeach
 				              	</div><!-- /.row .select-box-wrapper -->
@@ -47,14 +45,15 @@
 
 				              	<div id="calculation-section">
 				                  	<div class="row">
-									  	<div class="col-sm-3 col-xs-4">
+									  	<div class="col-3">
 				    	              		<span class="info-label" data-options="{{ $shipping_options }}" id="shipping-options" >@lang('theme.shipping'):</span>
 								            {{ Form::hidden('shipping_zone_id', isset($shipping_zone->id) ? $shipping_zone->id : Null, ['id' => 'shipping-zone-id']) }}
 								            {{ Form::hidden('shipping_rate_id', Null, ['id' => 'shipping-rate-id']) }}
 								            {{ Form::hidden('shipto_country_id', $shipping_country->id, ['id' => 'shipto-country-id']) }}
 								            {{ Form::hidden('shipto_state_id', optional($shipping_state)->id, ['id' => 'shipto-state-id']) }}
 										</div>
-									  	<div class="col-sm-9 col-xs-8 nopadding-left">
+
+									  	<div class="col-9 nopadding-left">
 				                            <span id="summary-shipping-cost" data-value="0"></span>
 					                        <div id="product-info-shipping-detail">
 					                            <span>{{ strtolower(trans('theme.to')) }}
@@ -72,14 +71,14 @@
 										  		</span>
 									  		</div>
 									  		<small class="text-muted" id="delivery-time"></small>
-						              	</div><!-- /.col-sm-9 .col-xs-6 -->
+						              	</div><!-- /.col-sm-9 .col-6 -->
 					              	</div><!-- /.row -->
 
 				                  	<div class="row">
-									  	<div class="col-sm-3 col-xs-4">
+									  	<div class="col-3">
 				    	              		<span class="info-label qtt-label">@lang('theme.quantity'):</span>
 										</div>
-									  	<div class="col-sm-9 col-xs-8 nopadding">
+									  	<div class="col-9 nopadding">
 							              	<div class="product-qty-wrapper">
 							                  	<div class="product-info-qty-item">
 							                      	<button class="product-info-qty product-info-qty-minus">-</button>
@@ -88,16 +87,16 @@
 								                </div>
 							                  	<span class="available-qty-count">@lang('theme.stock_count', ['count' => $item->stock_quantity])</span>
 							              	</div>
-						              	</div><!-- /.col-sm-9 .col-xs-6 -->
+						              	</div><!-- /.col-sm-9 .col-6 -->
 				                  	</div><!-- /.row -->
 
 				                  	<div class="row" id="order-total-row">
-									  	<div class="col-sm-3 col-xs-4">
+									  	<div class="col-3">
 				    	              		<span class="info-label">@lang('theme.total'):</span>
 										</div>
-									  	<div class="col-sm-9 col-xs-8 nopadding">
+									  	<div class="col-9 nopadding">
 				                            <span id="summary-total" class="text-muted">{{ trans('theme.notify.will_calculated_on_select') }}</span>
-						              	</div><!-- /.col-sm-9 .col-xs-6 -->
+						              	</div><!-- /.col-sm-9 .col-6 -->
 					              	</div><!-- /.row -->
 				              	</div>
 				          	</div><!-- /.product-option -->
@@ -107,14 +106,14 @@
  				          	<a href="{{ route('direct.checkout', $item->slug) }}" class="btn btn-lg btn-warning flat" id="buy-now-btn"><i class="fas fa-rocket"></i> @lang('theme.button.buy_now')</a>
 
  				          	@if($item->product->inventories_count > 1)
-						        <a href="{{ route('show.offers', $item->product->slug) }}" class="btn btn-sm btn-link">
+						        <a href="{{ route('show.offers', $item->product->slug) }}" class="d-none d-sm-inline-block btn btn-sm btn-link">
 					        		@lang('theme.view_more_offers', ['count' => $item->product->inventories_count])
 						        </a>
 					        @endif
 				      	</div><!-- /.product-single -->
 			  		</div>
 
-				  	<div class="col-md-5 col-sm-6">
+				  	<div class="col-md-5 col-sm-12">
 				        <div class="seller-info space20">
 				            <div class="text-muted small space10">
 				            	@lang('theme.sold_by')
@@ -123,7 +122,7 @@
 				            	</a>
 				            </div>
 
-							<img src="{{ get_storage_file_url(optional($item->shop->logoImage)->path, 'thumbnail') }}" class="seller-info-logo img-sm img-circle" alt="{{ trans('theme.logo') }}">
+							<img src="{{ get_storage_file_url(optional($item->shop->logoImage)->path, 'thumbnail') }}" class="seller-info-logo img-sm" alt="{{ trans('theme.logo') }}">
 
 					        <a href="javascript:void(0)" data-toggle="modal" data-target="#shopReviewsModal" class="seller-info-name">
 				            	{!! $item->shop->getQualifiedName() !!}
@@ -167,21 +166,20 @@
 						@endif
 			  		</div>
 		  		</div><!-- /.row -->
-		      	<div class="space20"></div>
 		  	</div><!-- /.col-md-7 col-sm-6 -->
 		</div><!-- /.row -->
 	</div><!-- /.container -->
 </section>
 
-<div class="clearfix space20"></div>
+{{-- <div class="clearfix space20"></div> --}}
 
 <section id="item-desc-section">
     <div class="container">
       	<div class="row">
       		@if($linked_items->count())
-		        <div class="col-md-3 bg-light nopadding-right">
+		        <div class="col-md-3 bg-light nopadding-right mb-3 pb-3">
 			        <div class="section-title">
-			          <h4 class="space20">@lang('theme.section_headings.bought_together'):</h4>
+			          <h4 class="mb-4">@lang('theme.section_headings.bought_together'):</h4>
 			        </div>
 					<ul class="sidebar-product-list">
                         @include('theme::partials._product_vertical', ['products' => $linked_items])
@@ -208,11 +206,11 @@
 
 							{!! $item->product->description !!}
 
-							<div class="clearfix space30"></div>
+							{{-- <div class="clearfix space30"></div> --}}
 
-                		  	<hr class="style4 muted"/>
+                		  	<hr class="style4 muted my-4"/>
 
-                		  	<h4>{{ trans('theme.technical_details') }}: </h4>
+                		  	<h3 class="mb-3">{{ trans('theme.technical_details') }}: </h3>
 
 							<table class="table table-striped noborder">
 								<tbody>
@@ -290,7 +288,6 @@
 		                </div>
 
          		        <div role="tabpanel" class="tab-pane fade" id="seller_desc_tab">
-
          		        	<div id="seller_seller_desc">
 	                		  	{!! $item->description !!}
          		        	</div>

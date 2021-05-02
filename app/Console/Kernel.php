@@ -37,7 +37,7 @@ class Kernel extends ConsoleKernel
         // Check local subscription expiry and charge
         if(is_subscription_enabled() && SystemConfig::isBillingThroughWallet()){
             // $time = (int) config('subscription.default.charge_min_before_expiry') - 1;
-            $schedule->command('subscription:refresh')->everyMinute();
+            $schedule->command('subscription:refresh')->hourly();
         }
 
         // Reset demo content for demo hosting

@@ -12,7 +12,7 @@
                     <div class="sep"></div>
 
                     <div class="row product-attribute">
-                        <div class="col-xs-12">
+                        <div class="col-12">
                             @if($item->key_features)
                                 <div class="section-title space10">
                                   {!! trans('theme.section_headings.key_features') !!}
@@ -29,7 +29,7 @@
                             <a href="{{ route('show.product', $item->slug) }}" class="btn btn-default flat space10">
                                 @lang('theme.button.view_product_details')
                             </a>
-                        </div><!-- /.col-sm-9 .col-xs-6 -->
+                        </div><!-- /.col-sm-9 .col-6 -->
                     </div><!-- /.row -->
 
                     <div class="sep"></div>

@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
+use Auth;
 use Illuminate\Http\Request;
 use App\Common\Authorizable;
 use App\Http\Controllers\Controller;
@@ -10,6 +11,7 @@ use App\Http\Requests\Validations\ProductSearchRequest;
 use App\Http\Requests\Validations\CreateInventoryRequest;
 use App\Http\Requests\Validations\UpdateInventoryRequest;
 use App\Http\Requests\Validations\CreateInventoryWithVariantRequest;
+use Yajra\DataTables\DataTables;
 
 class InventoryController extends Controller
 {
@@ -38,11 +40,11 @@ class InventoryController extends Controller
      */
     public function index()
     {
-        $inventories = $this->inventory->all();
+        //$inventories = $this->inventory->all();
 
         $trashes = $this->inventory->trashOnly();
 
-        return view('admin.inventory.index', compact('inventories', 'trashes'));
+        return view('admin.inventory.index', compact('trashes'));
     }
 
     /**
@@ -67,7 +69,7 @@ class InventoryController extends Controller
             ->with('error', trans('messages.cant_add_more_inventory'));
         }
 
-        $inInventory = $this->inventory->checkInveoryExist($id);
+        $inInventory = $this->inventory->checkInventoryExist($id);
 
         if($inInventory) {
             return redirect()->route('admin.stock.inventory.edit', $inInventory->id)
@@ -129,7 +131,8 @@ class InventoryController extends Controller
     {
         $this->inventory->storeWithVariant($request);
 
-        return redirect()->route('admin.stock.inventory.index')->with('success', trans('messages.created', ['model' => $this->model]));
+        return redirect()->route('admin.stock.inventory.index')
+        ->with('success', trans('messages.created', ['model' => $this->model]));
     }
 
     /**
@@ -154,8 +157,6 @@ class InventoryController extends Controller
     public function edit($id)
     {
         $inventory = $this->inventory->find($id);
-
-        $this->authorize('update', $inventory); // Check permission
 
         $product = $this->inventory->findProduct($inventory->product_id);
 
@@ -190,7 +191,10 @@ class InventoryController extends Controller
     {
         $inventory = $this->inventory->update($request, $id);
 
-        $this->authorize('update', $inventory); // Check permission
+        // For inspectable
+        if (! Auth::user()->isFromPlatform()) {
+            $this->authorize('update', $inventory); // Check permission
+        }
 
         $request->session()->flash('success', trans('messages.updated', ['model' => $this->model]));
 
@@ -263,8 +267,9 @@ class InventoryController extends Controller
     {
         $this->inventory->massTrash($request->ids);
 
-        if($request->ajax())
+        if($request->ajax()) {
             return response()->json(['success' => trans('messages.trashed', ['model' => $this->model])]);
+        }
 
         return back()->with('success', trans('messages.trashed', ['model' => $this->model]));
     }
@@ -279,8 +284,9 @@ class InventoryController extends Controller
     {
         $this->inventory->massDestroy($request->ids);
 
-        if($request->ajax())
+        if($request->ajax()) {
             return response()->json(['success' => trans('messages.deleted', ['model' => $this->model])]);
+        }
 
         return back()->with('success', trans('messages.deleted', ['model' => $this->model]));
     }
@@ -295,8 +301,9 @@ class InventoryController extends Controller
     {
         $this->inventory->emptyTrash($request);
 
-        if($request->ajax())
+        if($request->ajax()) {
             return response()->json(['success' => trans('messages.deleted', ['model' => $this->model])]);
+        }
 
         return back()->with('success', trans('messages.deleted', ['model' => $this->model]));
     }
@@ -309,11 +316,47 @@ class InventoryController extends Controller
      * @return array
      */
     private function getJsonParams($inventory){
+        $route = Auth::user()->isFromPlatform() ? 'admin.inspector.inspectables' : 'admin.stock.inventory.index';
+
         return [
             'id' => $inventory->id,
             'model' => 'inventory',
-            // 'path' => image_path("inventories/{$inventory->id}"),
-            'redirect' => route('admin.stock.inventory.index')
+            'redirect' => route($route)
         ];
     }
+
+    // function will process the ajax request
+    public function getInventory(Request $request, $status) {
+
+        $inventory = $this->inventory->all($status);
+
+        return Datatables::of($inventory)
+            ->editColumn('checkbox', function($inventory){
+                return view('admin.inventory.partials.checkbox', compact('inventory'));
+            })
+            ->addColumn('option', function ($inventory) {
+                return view('admin.inventory.partials.options', compact('inventory'));
+            })
+            ->editColumn('image', function($inventory){
+                return view('admin.inventory.partials.image', compact('inventory'));
+            })
+            ->editColumn('sku', function($inventory){
+                return view('admin.inventory.partials.sku', compact('inventory'));
+            })
+            ->editColumn('title', function($inventory){
+                return view('admin.inventory.partials.title', compact('inventory'));
+            })
+            ->editColumn('condition',  function ($inventory) {
+                return view('admin.inventory.partials.condition', compact('inventory'));
+            })
+            ->editColumn('price', function($inventory){
+                return view('admin.inventory.partials.price', compact('inventory'));
+            })
+            ->editColumn('quantity', function($inventory){
+                return view('admin.inventory.partials.quantity', compact('inventory'));
+            })
+            ->rawColumns(['image', 'sku', 'title', 'condition', 'price', 'quantity', 'checkbox', 'option'])
+            ->make(true);
+    }
+
 }

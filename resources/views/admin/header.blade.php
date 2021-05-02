@@ -12,15 +12,24 @@
   <!-- Header Navbar -->
   <nav class="navbar navbar-static-top" role="navigation">
     <!-- Sidebar toggle button-->
-    <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+    <a href="javascript::void(0)" class="sidebar-toggle" data-toggle="offcanvas" role="button">
       <span class="sr-only">Toggle navigation</span>
     </a>
+
+    <ul class="nav navbar-nav hidden-xs">
+      <li>
+        <a href="{{ route('admin.account.profile') }}">
+          {{ trans('app.welcome') . ' ' . Auth::user()->getName()}}
+        </a>
+      </li>
+    </ul>
+
     <!-- Navbar Right Menu -->
     <div class="navbar-custom-menu">
       <ul class="nav navbar-nav">
         <!-- Messages Menu-->
         <li class="dropdown messages-menu">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
             <i class="fa fa-envelope-o"></i>
             @if($count_message = $unread_messages->count())
               <span class="label label-success">{{ $count_message }}</span>
@@ -56,7 +65,7 @@
 
         <!-- Notifications Menu -->
         <li class="dropdown notifications-menu" id="notifications-dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
             <i class="fa fa-bell-o"></i>
             @if($count_notification = Auth::user()->unreadNotifications->count())
               <span class="label label-warning">{{ $count_notification }}</span>
@@ -84,7 +93,7 @@
         <!-- Announcement Menu -->
         @if($active_announcement)
           <li class="dropdown tasks-menu" id="announcement-dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bullhorn"></i>
               @if($active_announcement && $active_announcement->updated_at > Auth::user()->read_announcements_at)
                 <span class="label"><i class="fa fa-circle"></i></span>
@@ -113,58 +122,24 @@
           </li>
         @endif
 
-        <!-- User Account Menu -->
-        <li class="dropdown user user-menu">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <li class="user user-menu">
+          <a href="{{ route('admin.account.profile') }}">
             @if(Auth::user()->image)
               <img src="{{ get_storage_file_url(Auth::user()->image->path, 'tiny') }}" class="user-image" alt="{{ trans('app.avatar') }}">
             @else
               <img src="{{ get_gravatar_url(Auth::user()->email, 'tiny') }}" class="user-image" alt="{{ trans('app.avatar') }}">
             @endif
             <!-- hidden-xs hides the username on small devices so only the image appears. -->
-            <span class="hidden-xs">{{ ($Tname = Auth::user()->getName()) ? $Tname : trans('app.welcome') }}</span>
+            <span class="hidden-xs">{{ trans('app.account') }}</span>
           </a>
-          <ul class="dropdown-menu">
-            <!-- The user image in the menu -->
-            <li class="user-header">
-              @if(Auth::user()->image)
-                <img src="{{ get_storage_file_url(Auth::user()->image->path, 'small') }}" class="user-image" alt="{{ trans('app.avatar') }}">
-              @else
-                <img src="{{ get_gravatar_url(Auth::user()->email, 'small') }}" class="user-image" alt="{{ trans('app.avatar') }}">
-              @endif
+        </li>
 
-              <h4>{{Auth::user()->name}}</h4>
-              <p>
-                @if(Auth::user()->isSuperAdmin())
-                  {{ trans('app.super_admin') }}
-                @else
-                  @if(Auth::user()->isFromPlatform())
-                    {{ Auth::user()->role->name }}
-                  @elseif(Auth::user()->isMerchant())
-                    {{ Auth::user()->owns ? Auth::user()->owns->name : Auth::user()->role->name }}
-                  @else
-                    {{ Auth::user()->role->name . ' | ' . Auth::user()->shop->name }}
-                  @endif
-                @endif
-
-                <small>{{ trans('app.member_since') . ' ' . Auth::user()->created_at->diffForHumans() }}</small>
-              </p>
-            </li>
-            <!-- Menu Footer-->
-            <li class="user-footer">
-              <div class="pull-left">
-                <a href="{{ route('admin.account.profile') }}" class="btn btn-default btn-flat"><i class="fa fa-user"></i> {{ trans('app.account') }}</a>
-              </div>
-              <div class="pull-right">
-                <a href="{{ Request::session()->has('impersonated') ? route('admin.secretLogout') : route('logout') }}" class="btn btn-default btn-flat"><i class="fa fa-sign-out"></i> {{ trans('app.log_out') }}</a>
-              </div>
-            </li>
-          </ul>
-        </li><!-- /.user-menu -->
-
-        <!-- Control Sidebar Toggle Button -->
         <li>
-          {{-- <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a> --}}
+            <a href="{{ Request::session()->has('impersonated') ? route('admin.secretLogout') : route('logout') }}"><i class="fa fa-sign-out"></i> <span class="hidden-xs">{{ trans('app.log_out') }}</span></a>
+        </li>
+
+        <li>
+          {{-- <a href="javascript:void(0)" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a> --}}
         </li>
       </ul>
     </div>

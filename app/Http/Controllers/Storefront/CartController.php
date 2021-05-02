@@ -15,29 +15,26 @@ use App\ShippingRate;
 use App\SystemConfig;
 use App\PaymentMethod;
 use App\Helpers\ListHelper;
+use App\Common\ShoppingCart;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Validations\DirectCheckoutRequest;
 
 class CartController extends Controller
 {
+    use ShoppingCart;
+
     /**
      * Display a listing of the resource.
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request, $expressId = Null)
     {
-        $carts = Cart::whereNull('customer_id')->where('ip_address', $request->ip());
-
-        if(Auth::guard('customer')->check()) {
-            $carts = $carts->orWhere('customer_id', Auth::guard('customer')->user()->id);
-        }
-
-        $carts = $carts->get();
+        $carts = $this->getShoppingCarts($request);
 
         // Load related models
         $carts->load(['shop' => function($q) {
-            $q->with(['config', 'packagings' => function($query){
+            $q->with(['config', 'packagings' => function($query) {
                 $query->active();
             }])->active();
         }, 'state:id,name', 'country:id,name', 'inventories.image', 'shippingPackage']);
@@ -53,7 +50,30 @@ class CartController extends Controller
         $geoip_state = State::select('id', 'name', 'iso_code', 'country_id')
         ->where('iso_code', $geoip->state)->where('country_id', $geoip_country->id)->first();
 
-        return view('theme::cart', compact('carts','business_areas','geoip_country','geoip_state','platformDefaultPackaging','expressId'));
+        $shipping_zones = [];
+        $shipping_options = [];
+
+        // Prepare shipping info
+        foreach ($carts as $cart) {
+            $country_id = $cart->ship_to_country_id ?? $geoip_country->id;
+            $state_id = $cart->ship_to_state_id ?? optional($geoip_state)->id;
+
+            $shipping_zones[$cart->id] = get_shipping_zone_of($cart->shop_id, $country_id, $state_id);
+            $shipping_options[$cart->id] = isset($shipping_zones[$cart->id]->id) ? getShippingRates($shipping_zones[$cart->id]->id) : 'NaN';
+
+            // Update cart if needed
+            if (! $cart->ship_to_country_id) {
+                $cart->ship_to_country_id = $country_id;
+                $cart->ship_to_state_id = $state_id;
+                $cart->shipping_zone_id = isset($shipping_zones[$cart->id]->id) ? $shipping_zones[$cart->id]->id : Null;
+                if ($shipping_options[$cart->id] != 'NaN') {
+                    $cart->shipping_rate_id = $cart->is_free_shipping() ? Null : $shipping_options[$cart->id]->first()->id;
+                }
+                $cart->save();
+            }
+        }
+
+        return view('theme::cart', compact('carts', 'business_areas', 'shipping_zones', 'shipping_options','platformDefaultPackaging', 'expressId'));
     }
 
     /**
@@ -62,7 +82,6 @@ class CartController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-
     public function addToCart(Request $request, $slug)
     {
         $item = Inventory::where('slug', $slug)->first();
@@ -74,8 +93,8 @@ class CartController extends Controller
         $customer_id = Auth::guard('customer')->check() ? Auth::guard('customer')->user()->id : Null;
 
         if ($customer_id) {
-            $old_cart = Cart::where('shop_id', $item->shop_id)->where(function($query) use ($customer_id){
-                $query->where('customer_id', $customer_id)->orWhere(function($q){
+            $old_cart = Cart::where('shop_id', $item->shop_id)->where(function($query) use ($customer_id) {
+                $query->where('customer_id', $customer_id)->orWhere(function($q) {
                     $q->whereNull('customer_id')->where('ip_address', request()->ip());
                 });
             })->first();
@@ -154,26 +173,6 @@ class CartController extends Controller
         }
 
         return response()->json($cart->toArray(), 200);
-
-    }
-
-    /**
-     * Update the cart and redirected to checkout page.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Cart    $cart
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Cart $cart)
-    {
-        if (! crosscheckCartOwnership($request, $cart)) {
-            return redirect()->route('cart.index')->with('warning', trans('theme.notify.please_login_to_checkout'));
-        }
-
-        $cart = crosscheckAndUpdateOldCartInfo($request, $cart);
-
-        return redirect()->route('cart.checkout', $cart);
     }
 
     /**
@@ -190,26 +189,43 @@ class CartController extends Controller
 
         $cart = crosscheckAndUpdateOldCartInfo($request, $cart);
 
-        $shop = Shop::where('id', $cart->shop_id)->active()->with(['paymentMethods' => function($q){
-            $q->active();
-        }, 'config'])->first();
+        $shop = Shop::where('id', $cart->shop_id)->active()->with('config')->first();
 
         // Abort if the shop is not exist or inactive
-        abort_unless( $shop, 406, trans('theme.notify.seller_has_no_payment_method') );
+        abort_unless($shop, 406, trans('theme.notify.store_not_available'));
+
+        if (vendor_get_paid_directly()) {
+            $paymentMethods = $shop->load(['paymentMethods' => function($q) {
+                $q->active();
+            }]);
+
+            if (! $paymentMethods) {
+                return redirect()->route('cart.index')->with('warning', trans('theme.notify.seller_has_no_payment_method'));
+            }
+        }
+        else {
+            $paymentMethods = PaymentMethod::active()->get();
+        }
 
         $customer = Auth::guard('customer')->check() ? Auth::guard('customer')->user() : Null;
         $business_areas = Country::select('id', 'name', 'iso_code')->orderBy('name', 'asc')->get();
         $states = $cart->ship_to_state_id ? ListHelper::states($cart->ship_to_country_id) : []; // Sate list of the country for ship_to dropdown
         $platformDefaultPackaging = getPlatformDefaultPackaging(); // Get platform's default packaging
 
-        if (vendor_get_paid_directly()) {
-            $paymentMethods = $shop->paymentMethods;
-        }
-        else {
-            $paymentMethods = PaymentMethod::active()->get();
-        }
+        $geoip = geoip(request()->ip());
 
-        return view('theme::checkout', compact('cart', 'customer', 'shop', 'business_areas', 'states', 'paymentMethods', 'platformDefaultPackaging'));
+        $geoip_country = $business_areas->where('iso_code', $geoip->iso_code)->first();
+
+        $geoip_state = State::select('id', 'name', 'iso_code', 'country_id')
+        ->where('iso_code', $geoip->state)->where('country_id', $geoip_country->id)->first();
+
+        $country_id = $cart->ship_to_country_id ?? $geoip_country->id;
+        $state_id = $cart->ship_to_state_id ?? optional($geoip_state)->id;
+
+        $shipping_zones[$cart->id] = get_shipping_zone_of($cart->shop_id, $country_id, $state_id);
+        $shipping_options[$cart->id] = isset($shipping_zones[$cart->id]->id) ? getShippingRates($shipping_zones[$cart->id]->id) : 'NaN';
+
+        return view('theme::checkout', compact('cart', 'customer', 'shop', 'business_areas', 'shipping_zones', 'shipping_options', 'states', 'paymentMethods', 'platformDefaultPackaging'));
     }
 
     /**
@@ -224,14 +240,33 @@ class CartController extends Controller
     {
         $cart = $this->addToCart($request, $slug);
 
-        if(200 == $cart->status()) {
+        if (200 == $cart->status()) {
             return redirect()->route('cart.index', $cart->getdata()->id);
         }
-        elseif(444 == $cart->status()) {
+        elseif (444 == $cart->status()) {
             return redirect()->route('cart.index', $cart->getdata()->cart_id);
         }
 
         return redirect()->back()->with('warning', trans('theme.notify.failed'));
+    }
+
+    /**
+     * Update the cart and redirected to checkout page.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Cart    $cart
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Cart $cart)
+    {
+        if (! crosscheckCartOwnership($request, $cart)) {
+            return response(trans('theme.notify.please_login_to_checkout'), 401);
+        }
+
+        $cart = crosscheckAndUpdateOldCartInfo($request, $cart);
+
+        return response(trans('theme.notify.cart_updated'), 200);
     }
 
     /**
@@ -244,13 +279,21 @@ class CartController extends Controller
     {
         $cart = Cart::findOrFail($request->cart);
 
-        $result = \DB::table('cart_items')->where([
-            ['cart_id', $request->cart],
-            ['inventory_id', $request->item],
+        $item = \DB::table('cart_items')->where([
+            'cart_id' => $request->cart,
+            'inventory_id' => $request->item
         ])->delete();
 
-        if($result){
-            if(! $cart->inventories()->count()) {
+        // Delete item from cart_items table
+        if ($item) {
+            // Update or delate cart
+            if ($item_count = $cart->inventories->count()) {
+                $cart->fill([
+                    'quantity' => $cart->inventories->sum('quantity'),
+                    'item_count' => $item_count,
+                ])->save();
+            }
+            else {
                 $cart->forceDelete();
             }
 
@@ -273,19 +316,19 @@ class CartController extends Controller
             ['shop_id', $request->shop],
         ])->withCount(['orders','customerOrders'])->first();
 
-        if(! $coupon) {
+        if (! $coupon) {
             return response('Coupon not found', 404);
         }
 
-        if(! $coupon->isLive() || ! $coupon->isValidCustomer()) {
+        if (! $coupon->isLive() || ! $coupon->isValidCustomer()) {
             return response('Coupon not valid', 403);
         }
 
-        if(! $coupon->isValidZone($request->zone)) {
+        if (! $coupon->isValidZone($request->zone)) {
             return response('Coupon not valid for shipping area', 443);
         }
 
-        if(! $coupon->hasQtt()) {
+        if (! $coupon->hasQtt()) {
             return response('Coupon qtt limit exit', 444);
         }
 

@@ -38,8 +38,7 @@ use Carbon\Carbon;
 //     }
 // }
 
-if (! function_exists('get_platform_title'))
-{
+if (! function_exists('get_platform_title')) {
     /**
      * Return shop title or the application title
      */
@@ -49,8 +48,7 @@ if (! function_exists('get_platform_title'))
     }
 }
 
-if (! function_exists('get_platform_address'))
-{
+if (! function_exists('get_platform_address')) {
     /**
      * return platforms address in html formate
      */
@@ -63,8 +61,7 @@ if (! function_exists('get_platform_address'))
 }
 
 //Get address as array:
-if (! function_exists('get_platform_address_string'))
-{
+if (! function_exists('get_platform_address_string')) {
     /**
      * return platforms address in html formate
      */
@@ -77,14 +74,13 @@ if (! function_exists('get_platform_address_string'))
 }
 
 
-if (! function_exists('get_site_title'))
-{
+if (! function_exists('get_site_title')) {
     /**
      * Return shop title or the application title
      */
     function get_site_title()
     {
-        if(auth()->guard('web')->check() && auth()->user()->isFromMerchant() && auth()->user()->shop) {
+        if (auth()->guard('web')->check() && auth()->user()->isFromMerchant() && auth()->user()->shop) {
             return auth()->user()->shop->name;
         }
 
@@ -92,41 +88,35 @@ if (! function_exists('get_site_title'))
     }
 }
 
-if (! function_exists('get_system_currency'))
-{
+if (! function_exists('get_system_currency')) {
     function get_system_currency()
     {
         return config('system_settings.currency.iso_code');
     }
 }
 
-if (! function_exists('is_billing_info_required'))
-{
+if (! function_exists('is_billing_info_required')) {
     function is_billing_info_required()
     {
         return config('system_settings.required_card_upfront');
-        //return 0;
     }
 }
 
-if (! function_exists('get_currency_symbol'))
-{
+if (! function_exists('get_currency_symbol')) {
     function get_currency_symbol()
     {
         return config('system_settings.currency.symbol', '$');
     }
 }
 
-if (! function_exists('get_option_table_name'))
-{
+if (! function_exists('get_option_table_name')) {
     function get_option_table_name()
     {
         return 'options';
     }
 }
 
-if (! function_exists('get_social_media_links'))
-{
+if (! function_exists('get_social_media_links')) {
     /**
      * Return social_media_links
      */
@@ -144,18 +134,17 @@ if (! function_exists('get_social_media_links'))
     }
 }
 
-if (! function_exists('get_shop_url'))
-{
+if (! function_exists('get_shop_url')) {
     /**
      * Return shop title or the application title
      */
     function get_shop_url($id = null)
     {
         $slug = '';
-        if(auth()->user()->isFromMerchant() && auth()->user()->shop) {
+        if (auth()->user()->isFromMerchant() && auth()->user()->shop) {
             $slug = auth()->user()->shop->slug;
         }
-        else if(auth()->user()->isFromPlatform() && $id) {
+        else if (auth()->user()->isFromPlatform() && $id) {
             $slug = \DB::table('shops')->find($id)->slug;
         }
 
@@ -163,8 +152,7 @@ if (! function_exists('get_shop_url'))
     }
 }
 
-if (! function_exists('get_csv_import_limit'))
-{
+if (! function_exists('get_csv_import_limit')) {
     /**
      * Return the csv_import_limit
      */
@@ -174,14 +162,13 @@ if (! function_exists('get_csv_import_limit'))
     }
 }
 
-if (! function_exists('get_page_url'))
-{
+if (! function_exists('get_page_url')) {
     /**
      * Return page url
      */
     function get_page_url($page = Null)
     {
-        if($page == Null) {
+        if ($page == Null) {
             return url('/');
         }
 
@@ -189,15 +176,13 @@ if (! function_exists('get_page_url'))
     }
 }
 
-if (! function_exists('get_verified_badge'))
-{
+if (! function_exists('get_verified_badge')) {
     function get_verified_badge() {
         return url("images/placeholders/verified_badge.png");
     }
 }
 
-if (! function_exists('get_invoice_stamp'))
-{
+if (! function_exists('get_invoice_stamp')) {
     /**
      * Return invoice stamp img
      */
@@ -206,8 +191,7 @@ if (! function_exists('get_invoice_stamp'))
     }
 }
 
-if (! function_exists('is_serialized'))
-{
+if (! function_exists('is_serialized')) {
     /**
      * Check if the given value is_serialized or not
      */
@@ -246,8 +230,7 @@ if (! function_exists('is_serialized'))
     }
 }
 
-if (! function_exists('remove_url_parameter'))
-{
+if (! function_exists('remove_url_parameter')) {
     /**
      * Remove given parameter from the given url str
      */
@@ -257,8 +240,7 @@ if (! function_exists('remove_url_parameter'))
     }
 }
 
-if (! function_exists('get_avatar_src'))
-{
+if (! function_exists('get_avatar_src')) {
     function get_avatar_src($model, $size = 'small')
     {
         if ($model instanceof User || $model instanceof Customer){
@@ -273,8 +255,7 @@ if (! function_exists('get_avatar_src'))
     }
 }
 
-if (! function_exists('get_gravatar_url'))
-{
+if (! function_exists('get_gravatar_url')) {
     function get_gravatar_url($email, $size = 'small')
     {
         $email = md5(strtolower(trim($email)));
@@ -288,8 +269,7 @@ if (! function_exists('get_gravatar_url'))
     }
 }
 
-if (! function_exists('get_sender_email'))
-{
+if (! function_exists('get_sender_email')) {
     /**
      * Return shop title or the application title
      */
@@ -305,8 +285,7 @@ if (! function_exists('get_sender_email'))
     }
 }
 
-if (! function_exists('get_sender_name'))
-{
+if (! function_exists('get_sender_name')) {
     /**
      * Return shop title or the application title
      */
@@ -322,8 +301,7 @@ if (! function_exists('get_sender_name'))
     }
 }
 
-if (! function_exists('get_address_str_from_request_data'))
-{
+if (! function_exists('get_address_str_from_request_data')) {
     function get_address_str_from_request_data($request)
     {
         $state = is_numeric($request->state_id) ? get_value_from($request->state_id, 'states', 'name') : $request->state_id;
@@ -337,7 +315,7 @@ if (! function_exists('get_address_str_from_request_data'))
         $str []= $state . ' ' . $request->zip_code;
         $str []= is_numeric($request->country_id) ? get_value_from($request->country_id, 'countries', 'name') : $request->country_id;
 
-        if($request->phone) {
+        if ($request->phone) {
             $str [] =  trans('app.phone') . ': ' . e($request->phone);
         }
         $str [] = '</address>';
@@ -346,8 +324,7 @@ if (! function_exists('get_address_str_from_request_data'))
     }
 }
 
-if (! function_exists('address_str_to_html'))
-{
+if (! function_exists('address_str_to_html')) {
     function address_str_to_html($address, $separator = '<br/>')
     {
         $addressStr = str_replace(',', $separator, $address);
@@ -358,15 +335,14 @@ if (! function_exists('address_str_to_html'))
     }
 }
 
-if (! function_exists('address_str_to_geocode_str'))
-{
+if (! function_exists('address_str_to_geocode_str')) {
     function address_str_to_geocode_str($address)
     {
         $t_arr = explode(',', $address);
         array_shift($t_arr); // Remove address titme/name
 
         // Remove phone number from address
-        if(preg_match('/^[0-9 +-]*$/', end($t_arr))) {
+        if (preg_match('/^[0-9 +-]*$/', end($t_arr))) {
             array_pop($t_arr);
         }
 
@@ -380,14 +356,13 @@ if (! function_exists('address_str_to_geocode_str'))
 /**
  * Get latitude and longitude of an address from Google API
  */
-if (! function_exists('getGeocode'))
-{
+if (! function_exists('getGeocode')) {
     function getGeocode($address)
     {
-        if(is_object($address)) {
+        if (is_object($address)) {
             $address = $address->toGeocodeString();
         }
-        else if(is_numeric($address)) {
+        else if (is_numeric($address)) {
             $address = \DB::table('addresses')->find($address);
             $address = $address->toGeocodeString();
         }
@@ -412,11 +387,10 @@ if (! function_exists('getGeocode'))
     }
 }
 
-if (! function_exists('getPaginationValue'))
-{
+if (! function_exists('getPaginationValue')) {
     function getPaginationValue()
     {
-        if(auth()->user()->isFromPlatform()) {
+        if (auth()->user()->isFromPlatform()) {
             return config('system_settings.pagination') ?: 10;
         }
 
@@ -424,8 +398,7 @@ if (! function_exists('getPaginationValue'))
     }
 }
 
-if (! function_exists('getMinNumberOfRequiredImgsForInventory'))
-{
+if (! function_exists('getMinNumberOfRequiredImgsForInventory')) {
     /**
      * Return Min Number Of Required Imgs For Inventory to upload per item
      */
@@ -435,8 +408,7 @@ if (! function_exists('getMinNumberOfRequiredImgsForInventory'))
     }
 }
 
-if (! function_exists('getMaxNumberOfImgsForInventory'))
-{
+if (! function_exists('getMaxNumberOfImgsForInventory')) {
     /**
      * Return max_number_of_inventory_imgs allowed to upload per item
      */
@@ -446,8 +418,7 @@ if (! function_exists('getMaxNumberOfImgsForInventory'))
     }
 }
 
-if (! function_exists('getAllowedMinImgSize'))
-{
+if (! function_exists('getAllowedMinImgSize')) {
     /**
      * Return min_img_size_limit_kb allowed to upload
      */
@@ -457,8 +428,7 @@ if (! function_exists('getAllowedMinImgSize'))
     }
 }
 
-if (! function_exists('getAllowedMaxImgSize'))
-{
+if (! function_exists('getAllowedMaxImgSize')) {
     /**
      * Return max_img_size_limit_kb allowed to upload
      */
@@ -468,23 +438,21 @@ if (! function_exists('getAllowedMaxImgSize'))
     }
 }
 
-if (! function_exists('allow_checkout'))
-{
+if (! function_exists('allow_checkout')) {
     function allow_checkout()
     {
         return config('system_settings.allow_guest_checkout') || Auth::guard('customer')->check();
     }
 }
 
-if (! function_exists('highlightWords'))
-{
+if (! function_exists('highlightWords')) {
     function highlightWords($content = Null, $words = Null)
      {
-        if($content == Null || $words == Null) {
+        if ($content == Null || $words == Null) {
             return $content;
         }
 
-        if(is_array($words)) {
+        if (is_array($words)) {
             foreach ( $words as $word ) {
                 $content = str_ireplace($word, '<mark>'.$word.'</mark>', $content);
             }
@@ -496,8 +464,7 @@ if (! function_exists('highlightWords'))
      }
 }
 
-if (! function_exists('clear_encoding_str'))
-{
+if (! function_exists('clear_encoding_str')) {
     function clear_encoding_str($value)
     {
         if (is_array($value))
@@ -515,24 +482,21 @@ if (! function_exists('clear_encoding_str'))
     }
 }
 
-if (! function_exists('get_qualified_model'))
-{
+if (! function_exists('get_qualified_model')) {
     function get_qualified_model($class_name = '')
     {
         return 'App\\' . Str::singular(Str::studly($class_name));
     }
 }
 
-if (! function_exists('temp_storage_dir'))
-{
+if (! function_exists('temp_storage_dir')) {
     function temp_storage_dir($dir = '')
     {
         return Str::finish(public_path("temp/{$dir}"), '/');
     }
 }
 
-if (! function_exists('attachment_storage_dir'))
-{
+if (! function_exists('attachment_storage_dir')) {
     function attachment_storage_dir($dir = '')
     {
         return "attachments";
@@ -540,24 +504,21 @@ if (! function_exists('attachment_storage_dir'))
     }
 }
 
-if (! function_exists('image_storage_dir'))
-{
+if (! function_exists('image_storage_dir')) {
     function image_storage_dir()
     {
         return config('image.dir');
     }
 }
 
-if (! function_exists('sys_image_path'))
-{
+if (! function_exists('sys_image_path')) {
     function sys_image_path($dir = '')
     {
         return Str::finish("images/{$dir}", '/');
     }
 }
 
-if (! function_exists('image_storage_path'))
-{
+if (! function_exists('image_storage_path')) {
     function image_storage_path($path = Null)
     {
         $path = image_storage_dir() . '/' . $path;
@@ -565,8 +526,7 @@ if (! function_exists('image_storage_path'))
     }
 }
 
-if (! function_exists('image_cache_path'))
-{
+if (! function_exists('image_cache_path')) {
     function image_cache_path($path = Null)
     {
         $path = config('image.cache_dir') . '/' . $path;
@@ -575,15 +535,14 @@ if (! function_exists('image_cache_path'))
     }
 }
 
-if (! function_exists('get_storage_file_url'))
-{
+if (! function_exists('get_storage_file_url')) {
     function get_storage_file_url($path = null, $size = 'small')
     {
         if (! $path) {
             return get_placeholder_img($size);
         }
 
-        if($size == Null) {
+        if ($size == Null) {
             return url("image/{$path}");
         }
 
@@ -591,25 +550,25 @@ if (! function_exists('get_storage_file_url'))
     }
 }
 
-if (! function_exists('get_placeholder_img'))
-{
-    function get_placeholder_img($size = 'small')
+if (! function_exists('get_placeholder_img')) {
+    function get_placeholder_img($size = 'small', $txt = Null)
     {
         $size = config("image.sizes.{$size}");
 
+        $txt = $txt ?? get_platform_title();
+
         if ($size && is_array($size)) {
-            return "https://placehold.it/{$size['w']}x{$size['h']}/eee?text=" . trans('app.no_img_available');
+            return "https://via.placeholder.com/{$size['w']}x{$size['h']}/eee?text=" . $txt;
         }
 
         return url("images/placeholders/no_img.png");
     }
 }
 
-if (! function_exists('get_product_img_src'))
-{
+if (! function_exists('get_product_img_src')) {
     function get_product_img_src($item = null, $size = 'medium', $type = 'primary')
     {
-        if(! $item) {
+        if (! $item) {
             return asset('images/placeholders/no_img.png');
         }
 
@@ -620,13 +579,13 @@ if (! function_exists('get_product_img_src'))
         $images_count = $item->images->count();
 
         // If the listing has no images then pick the product images
-        if(! $images_count) {
+        if (! $images_count) {
             $item = $item->product;
             $images_count = $item->images->count();
         }
 
-        if($images_count) {
-            if($type == 'alt' && $images_count > 1) {
+        if ($images_count) {
+            if ($type == 'alt' && $images_count > 1) {
                 $imgs = $item->images->toArray();
                 $path = $imgs[1]['path'];
             }
@@ -641,8 +600,7 @@ if (! function_exists('get_product_img_src'))
     }
 }
 
-if (! function_exists('get_inventory_img_src'))
-{
+if (! function_exists('get_inventory_img_src')) {
     function get_inventory_img_src($item, $size = 'medium')
     {
         if ($item->image) {
@@ -657,8 +615,7 @@ if (! function_exists('get_inventory_img_src'))
     }
 }
 
-if (! function_exists('get_catalog_featured_img_src'))
-{
+if (! function_exists('get_catalog_featured_img_src')) {
     function get_catalog_featured_img_src($product, $size = 'small')
     {
         if (is_int($product) && ! ($product instanceof Product)) {
@@ -681,11 +638,10 @@ if (! function_exists('get_catalog_featured_img_src'))
     }
 }
 
-if (! function_exists('get_cover_img_src'))
-{
+if (! function_exists('get_cover_img_src')) {
     function get_cover_img_src($model, $type = 'category')
     {
-        if(isset($model->coverImage->path) && Storage::exists($model->coverImage->path)) {
+        if (isset($model->coverImage->path) && Storage::exists($model->coverImage->path)) {
             return get_storage_file_url($model->coverImage->path, 'cover');
         }
 
@@ -693,11 +649,13 @@ if (! function_exists('get_cover_img_src'))
     }
 }
 
-if (! function_exists('get_logo_url'))
-{
-    function get_logo_url($model,  $size = 'small')
+if (! function_exists('get_logo_url')) {
+    function get_logo_url($model, $size = 'small')
     {
-        if($model->logo) {
+        if ($model == 'platform') {
+            return Storage::exists('logo.png') ? get_storage_file_url('logo.png', $size) : get_placeholder_img('logo');
+        }
+        elseif ($model->logo) {
             return get_storage_file_url($model->logo->path, $size);
         }
 
@@ -705,11 +663,10 @@ if (! function_exists('get_logo_url'))
     }
 }
 
-if (! function_exists('verifyUniqueSlug'))
-{
+if (! function_exists('verifyUniqueSlug')) {
     function verifyUniqueSlug($slug, $table, $field = 'slug', $json = TRUE)
     {
-        if(\DB::table($table)->select($field)->where($field, $slug)->first()) {
+        if (\DB::table($table)->select($field)->where($field, $slug)->first()) {
             return $json ? response()->json('false') : FALSE;
         }
 
@@ -717,11 +674,10 @@ if (! function_exists('verifyUniqueSlug'))
     }
 }
 
-if (! function_exists('convertToSlugString'))
-{
+if (! function_exists('convertToSlugString')) {
     function convertToSlugString($str, $salt = Null, $separator = '-')
     {
-        if($salt) {
+        if ($salt) {
             return Str::slug($str, $separator) . $separator . Str::slug($salt, $separator);
         }
 
@@ -729,8 +685,7 @@ if (! function_exists('convertToSlugString'))
     }
 }
 
-if (! function_exists('generateCouponCode'))
-{
+if (! function_exists('generateCouponCode')) {
     function generateCouponCode()
     {
         $unique = TRUE;
@@ -738,16 +693,18 @@ if (! function_exists('generateCouponCode'))
 
         do{
             $code = generateUniqueSrt($size);
+
             $check = \DB::table('coupons')->where('code', $code)->first();
-            if($check) $unique = FALSE;
+
+            if ($check) $unique = FALSE;
+
         }while(! $unique );
 
         return $code;
     }
 }
 
-if (! function_exists('generatePinCode'))
-{
+if (! function_exists('generatePinCode')) {
     function generatePinCode()
     {
         $unique = TRUE;
@@ -755,16 +712,18 @@ if (! function_exists('generatePinCode'))
 
         do{
             $code = generateUniqueSrt($size);
+
             $check = \DB::table('gift_cards')->where('pin_code', $code)->first();
-            if($check) $unique = FALSE;
+
+            if ($check) $unique = FALSE;
+
         }while(! $unique );
 
         return $code;
     }
 }
 
-if (! function_exists('generateSerialNumber'))
-{
+if (! function_exists('generateSerialNumber')) {
     function generateSerialNumber()
     {
         $unique = TRUE;
@@ -775,7 +734,7 @@ if (! function_exists('generateSerialNumber'))
 
             $check = \DB::table('gift_cards')->where('serial_number', $code)->first();
 
-            if($check) $unique = FALSE;
+            if ($check) $unique = FALSE;
 
         }while(! $unique );
 
@@ -783,8 +742,7 @@ if (! function_exists('generateSerialNumber'))
     }
 }
 
-if (! function_exists('generateUniqueSrt'))
-{
+if (! function_exists('generateUniqueSrt')) {
     /**
      * Generate random alfa numaric str.
      *
@@ -804,8 +762,7 @@ if (! function_exists('generateUniqueSrt'))
     }
 }
 
-if (! function_exists('get_age'))
-{
+if (! function_exists('get_age')) {
     /**
      * Get age of user/customer from date of birth.
      * @param  str $dob date of bith
@@ -817,8 +774,7 @@ if (! function_exists('get_age'))
     }
 }
 
-if (! function_exists('get_formated_file_size'))
-{
+if (! function_exists('get_formated_file_size')) {
     /**
      * Get the formated file size.
      * @param  int $bytes
@@ -837,8 +793,7 @@ if (! function_exists('get_formated_file_size'))
     }
 }
 
-if (! function_exists('get_customer_email_from_order'))
-{
+if (! function_exists('get_customer_email_from_order')) {
     function get_customer_email_from_order($order)
     {
         if (! $order instanceof Order) {
@@ -853,8 +808,7 @@ if (! function_exists('get_customer_email_from_order'))
     }
 }
 
-if (! function_exists('get_formated_cutomer_str'))
-{
+if (! function_exists('get_formated_cutomer_str')) {
     /**
      * Get the formated customer string.
      *
@@ -872,8 +826,7 @@ if (! function_exists('get_formated_cutomer_str'))
     }
 }
 
-if (! function_exists('get_formated_gender'))
-{
+if (! function_exists('get_formated_gender')) {
     /**
      * Get the formated gender string.
      *
@@ -895,8 +848,7 @@ if (! function_exists('get_formated_gender'))
     }
 }
 
-if (! function_exists('get_cent_from_doller'))
-{
+if (! function_exists('get_cent_from_doller')) {
     /**
      * Get cent from decimal amount value.
      *
@@ -912,8 +864,7 @@ if (! function_exists('get_cent_from_doller'))
     }
 }
 
-if (! function_exists('get_doller_from_cent'))
-{
+if (! function_exists('get_doller_from_cent')) {
     /**
      * Get doller from cent decimal value.
      *
@@ -929,8 +880,7 @@ if (! function_exists('get_doller_from_cent'))
     }
 }
 
-if (! function_exists('format_to_number'))
-{
+if (! function_exists('format_to_number')) {
     /**
      * Format the input data with decimal places
      *
@@ -950,8 +900,7 @@ if (! function_exists('format_to_number'))
     }
 }
 
-if (! function_exists('get_formated_decimal'))
-{
+if (! function_exists('get_formated_decimal')) {
     function get_formated_decimal($value = 0, $trim = true, $decimal = 0)
     {
         // if (! $decimal )
@@ -963,7 +912,7 @@ if (! function_exists('get_formated_decimal'))
 
         if ($trim) {
             $arr = explode($decimal_mark, $value);
-            if(count($arr) == 2) {
+            if (count($arr) == 2) {
                 $temp = rtrim($arr[1], '0');
                 $value = $temp ? $arr[0] . $decimal_mark . $temp : $arr[0];
             }
@@ -973,8 +922,7 @@ if (! function_exists('get_formated_decimal'))
     }
 }
 
-if (! function_exists('get_formated_price'))
-{
+if (! function_exists('get_formated_price')) {
     function get_formated_price($value = 0, $decimal = null)
     {
         if (in_array(get_system_currency(), config('system.non_decimal_currencies'))) {
@@ -983,13 +931,13 @@ if (! function_exists('get_formated_price'))
 
         $price = get_formated_currency($value, $decimal);
 
-        if($decimal == 0) {
+        if ($decimal == 0) {
             return $price;
         }
 
         $arr = explode(config('system_settings.currency.decimal_mark', '.'), $price);
 
-        if(count($arr) == 2) {
+        if (count($arr) == 2) {
             return $arr[1] > 0 ? $arr[0] . '<sup class="price-fractional">' . $arr[1] .'</sup>' : $arr[0];
         }
 
@@ -997,63 +945,63 @@ if (! function_exists('get_formated_price'))
     }
 }
 
-if (! function_exists('get_formated_currency'))
-{
+if (! function_exists('get_formated_currency')) {
     function get_formated_currency($value = 0, $decimal = null)
     {
         if ($decimal && in_array(get_system_currency(), config('system.non_decimal_currencies'))) {
             $decimal = Null;
         }
 
-        $value =  get_formated_decimal($value, $decimal ? false : true, $decimal);
+        $value = get_formated_decimal($value, $decimal ? false : true, $decimal);
+
+        // If the value is negative
+        if ($value < 0) {
+            return '-' . get_currency_prefix() . abs($value) . get_currency_suffix();
+        }
 
         return get_currency_prefix() . $value . get_currency_suffix();
     }
 }
 
-if (! function_exists('get_currency_prefix'))
-{
+if (! function_exists('get_currency_prefix')) {
     function get_currency_prefix()
     {
         return config('system_settings.currency.symbol_first') ? get_formated_currency_symbol() : '';
     }
 }
 
-if (! function_exists('get_currency_suffix'))
-{
+if (! function_exists('get_currency_suffix')) {
     function get_currency_suffix()
     {
         return config('system_settings.currency.symbol_first') ? '' : get_formated_currency_symbol();
     }
 }
 
-if (! function_exists('get_formated_currency_symbol'))
-{
+if (! function_exists('get_formated_currency_symbol')) {
     function get_formated_currency_symbol()
     {
-        if ( config('system_settings.show_currency_symbol')) {
+        if (config('system_settings.show_currency_symbol')) {
+            $space = config('system_settings.show_space_after_symbol') ? ' ' : '';
 
-            if ( config('system_settings.currency.symbol_first')) {
-                return get_currency_symbol() . (config('system_settings.show_space_after_symbol') ? ' ' : '');
+            if (config('system_settings.currency.symbol_first')) {
+                return get_currency_symbol() . ($space);
             }
 
-            return (config('system_settings.show_space_after_symbol') ? ' ' : '') . get_currency_symbol();
+            return ($space) . get_currency_symbol();
         }
 
         return '';
     }
 }
 
-if (! function_exists('get_currency_code'))
-{
+if (! function_exists('get_currency_code')) {
     function get_currency_code()
     {
         return config('system_settings.currency.iso_code') ?? 'USD';
     }
 }
 
-if (! function_exists('get_formated_dimension'))
-{
+if (! function_exists('get_formated_dimension')) {
     function get_formated_dimension($packaging)
     {
         $dimension = get_formated_decimal($packaging->width) . ' x ' . get_formated_decimal($packaging->height);
@@ -1066,11 +1014,10 @@ if (! function_exists('get_formated_dimension'))
     }
 }
 
-if (! function_exists('get_formated_weight'))
-{
+if (! function_exists('get_formated_weight')) {
     function get_formated_weight($value = 0)
     {
-        if($value == Null) {
+        if ($value == Null) {
             return Null;
         }
 
@@ -1078,13 +1025,12 @@ if (! function_exists('get_formated_weight'))
     }
 }
 
-if (! function_exists('get_formated_order_number'))
-{
+if (! function_exists('get_formated_order_number')) {
     function get_formated_order_number($shop_id = Null, $order_id = Null)
     {
         $order_id = $order_id ?? str_pad(rand(1, 999999), 6, '0', STR_PAD_LEFT);
 
-        if($shop_id == Null && auth()->guard('web')->check()){
+        if ($shop_id == Null && auth()->guard('web')->check()){
             $shop_id = auth()->user()->merchantId();
         }
 
@@ -1102,8 +1048,7 @@ if (! function_exists('get_formated_order_number'))
 //     }
 // }
 
-if (! function_exists('file_upload_max_size'))
-{
+if (! function_exists('file_upload_max_size')) {
     // Returns a file size limit in bytes based on the PHP upload_max_filesize
     // and post_max_size
     function file_upload_max_size()
@@ -1128,8 +1073,7 @@ if (! function_exists('file_upload_max_size'))
     }
 }
 
-if (! function_exists('parse_size'))
-{
+if (! function_exists('parse_size')) {
     function parse_size($size) {
       $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
       $size = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
@@ -1143,8 +1087,7 @@ if (! function_exists('parse_size'))
     }
 }
 
-if (! function_exists('format_bytes'))
-{
+if (! function_exists('format_bytes')) {
     function format_bytes($bytes, $precision = 2) {
         $units = array('B', 'KB', 'MB', 'GB', 'TB');
 
@@ -1157,8 +1100,7 @@ if (! function_exists('format_bytes'))
     }
 }
 
-if (! function_exists('generate_ranges'))
-{
+if (! function_exists('generate_ranges')) {
     /**
      * Return array of different ranges
      */
@@ -1178,22 +1120,20 @@ if (! function_exists('generate_ranges'))
     }
 }
 
-if (! function_exists('get_percentage_of'))
-{
+if (! function_exists('get_percentage_of')) {
     function get_percentage_of($old_num, $new_num) {
         return get_formated_decimal((($old_num - $new_num)*100) / $old_num) ;
     }
 }
 
-if (! function_exists('get_formated_shipping_range_of'))
-{
+if (! function_exists('get_formated_shipping_range_of')) {
     /**
      * get_formated_shipping_range_of given shipping rate
      *
      * @param $tax
      */
     function get_formated_shipping_range_of($rate) {
-        if(! is_object($rate)){
+        if (! is_object($rate)){
             $rate = \DB::table('shipping_rates')->find($rate);
         }
 
@@ -1215,8 +1155,7 @@ if (! function_exists('get_formated_shipping_range_of'))
 }
 
 // Shipping zone
-if (! function_exists('get_countries_in_shipping_zone'))
-{
+if (! function_exists('get_countries_in_shipping_zone')) {
     function get_countries_in_shipping_zone($shipping_zone)
     {
         return Country::select('id', 'iso_code', 'name', 'active')
@@ -1226,14 +1165,13 @@ if (! function_exists('get_countries_in_shipping_zone'))
 }
 
 // COUNTRY
-if (! function_exists('get_countries_name_with_states'))
-{
+if (! function_exists('get_countries_name_with_states')) {
     function get_countries_name_with_states($ids) {
         if (is_array($ids)) {
             $countries = \DB::table('countries')->select('iso_code', 'name', 'id')->whereIn('id', $ids)->get()->toArray();
             $all_states = \DB::table('states')->whereIn('country_id', $ids)->pluck('country_id', 'id')->toArray();
 
-            if(! empty($countries)) {
+            if (! empty($countries)) {
                 $result = [];
                 foreach ($countries as $country) {
                     $states = array_filter($all_states, function ($value) use ($country) {
@@ -1254,17 +1192,16 @@ if (! function_exists('get_countries_name_with_states'))
     }
 }
 
-if (! function_exists('get_flag_img_by_code'))
-{
+if (! function_exists('get_flag_img_by_code')) {
     function get_flag_img_by_code($code, $plain = false)
     {
         $full_path = sys_image_path('flags') . $code . '.png';
 
-        if(! file_exists($full_path)){
+        if (! file_exists($full_path)){
             $full_path = sys_image_path('flags') . 'default.gif';
         }
 
-        if($plain){
+        if ($plain){
             return asset($full_path);
         }
 
@@ -1272,8 +1209,7 @@ if (! function_exists('get_flag_img_by_code'))
     }
 }
 
-if (! function_exists('get_formated_country_name'))
-{
+if (! function_exists('get_formated_country_name')) {
     function get_formated_country_name($country, $code = null)
     {
         if (is_numeric($country)) {
@@ -1282,7 +1218,7 @@ if (! function_exists('get_formated_country_name'))
             $code = $country_data->iso_code;
         }
 
-        if($code){
+        if ($code){
             return get_flag_img_by_code($code) . ' <span class="indent5">' . $country . '</span>';
         }
 
@@ -1290,8 +1226,7 @@ if (! function_exists('get_formated_country_name'))
     }
 }
 
-if (! function_exists('get_item_details_of'))
-{
+if (! function_exists('get_item_details_of')) {
     /**
      * Return the item detiails for the given inventory id
      *
@@ -1306,8 +1241,7 @@ if (! function_exists('get_item_details_of'))
     }
 }
 
-if (! function_exists('get_shipping_zone_of'))
-{
+if (! function_exists('get_shipping_zone_of')) {
     /**
      * Return the shipping zone id of given shop and country and state
      *
@@ -1318,13 +1252,13 @@ if (! function_exists('get_shipping_zone_of'))
         $cant_ship = new stdClass(); // A blank std class for null
 
         // If the iso_2 code given instead of ID as country
-        if(! is_numeric($country)) {
+        if (! is_numeric($country)) {
             $temp_country = \DB::table('countries')->select('id','active')->where('iso_code', $country)->first();
             $country = optional($temp_country)->id;
         }
 
         // If the iso_2 code given instead of ID as state
-        if($state && !is_numeric($state)) {
+        if ($state && !is_numeric($state)) {
             $temp_state = \DB::table('states')->select('id','active')->where([
                 ['iso_code', '=', $state],
                 ['country_id', '=', $country]
@@ -1334,23 +1268,22 @@ if (! function_exists('get_shipping_zone_of'))
         }
 
         // Check if the marketplace is worldwide_business_area
-        if(! config('system_settings.worldwide_business_area'))
-        {
+        if (! config('system_settings.worldwide_business_area')) {
             // Need the country's active value to check the business area
-            if(! isset($temp_country)) {
+            if (! isset($temp_country)) {
                 $temp_country = \DB::table('countries')->select('id','active')->where([
                     ['id', '=', $country],
                     ['active', '=', 1]
                 ])->first();
 
                 // Return back if the area is not in active business area
-                if(! $temp_country || $temp_country->active != 1) {
+                if (! $temp_country || $temp_country->active != 1) {
                     return $cant_ship;
                 }
             }
 
             // Need the state's active value to check the business area
-            if($state && ! isset($temp_state)){
+            if ($state && ! isset($temp_state)){
                 $temp_state = \DB::table('states')->select('id','active')->where([
                     ['id', '=', $state],
                     ['country_id', '=', $country],
@@ -1358,14 +1291,14 @@ if (! function_exists('get_shipping_zone_of'))
                 ])->first();
 
                 // Return back if the area is not in active business area
-                if(! $temp_state || $temp_state->active != 1) {
+                if (! $temp_state || $temp_state->active != 1) {
                     return $cant_ship;
                 }
             }
         }
 
         // Get number of states
-        if($state) {
+        if ($state) {
             $state_counts = get_state_count_of($country);
         }
 
@@ -1375,26 +1308,26 @@ if (! function_exists('get_shipping_zone_of'))
 
         foreach ($zones as $zone) {
             // Check the the shop has a worldwide shipping zone
-            if($zone->rest_of_the_world == 1) {
+            if ($zone->rest_of_the_world == 1) {
                 $worldwide = $zone;
             }
 
             $countries = unserialize($zone->country_ids);
 
             // Skip if the country is not found in this zone
-            if(empty($countries) || ! in_array($country, $countries)) continue;
+            if (empty($countries) || ! in_array($country, $countries)) continue;
 
             // If the country has no state or the state is not given, then return the zone
-            if($state == null || $state_counts == 0) {
+            if ($state == null || $state_counts == 0) {
                 return $zone;
             }
 
             $states = unserialize($zone->state_ids);
 
             // Skip if the country has states but the id not supplied
-            if($state_counts > 0 && $state == null) continue;
+            if ($state_counts > 0 && $state == null) continue;
 
-            if(in_array($state, $states)) {
+            if (in_array($state, $states)) {
                 return $zone;
             }
         }
@@ -1403,8 +1336,7 @@ if (! function_exists('get_shipping_zone_of'))
     }
 }
 
-if (! function_exists('get_state_count_of'))
-{
+if (! function_exists('get_state_count_of')) {
     /**
      * Return total number of states of given country
      *
@@ -1415,8 +1347,7 @@ if (! function_exists('get_state_count_of'))
     }
 }
 
-if (! function_exists('get_states_of'))
-{
+if (! function_exists('get_states_of')) {
     /**
      * Get states ids of given countries.
      *
@@ -1443,8 +1374,7 @@ if (! function_exists('get_states_of'))
     }
 }
 
-if (! function_exists('get_business_area_of'))
-{
+if (! function_exists('get_business_area_of')) {
     /**
      * Get states ids of given countries.
      *
@@ -1467,8 +1397,7 @@ if (! function_exists('get_business_area_of'))
     }
 }
 
-if (! function_exists('get_id_of_model'))
-{
+if (! function_exists('get_id_of_model')) {
     /**
      * Return ID og the given table using where
      *
@@ -1485,21 +1414,20 @@ if (! function_exists('get_id_of_model'))
     }
 }
 
-if (! function_exists('cart_item_count'))
-{
+if (! function_exists('cart_item_count')) {
     /**
      * Get cart item count for customer.
      */
     function cart_item_count($customer_id = Null)
     {
-        if(! $customer_id){
+        if (! $customer_id){
             $customer_id = Auth::guard('customer')->check() ? Auth::guard('customer')->user()->id : Null;
         }
 
         $cart_list = \DB::table('carts')->join('cart_items', 'cart_items.cart_id', '=', 'carts.id')
         ->whereNull('customer_id')->whereNull('deleted_at')->where('ip_address', request()->ip());
 
-        if($customer_id){
+        if ($customer_id){
             $cart_list = $cart_list->orWhere('customer_id', $customer_id);
         }
 
@@ -1507,8 +1435,7 @@ if (! function_exists('cart_item_count'))
     }
 }
 
-if (! function_exists('getTaxRate'))
-{
+if (! function_exists('getTaxRate')) {
     /**
      * Return taxe rate for the given tax id
      *
@@ -1524,20 +1451,19 @@ if (! function_exists('getTaxRate'))
     }
 }
 
-if (! function_exists('getShippingRates'))
-{
+if (! function_exists('getShippingRates')) {
     /**
      * Get shipping rates list for the given zone or shop.
      */
     function getShippingRates($zone = Null)
     {
-        if($zone) {
+        if ($zone) {
             return ShippingRate::where('shipping_zone_id', $zone)
             ->with('carrier:id,name')->orderBy('rate', 'asc')->get();
         }
 
         // Return empty object if zone it is not given and not an user
-        if(! Auth::guard('web')->check() || Auth::guard('web')->user()->merchantId()) {
+        if (! Auth::guard('web')->check() || Auth::guard('web')->user()->merchantId()) {
             return new stdClass();
         }
 
@@ -1548,8 +1474,7 @@ if (! function_exists('getShippingRates'))
     }
 }
 
-if (! function_exists('getTrackingUrl'))
-{
+if (! function_exists('getTrackingUrl')) {
     /**
      * Return tracking utl for the given carrier and tracking id
      *
@@ -1572,8 +1497,7 @@ if (! function_exists('getTrackingUrl'))
     }
 }
 
-if (! function_exists('filterShippingOptions'))
-{
+if (! function_exists('filterShippingOptions')) {
     /**
      * Return filtered shipping options for a given zone and price
      *
@@ -1608,8 +1532,7 @@ if (! function_exists('filterShippingOptions'))
     }
 }
 
-if (! function_exists('getFreeShippingObject'))
-{
+if (! function_exists('getFreeShippingObject')) {
     /**
      * Return free shipping options
      *
@@ -1630,8 +1553,7 @@ if (! function_exists('getFreeShippingObject'))
     }
 }
 
-if (! function_exists('getPlatformDefaultPackaging'))
-{
+if (! function_exists('getPlatformDefaultPackaging')) {
     /**
      * Return default packaging ID for given shop
      */
@@ -1642,8 +1564,7 @@ if (! function_exists('getPlatformDefaultPackaging'))
     }
 }
 
-if (! function_exists('getDefaultPackaging'))
-{
+if (! function_exists('getDefaultPackaging')) {
     /**
      * Return default packaging ID for given shop
      *
@@ -1663,8 +1584,7 @@ if (! function_exists('getDefaultPackaging'))
     }
 }
 
-if (! function_exists('getPackagings'))
-{
+if (! function_exists('getPackagings')) {
     /**
      * Return Packaging options for perticulater shop
      *
@@ -1679,8 +1599,7 @@ if (! function_exists('getPackagings'))
     }
 }
 
-if (! function_exists('getPackagingCost'))
-{
+if (! function_exists('getPackagingCost')) {
     /**
      * Return packaging Cost for the given id
      *
@@ -1688,7 +1607,7 @@ if (! function_exists('getPackagingCost'))
      */
     function getPackagingCost($packaging = Null)
     {
-        if(! $packaging) {
+        if (! $packaging) {
             return Null;
         }
 
@@ -1696,8 +1615,7 @@ if (! function_exists('getPackagingCost'))
     }
 }
 
-if (! function_exists('getShippingingCost'))
-{
+if (! function_exists('getShippingingCost')) {
     /**
      * Return shipping Cost for the given id
      *
@@ -1705,7 +1623,7 @@ if (! function_exists('getShippingingCost'))
      */
     function getShippingingCost($shipping = Null)
     {
-        if(! $shipping) {
+        if (! $shipping) {
             return Null;
         }
 
@@ -1713,8 +1631,7 @@ if (! function_exists('getShippingingCost'))
     }
 }
 
-if (! function_exists('find_string_in_array'))
-{
+if (! function_exists('find_string_in_array')) {
     /**
      * find string or sub_string in array of string
      *
@@ -1731,8 +1648,7 @@ if (! function_exists('find_string_in_array'))
     }
 }
 
-if (! function_exists('userLevelCompare'))
-{
+if (! function_exists('userLevelCompare')) {
     /**
      * Compare two user access level and
      * return true is $user can access the $comparable users information
@@ -1781,8 +1697,7 @@ if (! function_exists('userLevelCompare'))
     }
 }
 
-if (! function_exists('get_value_from'))
-{
+if (! function_exists('get_value_from')) {
     /**
      * Get value from a given table and id
      *
@@ -1794,10 +1709,10 @@ if (! function_exists('get_value_from'))
      */
     function get_value_from($ids, $table, $field)
     {
-        if(is_array($ids)) {
+        if (is_array($ids)) {
             $values = \DB::table($table)->select($field)->whereIn('id', $ids)->get()->toArray();
 
-            if(! empty($values)) {
+            if (! empty($values)) {
                 $result = [];
                 foreach ($values as $value) {
                     $result[] = $value->$field;
@@ -1809,7 +1724,7 @@ if (! function_exists('get_value_from'))
         else{
             $value = \DB::table($table)->select($field)->where('id', $ids)->first();
 
-            if(! empty($value) && isset($value->$field)){
+            if (! empty($value) && isset($value->$field)){
                 return $value->$field;
             }
         }
@@ -1818,16 +1733,14 @@ if (! function_exists('get_value_from'))
     }
 }
 
-if (! function_exists('get_package_options_settings'))
-{
+if (! function_exists('get_package_options_settings')) {
     function get_package_options_settings($prefix)
     {
         return \DB::table('options')->where('option_name', 'like', $prefix .'_%')->get();
     }
 }
 
-if (! function_exists('get_from_option_table'))
-{
+if (! function_exists('get_from_option_table')) {
     function get_from_option_table($field, $default = Null)
     {
         $record = \DB::table('options')->select('option_value')->where('option_name', $field)->first();
@@ -1849,8 +1762,7 @@ if (! function_exists('get_from_option_table'))
     }
 }
 
-if (! function_exists('update_option_table_record'))
-{
+if (! function_exists('update_option_table_record')) {
     function update_option_table_record($option, $data)
     {
         $data = is_array($data) ? serialize($data) : $data;
@@ -1869,8 +1781,7 @@ if (! function_exists('update_option_table_record'))
 //     }
 // }
 
-if (! function_exists('get_yes_or_no'))
-{
+if (! function_exists('get_yes_or_no')) {
     /**
      * Return YES or No tring for views base on a given bool value
      *
@@ -1884,8 +1795,7 @@ if (! function_exists('get_yes_or_no'))
     }
 }
 
-if (! function_exists('get_msg_folder_name_from_label'))
-{
+if (! function_exists('get_msg_folder_name_from_label')) {
     /**
      * get_msg_folder_name_from_label
      *
@@ -1906,8 +1816,7 @@ if (! function_exists('get_msg_folder_name_from_label'))
     }
 }
 
-if (! function_exists('get_payment_method_type'))
-{
+if (! function_exists('get_payment_method_type')) {
     function get_payment_method_type($id)
     {
         switch ($id) {
@@ -1935,8 +1844,7 @@ if (! function_exists('get_payment_method_type'))
     }
 }
 
-if (! function_exists('get_order_status_name'))
-{
+if (! function_exists('get_order_status_name')) {
     /**
      * get_order_status_name
      *
@@ -1960,8 +1868,7 @@ if (! function_exists('get_order_status_name'))
     }
 }
 
-if (! function_exists('get_payment_status_name'))
-{
+if (! function_exists('get_payment_status_name')) {
     /**
      * get_payment_status_name
      *
@@ -1998,8 +1905,7 @@ if ( ! function_exists('get_exception_message') )
     }
 }
 
-if (! function_exists('get_disput_status_name'))
-{
+if (! function_exists('get_disput_status_name')) {
     /**
      * get_disput_status_name
      *
@@ -2020,8 +1926,7 @@ if (! function_exists('get_disput_status_name'))
     }
 }
 
-if (! function_exists('get_chat_status_name'))
-{
+if (! function_exists('get_chat_status_name')) {
     /**
      * get_chat_status_name
      *
@@ -2039,8 +1944,7 @@ if (! function_exists('get_chat_status_name'))
     }
 }
 
-if (! function_exists('get_cancellation_reason_txt'))
-{
+if (! function_exists('get_cancellation_reason_txt')) {
     /**
      * get_cancellation_reason_txt
      *
@@ -2059,11 +1963,10 @@ if (! function_exists('get_cancellation_reason_txt'))
     }
 }
 
-if (! function_exists('get_activity_title'))
-{
+if (! function_exists('get_activity_title')) {
     function get_activity_title($activity)
     {
-        if(! $activity->causer){
+        if (! $activity->causer){
             return trans('app.system') . ' ' . $activity->description . ' ' . trans('app.this') . ' ' . $activity->log_name;
         }
 
@@ -2071,8 +1974,7 @@ if (! function_exists('get_activity_title'))
     }
 }
 
-if (! function_exists('isActive'))
-{
+if (! function_exists('isActive')) {
     /**
      * Set the active class to the current opened menu.
      *
@@ -2096,11 +1998,10 @@ if (! function_exists('isActive'))
     }
 }
 
-if(! function_exists('verifyRequiredDataForBulkUpload'))
-{
+if (! function_exists('verifyRequiredDataForBulkUpload')) {
     function verifyRequiredDataForBulkUpload($data, $type = 'inventory')
     {
-        if(! is_array($data)){
+        if (! is_array($data)){
             $data = unserialize($data);
         }
 
@@ -2116,8 +2017,7 @@ if(! function_exists('verifyRequiredDataForBulkUpload'))
     }
 }
 
-if(! function_exists('checkAllValuesExistInAArray'))
-{
+if (! function_exists('checkAllValuesExistInAArray')) {
     /**
      * check all the Values Exist of $b exist is array $a
      *
@@ -2136,8 +2036,7 @@ if(! function_exists('checkAllValuesExistInAArray'))
     }
 }
 
-if (! function_exists('is_chat_enabled'))
-{
+if (! function_exists('is_chat_enabled')) {
     /**
      * Check if the chat window is enabled for the shop
      */
@@ -2147,8 +2046,7 @@ if (! function_exists('is_chat_enabled'))
     }
 }
 
-if (! function_exists('is_subscription_enabled'))
-{
+if (! function_exists('is_subscription_enabled')) {
     /**
      * Check if the subscription enabled
      */
@@ -2158,8 +2056,17 @@ if (! function_exists('is_subscription_enabled'))
     }
 }
 
-if (! function_exists('subscription_billing_type'))
-{
+if (! function_exists('get_subscription_billing')) {
+    /**
+     * Check if the subscription billing
+     */
+    function get_subscription_billing()
+    {
+        return config('system.subscription.billing');
+    }
+}
+
+if (! function_exists('subscription_billing_type')) {
     /**
      * Get the subscription billing type
      */
@@ -2169,8 +2076,7 @@ if (! function_exists('subscription_billing_type'))
     }
 }
 
-if (! function_exists('is_stripe_configured'))
-{
+if (! function_exists('is_stripe_configured')) {
     /**
      * Check if the stripe APIs configured
      */
@@ -2181,8 +2087,7 @@ if (! function_exists('is_stripe_configured'))
     }
 }
 
-if (! function_exists('get_chat_room_name'))
-{
+if (! function_exists('get_chat_room_name')) {
     /**
      * Return zcart chat_room_name
      */
@@ -2192,8 +2097,7 @@ if (! function_exists('get_chat_room_name'))
     }
 }
 
-if (! function_exists('get_vendor_chat_room_id'))
-{
+if (! function_exists('get_vendor_chat_room_id')) {
     /**
      * Return vendor_chat_room_id
      */
@@ -2209,8 +2113,7 @@ if (! function_exists('get_vendor_chat_room_id'))
     }
 }
 
-if (! function_exists('get_private_chat_room_id'))
-{
+if (! function_exists('get_private_chat_room_id')) {
     /**
      * Return unique private_chat_room_id
      */
@@ -2220,8 +2123,7 @@ if (! function_exists('get_private_chat_room_id'))
     }
 }
 
-if (! function_exists('multi_tag_explode'))
-{
+if (! function_exists('multi_tag_explode')) {
     /**
      * extend php's explode functions
      */
@@ -2231,8 +2133,7 @@ if (! function_exists('multi_tag_explode'))
     }
 }
 
-if (! function_exists('get_featured_items'))
-{
+if (! function_exists('get_featured_items')) {
     /**
      * Get featured Products
      * @return array
@@ -2264,8 +2165,7 @@ if (! function_exists('get_deal_of_the_day')) {
     }
 }
 
-if (! function_exists('create_file_from_base64'))
-{
+if (! function_exists('create_file_from_base64')) {
     /**
      * extend php's explode functions
      */

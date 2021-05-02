@@ -60,12 +60,11 @@ return [
     'no_card_added' => 'Please add billing information to subscribe.',
     'we_dont_save_card_info' => 'We do not store your card information.',
     'plan_comes_with_trial' => 'Every plan comes with a FREE :days days trial period',
-    'current_subscription' => 'You are currently subscribed to the <strong>:plan</strong> plan.',
     'trial_ends_at' => 'Your trial ends in :ends days!',
     'trial_expired' => 'Your trial period expired! Choose a subscription to continue.',
     'generic_trial_ends_at' => 'Your free trial ends in :ends days! Add billing information and choose a plan to continue.',
     'resume_subscription' => 'Your subscription ends in :ends days! Resume your subscription to continue.',
-    'choose_subscription' => 'Choose a subscription that best fit your style.',
+    'choose_subscription' => 'Choose a subscription that best fit your need.',
     'trouble_validating_card' => 'We had trouble validating your card. It can be your card provider is preventing us from charging the card. Please contact your card provider or customer support.',
     'subscription_expired' => 'Your subscription has been expired! Choose a subscription to continue.',
     'using_more_resource' => 'You\'re using more resources than the :plan plan allowed to. Please use a plan that appropriate to your business.',
@@ -270,5 +269,8 @@ return [
 
     'trending_categories_update_failed' => 'You can add maximum :limit trending category',
 
+    'misconfigured_subscription_stripe' => 'The system found misconfigured Stripe subscriptions. Please check your settings. Read the documentation if need help.',
+
+    'misconfigured_subscription_wallet' => 'Wallet based subscription required WALLET and LOCAL SUBSCRIPTION packages to fucntion. Please contact support team for help. System will try to use STRIPE subscription unless these requirements met.',
 
 ];

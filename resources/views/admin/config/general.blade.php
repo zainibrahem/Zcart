@@ -177,10 +177,10 @@
 					        <div class="spacer30"></div>
 						</div>
 
-						@if(isset($shop) && $shop->logo)
+						@if(isset($shop) && $shop->logoImage)
 							<div class="form-group text-center">
 								<label class="with-help control-label"> {{ trans('app.logo') }}</label>
-								<img src="{{ get_storage_file_url(optional($shop->logo)->path, 'medium') }}" alt="{{ trans('app.logo') }}">
+								<img src="{{ get_storage_file_url(optional($shop->logoImage)->path, 'medium') }}" alt="{{ trans('app.logo') }}">
 						        <div class="spacer10"></div>
 								<label>
 							    	{!! Form::checkbox('delete_image', 1, null, ['class' => 'icheck']) !!} {{ trans('app.form.delete_logo') }}
@@ -188,10 +188,10 @@
 							</div>
 					  	@endif
 
-						@if(isset($shop) && $shop->featuredImage)
+						@if(isset($shop) && $shop->coverImage)
 							<div class="form-group text-center">
 								<label class="with-help control-label"> {{ trans('app.cover_image') }}</label>
-		                      	<img src="{{ get_storage_file_url(optional($shop->featuredImage)->path, 'medium') }}" width="" alt="{{ trans('app.cover_image') }}">
+		                      	<img src="{{ get_storage_file_url(optional($shop->coverImage)->path, 'medium') }}" width="" alt="{{ trans('app.cover_image') }}">
 			                    <label>
 						        <div class="spacer10"></div>
 								<label>

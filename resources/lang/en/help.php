@@ -141,7 +141,7 @@ return [
 
     'subscription_name' => 'Give a meaningful name to the subscription plan.',
 
-    'subscription_plan_id' => 'This is the identifier that needs to be the exact match with Stripe\'s plan ID',
+    'subscription_plan_id' => 'If you\'re using Stripe based subscription system, put Stripe\'s plan ID here.',
 
     'featured_subscription' => 'There should be only one featured subscription',
 
@@ -645,7 +645,7 @@ return [
 
     'slider_image' => 'The main image what will display as slider. Its required to generate the slider.',
 
-    'slider_img_hint' => 'The slider image should be 1280x300px',
+    'slider_img_hint' => 'The slider image should be 1280x350px',
 
     'slider_order' => 'The slider will be  arranged by this order.',
 
@@ -804,4 +804,12 @@ return [
     'slider_text_position' => 'Set your content position on slider. default position right',
 
     'deal_of_the_day' => 'Just one item can be set as deal of the day.',
+
+    'upload_package_zip_archive' => 'Upload the zip archive containing the package files only. Don\'t upload documentation or other files.',
+
+    'help_clear_configs' => 'Clear configuration cache. This action may require after you made some changes in the .env file or any config files.',
+
+    'this_will_overwrite_by_dynamic_commission' => 'When dynamic commission plugin is active. This will overwrite by dynamic value.',
+
+    'transaction_fee_will_charge' => 'The transaction fee will be charged even when the commission is zero.',
 ];

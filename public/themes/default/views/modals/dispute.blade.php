@@ -23,16 +23,16 @@
                 <div class="row space10">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <div class="col-xs-6 nopadding">
+                            <div class="col-6 nopadding">
                                 <label for="goods_received">@lang('theme.goods_received')?<sup>*</sup></label>
                                 <div class="help-block with-errors"></div>
                             </div>
-                            <div class="col-xs-3">
+                            <div class="col-3">
                                 <label>
                                   <input name="order_received" value="1" class="i-radio-blue" type="radio" required="required"/> {{ trans('theme.yes') }}
                                 </label>
                             </div>
-                            <div class="col-xs-3">
+                            <div class="col-3">
                                 <label>
                                   <input name="order_received" value="0" class="i-radio-blue" type="radio" required="required"/> {{ trans('theme.no') }}
                                 </label>
@@ -87,7 +87,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-xs-7">
+                    <div class="col-7">
                         <div class="form-group hidden" id="return_goods_checkbox">
                             <label>
                               <input name="return_goods" value="1" class="i-check-blue" id="return_goods" type="checkbox"/> {{ trans('theme.return_goods') }}
@@ -95,7 +95,7 @@
                         </div>
                         <div class="help-block with-errors small"><span class="text-info hidden" id="return_goods_help_txt"><i class="fas fa-info-circle"></i> @lang('theme.help.return_goods_help_txt')</span></div>
                     </div>
-                    <div class="col-xs-5">
+                    <div class="col-5">
                         <input class="btn btn-block flat btn-primary" type="submit" value="{{ trans('theme.button.open_dispute') }}">
                     </div>
                 </div>

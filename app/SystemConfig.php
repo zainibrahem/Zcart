@@ -124,6 +124,16 @@ class SystemConfig extends BaseModel
     }
 
     /**
+     * Check if Ggoogle Analytic has been Ready.
+     *
+     * @return bool
+     */
+    public static function isGgoogleAnalyticReady()
+    {
+        return self::isGgoogleAnalyticEnabled() && self::isGgoogleAnalyticConfigured();
+    }
+
+    /**
      * Check if Chat enabled.
      *
      * @return bool

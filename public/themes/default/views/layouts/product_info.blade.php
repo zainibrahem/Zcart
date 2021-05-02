@@ -13,37 +13,38 @@
     @include('theme::layouts.ratings', ['ratings' => $item->feedbacks->avg('rating'), 'count' => $item->feedbacks_count])
   @endif
 
-  <div class="row">
-    <div class="col-sm-12">
-      @include('theme::layouts.pricing', ['item' => $item])
-    </div>
-  </div>
+  @include('theme::layouts.pricing', ['item' => $item])
 
   <div class="row">
-    <div class="col-sm-6 col-xs-12 nopadding-right">
-        <div class="product-info-availability space10">@lang('theme.availability'):
+    <div class="col-6 nopadding-right">
+        <div class="product-info-availability space10">
+          <div class="d-none d-sm-inline-block">@lang('theme.availability'):</div>
           <span>{{ $item->stock_quantity > 0 ? trans('theme.in_stock') : trans('theme.out_of_stock') }}</span>
         </div>
     </div>
-    <div class="col-sm-6 col-xs-12 nopadding-left">
-        <div class="product-info-condition space10">
 
-          @lang('theme.condition'): <span><b id="item_condition">{!! $item->condition !!}</b></span>
+    <div class="col-6 nopadding-left">
+        <div class="product-info-condition space10">
+          <div class="d-none d-sm-inline-block">@lang('theme.condition'):</div>
+          <span><b id="item_condition">{!! $item->condition !!}</b></span>
 
           @if($item->condition_note)
-            <sup><i class="fas fa-question" id="item_condition_note" data-toggle="tooltip" title="{!! $item->condition_note !!}" data-placement="top"></i></sup>
+            <sup>
+              <i class="fas fa-question" id="item_condition_note" data-toggle="tooltip" title="{!! $item->condition_note !!}" data-placement="top"></i>
+            </sup>
           @endif
         </div>
     </div>
   </div><!-- /.row -->
 
-  <div class="row">
-    <div class="col-sm-6 col-xs-12 nopadding-right">
+  <div class="row mb-2">
+    <div class="col-6 nopadding-right">
       <a href="javascript:void(0)" data-link="{{ route('wishlist.add', $item) }}" class="btn btn-link add-to-wishlist">
         <i class="far fa-heart"></i> @lang('theme.button.add_to_wishlist')
       </a>
     </div>
-    <div class="col-sm-6 col-xs-12 nopadding-left">
+
+    <div class="col-6 nopadding-left">
       @if('quickView.product' == Route::currentRouteName())
         <a href="{{ route('show.store', $item->shop->slug) }}" class="btn btn-link">
           <i class="far fa-list"></i> @lang('theme.more_items_from_this_seller', ['seller' => $item->shop->name])

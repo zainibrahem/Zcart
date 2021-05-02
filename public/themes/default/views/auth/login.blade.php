@@ -18,14 +18,14 @@
                     <div class="help-block with-errors"></div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-7">
+                    <div class="col-7">
                         <div class="form-group">
                             <label>
                                 {!! Form::checkbox('remember', null, null, ['class' => 'icheck']) !!} {{ trans('theme.remember_me') }}
                             </label>
                         </div>
                     </div>
-                    <div class="col-xs-5">
+                    <div class="col-5">
                         {!! Form::submit(trans('theme.button.login'), ['class' => 'btn btn-block btn-lg btn-flat btn-primary']) !!}
                     </div>
                 </div>
@@ -33,8 +33,8 @@
 
             @if(config('system_settings.social_auth'))
                 <div class="social-auth-links text-center">
-                    <a href="{{ route('customer.login.social', 'facebook') }}" class="btn btn-block btn-social btn-facebook btn-lg btn-flat"><i class="fas fa-facebook"></i> {{ trans('theme.button.login_with_fb') }}</a>
-                    <a href="{{ route('customer.login.social', 'google') }}" class="btn btn-block btn-social btn-google btn-lg btn-flat"><i class="fas fa-google"></i> {{ trans('theme.button.login_with_g') }}</a>
+                    <a href="{{ route('customer.login.social', 'facebook') }}" class="btn btn-block btn-social btn-facebook btn-lg btn-flat"><i class="fa fa-facebook"></i> {{ trans('theme.button.login_with_fb') }}</a>
+                    <a href="{{ route('customer.login.social', 'google') }}" class="btn btn-block btn-social btn-google btn-lg btn-flat"><i class="fa fa-google"></i> {{ trans('theme.button.login_with_g') }}</a>
                 </div>
             @endif
             <!-- /.social-auth-links -->

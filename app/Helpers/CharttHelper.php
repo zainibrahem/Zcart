@@ -24,11 +24,13 @@ class CharttHelper
      */
    	public static function Days($days = Null, $format = 'F d', $start = Null)
     {
-    	if(!$days)
+    	if(! $days) {
     		$days = config('charts.default.days', 30);
+        }
 
-		if(!$start)
+		if(! $start) {
 			$start = Carbon::today();
+        }
 
 		$data = [];
 		for ($i = $days-1; $i >= 0; $i--) {
@@ -46,11 +48,13 @@ class CharttHelper
      */
    	public static function Months($months = Null, $format = 'F', $start = Null)
     {
-    	if(!$months)
+    	if(! $months) {
     		$months = config('charts.default.months', 12);
+        }
 
-		if(!$start)
+		if(! $start) {
 			$start = Carbon::today()->startOfMonth();
+        }
 
 		$data = [];
 		for ($i = $months-1; $i >= 0; $i--) {
@@ -68,8 +72,9 @@ class CharttHelper
      */
    	public static function SalesOfLast($days = Null, $start = Null)
     {
-		if(!$start)
+		if(! $start) {
 			$start = Carbon::today();
+        }
 
 		$dateRange = static::Days($days, 'M-d', $start);
 
@@ -87,10 +92,12 @@ class CharttHelper
 
 		$data = [];
 		foreach ($dateRange as $day) {
-			if(array_key_exists($day, $sales))
+			if(array_key_exists($day, $sales)) {
 				$data[] = round($sales[$day]);
-			else
+            }
+			else {
 				$data[] = 0;
+            }
 		}
 
     	return $data;
@@ -168,11 +175,12 @@ class CharttHelper
     // public static function VisitorsOfLast($months = Null, $start = Null)
    	public static function visitorsOfMonths($months = Null, $start = Null)
     {
-        if(SystemConfig::isGgoogleAnalyticEnabled() && SystemConfig::isGgoogleAnalyticConfigured()){
+        if(SystemConfig::isGgoogleAnalyticReady()){
             //retrieve visitors and pageviews from GoogleAnalytic
             $data = static::fetchVisitorsOfMonthsFromGoogle($months, $start);
 
             $breackdown = config('charts.visitors.breakdown_last_days') > 0 ? config('charts.visitors.breakdown_last_days') : Null;
+
             if($breackdown){
                 $analyticsData = static::fetchVisitorsOfDaysFromGoogle($breackdown);
                 $data['visits'] = array_merge($data['visits'], $analyticsData['visits']);
@@ -183,8 +191,9 @@ class CharttHelper
             return $data;
         }
 
-		if(!$start)
+		if(! $start) {
 			$start = Carbon::today()->startOfMonth();
+        }
 
 		$monthRange = static::Months($months, 'F', $start);
 
@@ -242,8 +251,9 @@ class CharttHelper
      */
     public static function visitorsOfDays($days = Null, $start = Null)
     {
-        if(!$start)
+        if(! $start) {
             $start = Carbon::today()->startOfDay();
+        }
 
         $visitors = Visitor::select('hits', 'page_views', 'updated_at')
                     ->withTrashed() //Include the blocked ips also
@@ -296,9 +306,10 @@ class CharttHelper
     {
         //retrieve visitors and pageviews since the 6 months ago
         $analyticsData = GoogleAnalytics::fetchTotalVisitorsSessionsAndPageViews(Period::months($months-1));
-        // echo "<pre>"; print_r($analyticsData); echo "</pre>"; exit();
-        if(!$start)
+
+        if(! $start) {
             $start = Carbon::now()->startOfMonth();
+        }
 
         $dateRange = static::Months($months, 'n', $start);
 
@@ -334,8 +345,9 @@ class CharttHelper
     {
         $analyticsData = GoogleAnalytics::fetchTotalVisitorsSessionsAndPageViews(Period::days($days-1), 'date');
 
-        if(!$start)
+        if(! $start) {
             $start = Carbon::today()->startOfDay();
+        }
 
         $dateRange = static::Days($days, 'l', $start);
 
@@ -408,10 +420,7 @@ class CharttHelper
 
     public static function getStartDate($date = Null)
     {
-        if ($date)
-            return Carbon::parse($date);
-
-        return Carbon::today();
+        return $date ? Carbon::parse($date) : Carbon::today();
     }
 
     // public static function getEndDate($date = Null, $period = 'day')

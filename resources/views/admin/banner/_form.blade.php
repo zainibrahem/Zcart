@@ -117,7 +117,7 @@
     <p class="help-block">* {{ trans('app.form.required_fields') }}</p>
   </div> <!--/.col-md-9 -->
   <div class="col-md-3 nopadding-left">
-    @if(active_theme() !== 'legacy')
+    @if(active_theme() == 'legacy')
       <img src="{{ asset('images/placeholders/legacy_banner_layout.jpg') }}" width="100%" height="450px" align="right">
     @else
       <img src="{{ asset('images/placeholders/banner_layout.jpg') }}" width="" height="450px" align="right">

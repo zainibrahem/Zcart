@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Invoicebackup extends BaseModel
+class Invoice extends BaseModel
 {
     use SoftDeletes;
 

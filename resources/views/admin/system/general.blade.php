@@ -243,23 +243,31 @@
 					    	</div><!-- /.col-sm-4 -->
 				    	</div><!-- /.row -->
 
-			            @unless( config('app.demo') == true )
-					    	<hr class="style3" />
-				    		<div class="spacer30"></div>
+			    		<div class="spacer30"></div>
 
-					    	<div class="row">
-						    	<div class="col-sm-5 text-justify col-sm-offset-1">
+				    	<div class="row">
+				            @unless( config('app.demo') == true )
+						    	<hr class="style3" />
+
+						    	<div class="col-sm-4 text-center">
+						    		<a href="{{ route('admin.incevio.clear') }}" class="btn btn-default btn-lg confirm">{{ trans('app.clear_configs') }}</a>
+						    		<div class="spacer10"></div>
+						    		<p class="text-danger"><i class="fa fa-info-circle"></i> {!! trans('help.help_clear_configs') !!}</p>
+						    	</div><!-- /.col-sm-4 -->
+
+						    	<div class="col-sm-4 text-justify">
 						    		<a href="javascript:void(0)" data-link="{{ route('admin.setting.license.uninstall') }}" class="ajax-modal-btn btn btn-danger btn-lg ">{{ trans('app.uninstall_app_license') }}</a>
 						    		<div class="spacer10"></div>
 						    		<p class="text-danger"><i class="fa fa-exclamation-triangle"></i> {!! trans('messages.uninstall_app_license') !!}</p>
-						    	</div><!-- /.col-sm-9 -->
-						    	<div class="col-sm-5 text-justify">
+						    	</div><!-- /.col-sm-4 -->
+
+						    	<div class="col-sm-4 text-justify">
 						    		<a href="{{ route('admin.setting.license.update') }}" class="btn btn-default btn-lg confirm">{{ trans('app.update_app_license') }}</a>
 						    		<div class="spacer10"></div>
 						    		<p class="text-info"><i class="fa fa-info-circle"></i> {!! trans('messages.update_app_license') !!}</p>
-						    	</div><!-- /.col-sm-3 -->
-					    	</div><!-- /.row -->
-			            @endunless
+						    	</div><!-- /.col-sm-4 -->
+				            @endunless
+				    	</div><!-- /.row -->
 			    	@endif
 		    		<div class="spacer50"></div>
 			    </div><!-- /.tab-pane -->

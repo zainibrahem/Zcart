@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-xs-12">
+  <div class="col-12">
     <div class="my-info-container">
         <div class="my-info-box">
             <div class="me-info-block">

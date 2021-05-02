@@ -1,5 +1,4 @@
 @foreach($products as $item)
-
     <div class="recent__items-box box">
         <a href="{{ route('show.product', $item->slug) }}">
             <div class="recent__items-img box-img">
@@ -31,5 +30,4 @@
             </div>
         @endif
     </div>
-
 @endforeach

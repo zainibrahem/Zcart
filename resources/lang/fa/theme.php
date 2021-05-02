@@ -412,7 +412,6 @@ return array (
     'your_feedback_saved' => 'با تشکر از نظرات شما',
     'you_will_be_redirected_to_paystack' => 'شما به Paystack هدایت می شوید.',
     'you_will_be_redirected_to_instamojo' => 'شما به Instamojo هدایت می شوید.',
-    'all_seller_doesnt_ship' => 'همه فروشندگان به کشور / منطقه انتخابی شما تحویل نمی دهند. آدرس حمل و نقل را تغییر دهید یا فروشندگان دیگری را که به منطقه شما حمل می کنند ، پیدا کنید.',
   ),
   'input_label' => 
   array (
@@ -659,7 +658,6 @@ return array (
   'shop_now' => 'اکنون خرید کنید',
   'add_to_cart' => 'افزودن به سبد خرید',
   'item_added_to_wishlist' => 'مورد به لیست خواسته ها اضافه شد',
-  'single_checkout' => 'پرداخت تمام',
   'flash_deal_days' => 'روزها',
   'hrs' => 'ساعت',
   'mins' => 'دقیقه',
@@ -671,4 +669,10 @@ return array (
   'vendors' => 'فروشندگان',
   'all_brands' => 'همه مارک ها',
   'all_shops' => 'همه فروشندگان',
+  'sale_over' => 'متاسف! شما فروش را از دست دادید',
+  'categories' => 'دسته بندی ها',
+  'messages' => 'پیام ها',
+  'sell' => 'فروش',
+  'cart_update_failed' => 'به روز رسانی سبد خرید شکست خورده است!',
+  'cart_count' => 'شمارش سبد خرید',
 );

@@ -15,8 +15,9 @@ class VerifyUserIsAdmin
      */
     public function handle($request, Closure $next)
     {
-        if($request->user()->isAdmin())
+        if($request->user()->isAdmin()) {
             return $next($request);
+        }
 
         return $request->ajax() || $request->wantsJson()
                                 ? response('Only the admin users can access this page.', 402)

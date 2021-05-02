@@ -292,7 +292,7 @@
 
 		      	@foreach($order->conversation->replies->sortByDesc('created_at') as $msg)
 				    <div class="row message-list-item {{ $msg->customer_id ? 'message-buyer message-me' : 'message-seller' }}">
-			          	<div class="col-xs-2 nopadding-right">
+			          	<div class="col-2 nopadding-right">
 			          		@unless($msg->customer_id)
 				              	<div class="message-user-info">
 				                  	<div class="message-user-name" title="seller">{{ $order->shop->name ?? lang('theme.seller')}}</div>
@@ -300,7 +300,7 @@
 					            </div>
 			          		@endunless
 			          	</div>
-				        <div class="col-xs-8">
+				        <div class="col-8">
 				            <div class="message-content-wrapper">
 				                <div class="message-content">{!! $msg->reply !!}</div>
 				            	@if($attachment = optional($msg->attachments)->first())
@@ -310,7 +310,7 @@
 				            	@endif
 				            </div>
 				        </div>
-				        <div class="col-xs-2 nopadding-left">
+				        <div class="col-2 nopadding-left">
 			          		@if($msg->customer_id)
 				              	<div class="message-user-info">
 				                  	<div class="message-user-name" title="me">@lang('theme.me')</div>
@@ -322,9 +322,9 @@
 		      	@endforeach
 
 			    <div class="row message-list-item message-buyer message-me">
-		          	<div class="col-xs-2 nopadding-right">
+		          	<div class="col-2 nopadding-right">
 		          	</div>
-			        <div class="col-xs-8">
+			        <div class="col-8">
 			            <div class="message-content-wrapper">
 			                <div class="message-content">{!! $order->conversation->message !!}</div>
 			            	@if($attachment = optional($order->conversation->attachments)->first())
@@ -334,7 +334,7 @@
 			            	@endif
 			            </div>
 			        </div>
-			        <div class="col-xs-2 nopadding-left">
+			        <div class="col-2 nopadding-left">
 			              <div class="message-user-info">
 			                  <div class="message-user-name" title="me">@lang('theme.me')</div>
 			                  <div class="message-date">{{ $order->conversation->created_at->toDayDateTimeString() }}</div>

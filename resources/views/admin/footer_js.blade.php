@@ -141,7 +141,8 @@
 	//DataTables
 	function initDatatables()
 	{
-		$('#all-product-table').DataTable({
+	    // Load products
+	    $('#all-product-table').DataTable({
 		  	"aaSorting": [],
 		    "iDisplayLength": {{ getPaginationValue() }},
 	        "processing": true,
@@ -188,6 +189,154 @@
 		        	'pageLength', 'copy', 'csv', 'excel', 'pdf', 'print'
 		    	]
 	    });
+
+	    // Load active inventoris
+	    $('#active_inventory').DataTable({
+		  	"aaSorting": [],
+		    "iDisplayLength": {{ getPaginationValue() }},
+	        "processing": true,
+	        "serverSide": true,
+	        "ajax": "{{ route('admin.stock.inventory.getMore', 'active') }}",
+	        "initComplete":function( settings, json){
+            	// console.log(json);
+        	},
+    	    "drawCallback": function( settings ) {
+			  	$(".massAction, .checkbox-toggle").unbind();
+			    $(".fa", '.checkbox-toggle').removeClass("fa-check-square-o").addClass('fa-square-o');
+    	    	initMassActions();
+			},
+			"columns": [
+	            { 'data': 'checkbox', 'name': 'checkbox', 'orderable': false, 'searchable': false, 'exportable': false, 'printable': false },
+	            { 'data': 'image', 'name': 'image', 'orderable': false, 'searchable': false },
+	            { 'data': 'sku', 'name': 'sku' },
+	            { 'data': 'title', 'name': 'title' },
+	            { 'data': 'condition', 'name': 'condition', 'orderable': false, 'searchable': false },
+	            { 'data': 'price', 'name': 'price', 'searchable': false },
+	            { 'data': 'quantity', 'name': 'quantity', 'orderable': false },
+	            { 'data': 'option', 'name': 'option', 'orderable': false, 'searchable': false, 'exportable': false, 'printable': false }
+	        ],
+		    "oLanguage": {
+		        "sInfo": "_START_ to _END_ of _TOTAL_ entries",
+		        "sLengthMenu": "Show _MENU_",
+		        "sSearch": "",
+		        "sEmptyTable": "No data found!",
+		        "oPaginate": {
+		          "sNext": '<i class="fa fa-hand-o-right"></i>',
+		          "sPrevious": '<i class="fa fa-hand-o-left"></i>',
+		        },
+		    },
+		    "aoColumnDefs": [{
+		        "bSortable": false,
+		        "aTargets": [ -1 ]
+		     }],
+			"lengthMenu": [
+				[10, 25, 50, -1],
+				[ '10 rows', '25 rows', '50 rows', 'Show all' ]
+			],     // page length options
+		    dom: 'Bfrtip',
+		    buttons: [
+		        	'pageLength', 'copy', 'csv', 'excel', 'pdf', 'print'
+		    	]
+	    });
+
+	    // Load inactive inventoris
+	    $('#inactive_inventory').DataTable({
+		  	"aaSorting": [],
+		    "iDisplayLength": {{ getPaginationValue() }},
+	        "processing": true,
+	        "serverSide": true,
+	        "ajax": "{{ route('admin.stock.inventory.getMore', 'inactive') }}",
+	        "initComplete":function( settings, json){
+            	// console.log(json);
+        	},
+    	    "drawCallback": function( settings ) {
+			  	$(".massAction, .checkbox-toggle").unbind();
+			    $(".fa", '.checkbox-toggle').removeClass("fa-check-square-o").addClass('fa-square-o');
+    	    	initMassActions();
+			},
+			"columns": [
+	            { 'data': 'checkbox', 'name': 'checkbox', 'orderable': false, 'searchable': false, 'exportable': false, 'printable': false },
+	            { 'data': 'image', 'name': 'image', 'orderable': false, 'searchable': false },
+	            { 'data': 'sku', 'name': 'sku' },
+	            { 'data': 'title', 'name': 'title' },
+	            { 'data': 'condition', 'name': 'condition', 'orderable': false, 'searchable': false },
+	            { 'data': 'price', 'name': 'price', 'searchable': false },
+	            { 'data': 'quantity', 'name': 'quantity', 'orderable': false },
+	            { 'data': 'option', 'name': 'option', 'orderable': false, 'searchable': false, 'exportable': false, 'printable': false }
+	        ],
+		    "oLanguage": {
+		        "sInfo": "_START_ to _END_ of _TOTAL_ entries",
+		        "sLengthMenu": "Show _MENU_",
+		        "sSearch": "",
+		        "sEmptyTable": "No data found!",
+		        "oPaginate": {
+		          "sNext": '<i class="fa fa-hand-o-right"></i>',
+		          "sPrevious": '<i class="fa fa-hand-o-left"></i>',
+		        },
+		    },
+		    "aoColumnDefs": [{
+		        "bSortable": false,
+		        "aTargets": [ -1 ]
+		     }],
+			"lengthMenu": [
+				[10, 25, 50, -1],
+				[ '10 rows', '25 rows', '50 rows', 'Show all' ]
+			],     // page length options
+		    dom: 'Bfrtip',
+		    buttons: [
+		        	'pageLength', 'copy', 'csv', 'excel', 'pdf', 'print'
+		    	]
+	    });
+
+	    // Load out of stock inventoris
+	    $('#outOfStock_inventory').DataTable({
+		  	"aaSorting": [],
+		    "iDisplayLength": {{ getPaginationValue() }},
+	        "processing": true,
+	        "serverSide": true,
+	        "ajax": "{{ route('admin.stock.inventory.getMore', 'outOfStock') }}",
+	        "initComplete":function( settings, json){
+            	// console.log(json);
+        	},
+    	    "drawCallback": function( settings ) {
+			  	$(".massAction, .checkbox-toggle").unbind();
+			    $(".fa", '.checkbox-toggle').removeClass("fa-check-square-o").addClass('fa-square-o');
+    	    	initMassActions();
+			},
+			"columns": [
+	            { 'data': 'checkbox', 'name': 'checkbox', 'orderable': false, 'searchable': false, 'exportable': false, 'printable': false },
+	            { 'data': 'image', 'name': 'image', 'orderable': false, 'searchable': false },
+	            { 'data': 'sku', 'name': 'sku' },
+	            { 'data': 'title', 'name': 'title' },
+	            { 'data': 'condition', 'name': 'condition', 'orderable': false, 'searchable': false },
+	            { 'data': 'price', 'name': 'price', 'searchable': false },
+	            { 'data': 'quantity', 'name': 'quantity', 'orderable': false },
+	            { 'data': 'option', 'name': 'option', 'orderable': false, 'searchable': false, 'exportable': false, 'printable': false }
+	        ],
+		    "oLanguage": {
+		        "sInfo": "_START_ to _END_ of _TOTAL_ entries",
+		        "sLengthMenu": "Show _MENU_",
+		        "sSearch": "",
+		        "sEmptyTable": "No data found!",
+		        "oPaginate": {
+		          "sNext": '<i class="fa fa-hand-o-right"></i>',
+		          "sPrevious": '<i class="fa fa-hand-o-left"></i>',
+		        },
+		    },
+		    "aoColumnDefs": [{
+		        "bSortable": false,
+		        "aTargets": [ -1 ]
+		     }],
+			"lengthMenu": [
+				[10, 25, 50, -1],
+				[ '10 rows', '25 rows', '50 rows', 'Show all' ]
+			],     // page length options
+		    dom: 'Bfrtip',
+		    buttons: [
+		        	'pageLength', 'copy', 'csv', 'excel', 'pdf', 'print'
+		    	]
+	    });
+
 
 		$('#all-customer-table').DataTable({
 		  	"aaSorting": [],

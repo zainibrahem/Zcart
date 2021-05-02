@@ -30,8 +30,10 @@
             var url = $(this).attr("href");
 
             var msg = $(this).data('confirm');
-            if(!msg)
+
+            if(! msg) {
                 msg = "{{ trans('theme.notify.are_you_sure') }}";
+            }
 
             $.confirm({
                 title: "{{ trans('theme.confirmation') }}",
@@ -54,10 +56,12 @@
 
                         if (typeof url != 'undefined') {
                             location.href = url;
-                        }else if(form != null){
+                        }
+                        else if (form != null) {
                             form.submit();
                             @include('theme::layouts.notification', ['message' => trans('theme.notify.confirmed'), 'type' => 'success', 'icon' => 'check-circle'])
                         }
+
                         return true;
                       }
                   },
@@ -364,7 +368,6 @@
             window.location.href = getFormatedUrlStr(href, 'price='+ data.from + '-' + data.to);
         },
     });
-
 }(window.jQuery, window, document));
 
 // Helpers
@@ -406,6 +409,7 @@ function getFromPHPHelper(funcName, args = null)
           result = v;
         }
     });
+
     return result;
 }
 </script>

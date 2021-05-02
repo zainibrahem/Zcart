@@ -107,7 +107,7 @@
 
 			// If customer exist the check shipping address is seleced
 			if (typeof customer !== "undefined") {
-				if ( ! $("input:radio[name='ship_to']").is(":checked") ){
+				if (! $("input:radio[name='ship_to']").is(":checked")) {
 					$('.address-list-item').addClass('has-error');
 					$('#ship-to-error-block').html("{{trans('theme.notify.select_shipping_address')}}");
 					return;
@@ -115,7 +115,7 @@
 			}
 
 			// Check if form validation pass
-			if ($(".has-error").length){
+			if ($(".has-error").length) {
 	            @include('theme::layouts.notification', ['message' => trans('theme.notify.fill_required_info'), 'type' => 'warning', 'icon' => 'times-circle'])
 				return;
 			}
@@ -135,13 +135,14 @@
 			        if (response.error) {
 			          	form.find('.stripe-errors').text(response.error.message).removeClass('hide');
 						remove_busy_filter('body');
-			        } else {
+			        }
+			        else {
 			          	form.append($('<input type="hidden" name="cc_token">').val(response.id));
 			          	form.get(0).submit();
 			        }
 				});
 		  	}
-		  	else if(payment_method == 'jrfpay' && ! $('#jrfpay-otp-code').val()){
+		  	else if(payment_method == 'jrfpay' && ! $('#jrfpay-otp-code').val()) {
 		  		submitJrfPayRequest();
 		  	}
 		  	else {
@@ -151,28 +152,6 @@
 
 		$("#submit-btn-block").show(); // Show the submit buttons after loading the doms
     });
-
-	// Functions
-  //   function checkShippingZone(countryId, stateID)
-  //   {
-  {{-- //       var shop = '{{ $cart->shop_id }}'; --}}
-  //       // var countryId = $(this).val();
-	 //    var zone = getFromPHPHelper('get_shipping_zone_of', [shop, countryId, stateID]);
-		// zone = JSON.parse(zone);
-
-		// if($.isEmptyObject(zone)) {
-		// 	if($("#createAddressModal").is(':visible')){ //If the form in the address create modal
-		{{-- // 		$("#createAddressModal").find("select[name='country_id']").next('.help-block').html('<small>{{ trans('theme.notify.seller_doesnt_ship') }}</small>'); --}}
-		// 	}
-		// 	else {
-		{{-- // 		@include('theme::layouts.notification', ['message' => trans('theme.notify.seller_doesnt_ship'), 'type' => 'warning', 'icon' => 'times-circle']) --}}
-		{{-- // 	  	disableCartPayment("{{ trans('theme.notify.seller_doesnt_ship') }}") --}}
-		// 	}
-		// }
-		// else {
-		//   	enableCartPayment()
-		// }
-  //   }
 
     function showAccountForm()
     {
@@ -250,22 +229,9 @@
             @include('theme::layouts.notification', ['message' => trans('jrfpay::lang.bad_request'), 'type' => 'warning', 'icon' => 'times-circle'])
 		});
 
-	    request.always(function () {
+	    request.always(function() {
 			remove_busy_filter('body');
 	    });
     }
-
-  // 	function disableCartPayment(msg = '')
-  // 	{
-		// $('#checkout-notice-msg').html(msg);
-		// $("#checkout-notice").show();
-  //       $('#pay-now-btn, #paypal-express-btn').hide();
-  // 	}
-
-  // 	function enableCartPayment()
-  // 	{
-		// $("#checkout-notice").hide();
-  //       $('#pay-now-btn, #paypal-express-btn').show();
-  // 	}
 }(window.jQuery, window, document));
 </script>

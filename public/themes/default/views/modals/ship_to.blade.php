@@ -8,7 +8,6 @@
         </div>
         <div class="modal-body">
             {!! Form::open(['route' => ['register'], 'data-toggle' => 'validator', 'id' => 'shipToForm']) !!}
-
                 {{ Form::hidden('cart', Null, ['id' => 'cartinfo']) }} {{-- For the carts page --}}
 
                 {{-- <button class="btn btn-block btn-lg flat btn-black space20" id="login_to_shipp_btn">{{ trans('app.login_to_choose_address') }}</button> --}}
@@ -37,13 +36,11 @@
 
                 <p class="space20 small"><i class="fas fa-info-circle"></i> {!! trans('theme.delivery_locations_info') !!}</p>
 
-                <div class="col-xs-5 pull-right">
+                <div class="col-5 pull-right">
                     <input class="btn btn-block btn-lg flat btn-primary" type="submit" value="{{ trans('theme.button.submit') }}">
                 </div>
-
             {!! Form::close() !!}
         </div><!-- /.modal-body -->
-        <div class="modal-footer">
-        </div>
+        <div class="modal-footer"></div>
     </div><!-- /.modal-content -->
 </div><!-- /#disputeOpenModal -->

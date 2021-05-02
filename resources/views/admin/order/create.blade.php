@@ -111,7 +111,7 @@
                     </td>
                   </tr>
 
-                  @if( (bool) get_formated_decimal(config('shop_settings.order_handling_cost')) )
+                  @if((boo) get_formated_decimal(config('shop_settings.order_handling_cost')))
                     <tr>
                       <td class="text-right">{{ trans('app.handling') }}</td>
                       <td class="text-right" width="40%">{{ get_formated_currency_symbol() }}
@@ -172,7 +172,7 @@
                 </button>
               @endif
 
-              @if( $shipping_options != 'NaN' && ! isset($order_cart) && Gate::allows('create', App\Order::class))
+              @if($shipping_options != 'NaN' && ! isset($order_cart) && Gate::allows('create', App\Order::class))
                 <button name='action' type="submit" class='btn btn-flat btn-lg btn-new' >
                   {{ trans('app.place_order') }}
                 </button>
@@ -299,13 +299,13 @@
   <script language="javascript" type="text/javascript">
     ;(function($, window, document) {
       var payment_methods = <?=$payment_methods;?>;
-      if(payment_methods.length == 0){
+      if (payment_methods.length == 0) {
         $("#global-alert-msg").html('{!! trans('messages.notice.no_active_payment_method') . ' ' . '<a href="' . route('admin.setting.config.paymentMethod.index') . '">' . trans('app.activate') . '</a>' !!}');
         $("#global-alert-box").removeClass('hidden');
       }
 
       var billing_address = <?=$billing_address;?>;
-      if(billing_address.length == 0){
+      if (billing_address.length == 0) {
         $("#global-alert-msg").html('{!! trans('messages.notice.no_billing_address') . ' ' . '<a class="ajax-modal-btn btn btn-new" href="javascript:void(0)" data-link="' . route('address.create', ['customer', $customer->id]) . '"><i class="fa fa-plus-square-o"></i>' . trans('app.add_address') . '</a>' !!}');
         $("#global-alert-box").removeClass('hidden');
       }
@@ -317,22 +317,22 @@
       var productObj = <?=json_encode($inventories);?>;
 
       var cart = "{{ isset($cart) ? TRUE : FALSE }}";
-      if(cart){
+      if (cart) {
         setPackagingCost('{{$default_packaging->name}}', {{$default_packaging->cost}}, {{$default_packaging->id}});
         calculateOrderTotal();
       }
 
       // Set default settings based on shop and system configs
       var taxId = "{{ isset($shipping_zone->tax_id) ? $shipping_zone->tax_id : config('shop_settings.default_tax_id') }}";
-      if( taxId ){
+      if (taxId) {
         setTax(taxId);
       }
 
-      if(!shipping_options){
+      if (! shipping_options) {
         $("#global-alert-msg").html('{{ trans('messages.notice.no_shipping_option_for_the_zone') }}');
         $("#global-alert-box").removeClass('hidden');
       }
-      else if($.isEmptyObject(shipping_options)){
+      else if ($.isEmptyObject(shipping_options)) {
         $("#global-alert-msg").html('{!! trans('messages.notice.no_rate_for_the_shipping_zone', ['zone' => optional($shipping_zone)->name]) !!}');
         $("#global-alert-box").removeClass('hidden');
       }
@@ -412,7 +412,7 @@
             var filtered = getShippingOptions();
 
             var options = '';
-            filtered.forEach( function (item){
+            filtered.forEach(function (item){
               var preChecked = String(current) == String(item.name) ? 'checked' : '';
 
               options += '<div class="radio"><label id="'+ item.id +'"><input type="radio" name="shipping_option" id="'+ item.name +'" value="'+ getFormatedValue(item.rate) +'" '+ preChecked +'>'+ item.name +'</label></div>';
@@ -444,15 +444,17 @@
               var ID = $("#product-to-add").select2('data')[0].id;
               var itemDescription = $("#product-to-add").select2('data')[0].text;
 
-              if (ID == '' || itemDescription == '')
+              if (ID == '' || itemDescription == '') {
                   return false;
-              else
+              }
+              else {
                   $("#empty-cart").hide(); // Hide the empty cart message
+              }
 
               $("#product-to-add").select2("val", ""); // Reset the product search dropdown
 
               // Check if the product is already on the cart, Is so then just increase the qtt
-              if($("tr#"+ID).length){
+              if ($("tr#"+ID).length) {
                   increaseQttByOne(ID);
                   calculateItemTotal(ID);
                   return;
@@ -518,7 +520,7 @@
                         el.minimum <= totalPrice &&
                         (el.maximum >= totalPrice || !el.maximum);
 
-          if(totalWeight){
+          if (totalWeight) {
             result =  result ||
                       (el.based_on == 'weight' &&
                       el.minimum <= totalWeight &&
@@ -552,16 +554,19 @@
             }
         );
 
-        if(!cartWeight){
+        if (! cartWeight) {
           $("#global-alert-msg").html('{{ trans('messages.notice.cant_cal_weight_shipping_rate') }}');
           $("#global-alert-box").removeClass('hidden');
         }
 
         var options = getShippingOptions();
-        if(options[0])
+
+        if (options[0]) {
           setShippingCost(options[0].name, options[0].rate, options[0].id);
-        else
+        }
+        else {
           setShippingCost('');
+        }
 
         return;
       };
@@ -598,7 +603,7 @@
 
       function setTax(ID = NULL)
       {
-          if(!ID){
+          if(! ID){
               $("#summary-taxrate").text(0);
               calculateTax();
               return;
@@ -710,8 +715,9 @@
       function getTotalAmount()
       {
         var total = getOrderTotal();
-        if(!total)
+        if (! total) {
           return total;
+        }
 
         var packaging = getPackaging();
         var handling  = getHandling();
@@ -725,8 +731,9 @@
       function deleteThisRow(ID)
       {
         $("tr#"+ID).remove();
-        if($("tbody#items tr").length <= 1)
+        if ($("tbody#items tr").length <= 1) {
           $("#empty-cart").show(); // Show the empty cart message
+        }
 
         calculateOrderTotal();
         return;
@@ -744,17 +751,17 @@
         var cart = $("input#cart_id").val();
         var order = <?=isset($order_cart) ? 1 : 'NaN'?>;
 
-        if (order){
+        if (order) {
           var method = '<input name="_method" type="hidden" value="PUT">';
           var url = "{{ url('admin/order/order/') }}/"+ cart;
           $("form#form").append(method);
         }
-        else if (cart){
+        else if (cart) {
           var method = '<input name="_method" type="hidden" value="PUT">';
           var url = "{{ url('admin/order/cart/') }}/"+ cart;
           $("form#form").append(method);
         }
-        else{
+        else {
           var url = "{{ url('admin/order/cart') }}";
         }
 

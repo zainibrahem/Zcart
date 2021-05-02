@@ -11,6 +11,8 @@ class SubscriptionPlansSeeder extends BaseSeeder
      */
     public function run()
     {
+        $now = Carbon::Now();
+
         DB::table('subscription_plans')->insert([
             [
                 'name' => 'Individual',
@@ -22,8 +24,8 @@ class SubscriptionPlansSeeder extends BaseSeeder
                 'inventory_limit' => 20,
                 'featured' => false,
                 'order' => 1,
-                'created_at' => Carbon::Now(),
-                'updated_at' => Carbon::Now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],[
                 'name' => 'Business',
                 'plan_id' => 'price_1GyyRyJewI4n8wVFSRWlMSHy',
@@ -34,8 +36,8 @@ class SubscriptionPlansSeeder extends BaseSeeder
                 'inventory_limit' => 200,
                 'featured' => true,
                 'order' => 2,
-                'created_at' => Carbon::Now(),
-                'updated_at' => Carbon::Now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ],[
                 'name' => 'Professional',
                 'plan_id' => 'price_1H1HW7JewI4n8wVFl8Ukknoz',
@@ -46,8 +48,8 @@ class SubscriptionPlansSeeder extends BaseSeeder
                 'inventory_limit' => 500,
                 'featured' => false,
                 'order' => 3,
-                'created_at' => Carbon::Now(),
-                'updated_at' => Carbon::Now(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ]
         ]);
     }

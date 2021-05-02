@@ -15,11 +15,11 @@ class AddFieldsToPackagesTable extends Migration
     {
         Schema::table('packages', function (Blueprint $table) {
             if (! Schema::hasColumn('installation_key', 'installation_hash')) {
-                $table->string('license_key');
-                $table->string('installation_key');
-                $table->string('installation_hash');
-                $table->string('lcd');
-                $table->string('lrd');
+                $table->string('license_key')->after('version');
+                $table->string('installation_key')->after('license_key');
+                $table->string('installation_hash')->after('installation_key');
+                $table->string('lcd')->after('installation_hash');
+                $table->string('lrd')->after('lcd');
             }
         });
     }

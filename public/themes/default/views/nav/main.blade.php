@@ -28,7 +28,7 @@
             </li>
           @else
             <li class="image-icon">
-               <a href="{{route('customer.login')}}">
+              <a href="javascript:void(0)" data-toggle="modal" data-target="#loginModal">
                 <i class="fal fa-user"></i>
                 <span>{{ trans('theme.sing_in') }}</span>
               </a>
@@ -80,7 +80,7 @@
           <li class="language">
             <select name="lang" id="languageChange">
                 @foreach(config('active_locales') as $lang)
-                  <option dd-link="{{route('locale.change', $lang->code)}}" value="{{$lang->code}}" data-imagesrc="{{asset(sys_image_path('flags') . array_slice(explode('_', $lang->php_locale_code), -1)[0] . '.png')}}" {{$lang->code == \App::getLocale() ? 'selected' : ''}}>
+                  <option dd-link="{{route('locale.change', $lang->code)}}" value="{{$lang->code}}" data-imagesrc="{{get_flag_img_by_code(array_slice(explode('_', $lang->php_locale_code), -1)[0], true) }}" {{$lang->code == \App::getLocale() ? 'selected' : ''}}>
                       {{ $lang->language }}
                   </option>
                 @endforeach
@@ -102,11 +102,7 @@
       </div>
       <div class="header__logo">
         <a href="{{ url('/') }}">
-          @if(Storage::exists('logo.png'))
-            <img src="{{ get_storage_file_url('logo.png', 'full') }}" class="brand-logo" alt="{{ trans('app.logo') }}" title="{{ trans('app.logo') }}">
-          @else
-            <img src="https://placehold.it/140x60/eee?text={{ get_platform_title() }}" alt="{{ trans('app.logo') }}" title="{{ trans('app.logo') }}" />
-          @endif
+          <img src="{{ get_logo_url('platform', 'full') }}" class="brand-logo" alt="{{ trans('app.logo') }}" title="{{ trans('app.logo') }}">
         </a>
       </div>
 
@@ -171,9 +167,9 @@
           </li>
           <li>
             <a href="{{ route('cart.index') }}">
-              <i class="fal fa-shopping-basket"></i>
+              <i class="fal fa-shopping-cart"></i>
               <!-- <img src="images/shopping-bag.svg" alt=""> -->
-              <span id="globalCartItemCount" class="badge">{{ cart_item_count() }}</span>
+              <span id="globalCartItemCount" class="badge {{ session('cart_item_count') > 0 ? '':'hidden'}}">{{ session('cart_item_count') }}</span>
             </a>
           </li>
          {{-- <li>
@@ -195,10 +191,9 @@
       <ul class="menu-dropdown-list header__navigation-category">
         <li>
           <a href="{{ route('categories') }}" class="menu-link" data-menu-link>
-            {{--<img src="{{theme_asset_url('img/bars.png')}}" alt="">--}}
             <i class="fas fa-stream" style="margin-right: 10px;"></i>
-            {{trans('nav.all_category')}}
-           {{-- <i class="far fa-chevron-down"></i>--}}
+            {{ trans('theme.categories') }}
+            {{-- <i class="far fa-chevron-down"></i> --}}
           </a>
           <ul class="menu-cat" data-menu-toggle>
             @foreach($all_categories as $catGroup)
@@ -213,7 +208,7 @@
                     <span>{{ $catGroup->name }}</span>
                     <i class="fal fa-chevron-right"></i>
                   </a>
-                  <div class="mega-dropdown" style="background-image:url({{ get_storage_file_url(optional($catGroup->backgroundImage)->path, 'full') }}); background-position: right bottom; background-repeat: no-repeat;margin-right: 0; background-size: contain;">
+                  <div class="mega-dropdown" style="background-image:url({{ $catGroup->backgroundImage ? get_storage_file_url(optional($catGroup->backgroundImage)->path, 'full') : '' }}); background-position: right bottom; background-repeat: no-repeat;margin-right: 0; background-size: contain;">
 
                     <div class="row">
                       @foreach($catGroup->subGroups as $subGroup)
@@ -410,9 +405,10 @@
       <div class="main-menu__top-inner">
         <div class="main-menu__top-box">
           <!-- <div class="main-menu__top-item"><a href="#"><i class="fal fa-user"></i></a></div> -->
-          <div class="main-menu__top-item"><a href="{{route('account', 'orders')}}">
+          <div class="main-menu__top-item">
+            <a href="{{ route('account', 'orders') }}">
               <i class="fal fa-heart"></i>
-              <span class="badge">{{ cart_item_count() }}</span>
+              <span class="badge">{{ session('cart_item_count') }}</span>
             </a>
           </div>
           <!-- <div class="main-menu__top-item"><a href="#"><i class="fal fa-wallet"></i></a></div> -->
@@ -420,9 +416,8 @@
             <div class="form-group">
               <select name="" id="mobile-lang">
                 @foreach(config('active_locales') as $lang)
-                  <option value="{{$lang->code}}" data-imagesrc="{{asset(sys_image_path('flags') .
-                        array_slice(explode('_', $lang->php_locale_code), -1)[0] . '.png')}}">
-                    {{ $lang->language }}
+                  <option value="{{$lang->code}}" data-imagesrc="{{ get_flag_img_by_code(array_slice(explode('_', $lang->php_locale_code), -1)[0], true) }}">
+                    {{ $lang->code }}
                   </option>
                 @endforeach
               </select>
@@ -441,8 +436,8 @@
         </div>
       </div>
     </div>
-    <ul class="main-menu-nav">
 
+    <ul class="main-menu-nav">
       @foreach($all_categories as $catGroup)
         @if($catGroup->subGroups->count())
           @php
@@ -458,14 +453,12 @@
               <li>
                 <a href="{{ route('categories.browse', $subGroup->slug) }}">{{ $subGroup->name }}</a>
                 <ul>
-
                   @foreach($subGroup->categories as $cat)
                     <li> <a href="{{ route('category.browse', $cat->slug) }}">{{ $cat->name }}</a></li>
                     @php
                       $cat_counter++;  //Increase the counter value by 1
                     @endphp
                   @endforeach
-
                 </ul>
               </li>
               @endforeach
@@ -475,16 +468,58 @@
       @endforeach
     </ul>
 
-    <div class="main-menu__bottom">
-      <div class="main-menu__bottom-inner">
-        <div class="main-menu__bottom-box">
-          <!-- <div class="main-menu__bottom-item" ><a href="#"><i class="fal fa-map-marker-alt"></i><span>Store Location</span></a></div> -->
-          <div class="main-menu__bottom-item" ><a href="{{route('account', 'account')}}"><i class="fal fa-user"></i></a></div>
-          {{--<div class="main-menu__bottom-item" ><a href="{{route('account', 'account')}}"><i class="fal fa-wallet"></i></a></div>--}}
-          {{--<div class="main-menu__bottom-item" ><a href="{{route('account', 'wishlist')}}"><i class="fal fa-map-marker-alt"></i></a></div>--}}
-          <div class="main-menu__bottom-item" ><a href="{{route('account', 'account')}}"><i class="fal fa-truck"></i></a></div>
-        </div>
-      </div>
-    </div>
   </nav>
+</div>
+
+<div class="main-menu__bottom">
+  <div class="main-menu__bottom-inner">
+    <div class="main-menu__bottom-box">
+      {{-- <div class="main-menu__bottom-item" >
+        <a href="#">
+          <i class="fal fa-map-marker-alt small"></i> <span>{{ trans('app.location') }}</span>
+        </a>
+      </div> --}}
+
+      <div class="main-menu__bottom-item">
+        <a href="{{ route('account', 'dashboard') }}">
+          @auth('customer')
+            <i class="fal fa-user small"></i> <span>{{ trans('app.account') }}</span>
+          @else
+            <i class="fal fa-sign-in-alt small"></i> <span>{{ trans('app.login') }}</span>
+          @endif
+        </a>
+      </div>
+
+      <div class="main-menu__bottom-item">
+        <a href="{{ route('brands') }}">
+          <i class="fal fa-crown small"></i> <span>{{ trans('theme.brands') }}</span>
+        </a>
+      </div>
+      <div class="main-menu__bottom-item">
+        <a href="{{ route('shops') }}">
+          <i class="fal fa-store small"></i> <span>{{ trans('theme.vendors') }}</span>
+        </a>
+      </div>
+      <div class="main-menu__bottom-item">
+        <a href="{{ url('/selling') }}">
+          <i class="fal fa-seedling small"></i> <span>{{ trans('theme.sell') }}</span>
+        </a>
+      </div>
+      {{-- <div class="main-menu__bottom-item">
+        <a href="{{route('account', 'account')}}">
+          <i class="fal fa-wallet small"></i> <span>{{ trans('wallet::lang.wallet') }}</span>
+        </a>
+      </div> --}}
+      {{-- <div class="main-menu__bottom-item">
+        <a href="{{route('account', 'wishlist')}}">
+          <i class="fal fa-heart small"></i> <span>{{ trans('theme.wishlist') }}</span>
+        </a>
+      </div> --}}
+      {{-- <div class="main-menu__bottom-item">
+        <a href="{{route('account', 'account')}}">
+          <i class="fal fa-truck small"></i> <span>{{ trans('app.orders') }}</span>
+        </a>
+      </div> --}}
+    </div>
+  </div>
 </div>

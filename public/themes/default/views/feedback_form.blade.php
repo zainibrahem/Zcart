@@ -5,7 +5,7 @@
     @include('theme::headers.order_detail')
 
     <!-- CONTENT SECTION -->
-	@include('theme::contents.leave_feedback')
+	@include('theme::contents.feedback_form')
 
     <!-- BROWSING ITEMS -->
     @include('theme::sections.recent_views')

@@ -1,5 +1,4 @@
 <!-- CONTENT SECTION -->
-<div class="clearfix space50"></div>
 <section>
   <div class="container">
     <div class="row">
@@ -24,5 +23,6 @@
     </div><!-- /.row -->
   </div><!-- /.container -->
 </section>
+
 <!-- END CONTENT SECTION -->
 <div class="clearfix space20"></div>

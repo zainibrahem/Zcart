@@ -14,14 +14,8 @@ class VendorsSeeder extends BaseSeeder
     {
         factory(App\Merchant::class, 1)
             ->create([
-                'id' => 3,
                 'shop_id' => 1,
-                'role_id' => \App\Role::MERCHANT,
-                'nice_name' => 'Merchant',
-                'name' => 'Merchant User',
                 'email' => 'merchant@demo.com',
-                'password' => bcrypt('123456'),
-                'active' => 1,
             ])
             ->each(function($merchant){
                 $merchant->dashboard()->save(factory(App\Dashboard::class)->make());
@@ -31,9 +25,11 @@ class VendorsSeeder extends BaseSeeder
                 );
             });
 
-
         factory(App\Merchant::class, 1)
-            ->create()
+            ->create([
+                'shop_id' => 2,
+                'email' => 'merchant2@demo.com',
+            ])
             ->each(function($merchant){
                 $merchant->dashboard()->save(factory(App\Dashboard::class)->make());
 

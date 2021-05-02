@@ -25,7 +25,7 @@ class UpdateFeaturedCategories extends Request
     public function rules()
     {
         return [
-           'featured_categories' => 'required',
+           'featured_categories' => 'required|array|min:1',
         ];
     }
 

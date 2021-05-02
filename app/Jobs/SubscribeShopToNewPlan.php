@@ -46,11 +46,12 @@ class SubscribeShopToNewPlan
 
         $subscription = $shop->newSubscription($subscriptionPlan);
 
-        $trialDays = (bool) config('system_settings.trial_days') ? config('system_settings.trial_days') : Null;
-
         // Subtract the used trial days with the new subscription
         if($shop->onGenericTrial()) {
             $trialDays = Carbon::now()->lt($shop->trial_ends_at) ? Carbon::now()->diffInDays($shop->trial_ends_at) : Null;
+        }
+        else {
+            $trialDays = (bool) config('system_settings.trial_days') ? config('system_settings.trial_days') : Null;
         }
 
         // Set trial days
@@ -63,33 +64,21 @@ class SubscribeShopToNewPlan
 
         // Create subscription
         try {
-            $subscription->create($this->payment_method, [
+            $subscription = $subscription->create($this->payment_method, [
                 'email' => $this->merchant->email
             ]);
-        }
-        catch (IncompletePayment $exception) {
-            return redirect()->route('cashier.payment', [$exception->payment->id, 'redirect' => route('home')]);
-        }
 
-        if (! $this->payment_method && $trialDays) {
-            $trial_ends_at = $shop->trial_ends_at ?? Carbon::now()->addDays($trialDays);
-
-            $this->adjustGenericTrial($shop, $trial_ends_at);
+           // Update shop model
+            $shop->forceFill([
+                'current_billing_plan' => $this->plan,
+                'trial_ends_at' => $subscription->trial_ends_at,
+            ])->save();
         }
-    }
-
-    /**
-     * Adjust Generic Trial information in shop table
-     *
-     * @param  App\Shop   $shop
-     * @param  [type] $trialEnds
-     *
-     * @return bool
-     */
-    private function adjustGenericTrial(Shop $shop, $trialEnds = Null){
-        return $shop->forceFill([
-                        'current_billing_plan' => $this->plan,
-                        'trial_ends_at' => $trialEnds
-                    ])->save();
+        catch (IncompletePayment $e) {
+            return redirect()->route('cashier.payment', [$e->payment->id, 'redirect' => route('home')]);
+        }
+        catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

@@ -125,9 +125,8 @@ trait Authorizable
      */
     public function callAction($method, $parameters)
     {
-        if ( ! $this->checkPermission('', $parameters) ) {
+        if (! $this->checkPermission('', $parameters)) {
             return view('errors.forbidden');
-            // return back()->with('error', trans('messages.permission.denied'));
         }
 
         return parent::callAction($method, $parameters);
@@ -150,6 +149,11 @@ trait Authorizable
 
         $slug = (bool) $slug ? $slug : $this->getSlug();
 
+        // For inspectable
+        if (in_array($slug, ['edit_inventory']) && Auth::user()->isFromPlatform()) {
+            return true;
+        }
+
         return (new Authorize(Auth::user(), $slug, $model))->check();
     }
 
@@ -168,8 +172,9 @@ trait Authorizable
             return $this->abilities[$action] . '_vendor';
         }
 
-        if($this->isUtility($module))
+        if($this->isUtility($module)) {
             return $this->abilities[$action] . '_utility';
+        }
 
         if($this->isAppearance($module)) {
             return 'customize_appearance';

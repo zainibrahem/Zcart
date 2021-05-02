@@ -19,8 +19,12 @@ use App\Http\Resources\OrderResource;
 use App\Http\Requests\Validations\DirectCheckoutRequest;
 use App\Http\Requests\Validations\ApiCheckoutCartRequest;
 
+use App\Common\ShoppingCart;
+
 class CheckoutController extends Controller
 {
+    use ShoppingCart;
+
     /**
      * Checkout the specified cart.
      *
@@ -29,7 +33,7 @@ class CheckoutController extends Controller
      */
     public function checkout(ApiCheckoutCartRequest $request, Cart $cart)
     {
-        if(! crosscheckCartOwnership($request, $cart)) {
+        if (! crosscheckCartOwnership($request, $cart)) {
             return response()->json(['message' => trans('theme.notify.please_login_to_checkout')], 404);
         }
 
@@ -38,29 +42,30 @@ class CheckoutController extends Controller
         $cart->packaging_id = $request->packaging_id;
         $cart->payment_method_id = $request->payment_method_id;
         $cart->shipping_address = $request->shipping_address;
-
         $cart->shipping = $request->shipping_option_id ? getShippingingCost($request->shipping_option_id) : Null;
 
-        if($request->packaging_id) {
+        if ($request->packaging_id) {
             $cart->packaging = getPackagingCost($request->packaging_id);
         }
 
-        $cart->grand_total = $cart->grand_total();
+        $cart->grand_total = $cart->calculate_grand_total();
         $cart->save();
 
         $cart = crosscheckAndUpdateOldCartInfo($request, $cart);
+
+        // Push device_id into the request
+        $request->merge([
+            'device_id' => str_replace('"', '', $request->device_id),
+        ]);
 
         // Start transaction!
         DB::beginTransaction();
         try {
             // Create the order from the cart
-            $order = saveOrderFromCart($request, $cart);
-            $deviceIdd = str_replace('"', '', $request->device_id);
-            $order->forceFill(['device_id' => $deviceIdd]);
-            $order->save();
-
-        } catch(\Exception $e){
-            \Log::error($e);        // Log the error
+            $order = $this->saveOrderFromCart($request, $cart);
+        }
+        catch(\Exception $e){
+            \Log::error($e);
 
             // rollback the transaction and log the error
             DB::rollback();
@@ -71,7 +76,7 @@ class CheckoutController extends Controller
         // Everything is fine. Now commit the transaction
         DB::commit();
 
-        $cart->forceDelete();   // Delete the cart
+        // $cart->forceDelete();   // Delete the cart
 
         event(new OrderCreated($order));   // Trigger the Event
 

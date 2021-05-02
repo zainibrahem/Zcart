@@ -2,7 +2,7 @@
     <section class="blog-sidebar-section">
         <h3 class="widget-title-sm">{{ trans('theme.search') }}</h3>
         <div class="row">
-            <div class="col-xs-12">
+            <div class="col-12">
                 {!! Form::open(['route' => ['blog.search'], 'method' => 'GET', 'id' => 'form', 'class' => 'form-inline', 'role' => 'form', 'data-toggle' => 'validator']) !!}
                   <div class="input-group full-width">
                     {!! Form::text('q', Null, ['class' => 'form-control flat', 'placeholder' => trans('theme.placeholder.search'), 'required']) !!}

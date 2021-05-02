@@ -121,6 +121,46 @@
 										</div>
 								  	</div> <!-- /.row -->
 
+							    	<div class="row">
+								    	<div class="col-sm-7 text-right">
+											<div class="form-group">
+										        {!! Form::label('vendor_can_view_customer_info', trans('app.vendor_can_view_customer_info'). ':', ['class' => 'with-help control-label']) !!}
+											  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.vendor_can_view_customer_info') }}"></i>
+											</div>
+										</div>
+								    	<div class="col-sm-4">
+									  		@if($can_update)
+											  	<div class="handle horizontal text-center">
+													<a href="javascript:void(0)" data-link="{{ route('admin.setting.system.config.toggle', 'vendor_can_view_customer_info') }}" type="button" class="btn btn-md btn-secondary btn-toggle {{ $system->vendor_can_view_customer_info ? 'active' : '' }}" data-toggle="button" aria-pressed="{{ $system->vendor_can_view_customer_info ? 'true' : 'false' }}" autocomplete="off">
+														<div class="btn-handle"></div>
+													</a>
+											  	</div>
+											@else
+												<span>{{ $system->vendor_can_view_customer_info ? trans('app.on') : trans('app.off') }}</span>
+											@endif
+										</div>
+								  	</div> <!-- /.row -->
+
+							    	<div class="row">
+								    	<div class="col-sm-7 text-right">
+											<div class="form-group">
+										        {!! Form::label('enable_chat', trans('app.enable_live_chat'). ':', ['class' => 'with-help control-label']) !!}
+											  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.enable_live_chat_on_platform') }}"></i>
+											</div>
+										</div>
+								    	<div class="col-sm-4">
+									  		@if($can_update)
+											  	<div class="handle horizontal text-center">
+													<a href="javascript:void(0)" data-link="{{ route('admin.setting.system.config.toggle', 'enable_chat') }}" type="button" class="btn btn-md btn-secondary btn-toggle {{ $system->enable_chat ? 'active' : '' }}" data-toggle="button" aria-pressed="{{ $system->enable_chat ? 'true' : 'false' }}" autocomplete="off">
+														<div class="btn-handle"></div>
+													</a>
+											  	</div>
+											@else
+												<span>{{ $system->vendor_can_view_customer_info ? trans('app.on') : trans('app.off') }}</span>
+											@endif
+										</div>
+									</div>
+
 									<div class="form-group">
 								        {!! Form::label('vendor_order_cancellation_fee', trans('app.vendor_order_cancellation_fee'). ':', ['class' => 'with-help col-sm-6 control-label']) !!}
 									  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.config_vendor_order_cancellation_fee') }}"></i>
@@ -142,6 +182,117 @@
 										      	</div>
 											@else
 												<span>{{ $system->vendor_order_cancellation_fee }}</span>
+											@endif
+									  	</div>
+									</div>
+					    		</fieldset>
+
+					    		<fieldset>
+					    			<legend>{{ trans('app.config_customer_section') }}</legend>
+
+									<div class="form-group">
+								        {!! Form::label('can_cancel_order_within', trans('app.can_cancel_order_within'). ':', ['class' => 'with-help col-sm-6 control-label']) !!}
+									  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.config_can_cancel_order_within') }}"></i>
+									  	<div class="col-sm-5 nopadding-left">
+									  		@if($can_update)
+											    <div class="input-group">
+										    	    {!! Form::number('can_cancel_order_within', $system->can_cancel_order_within, ['class' => 'form-control', 'placeholder' => trans_choice('app.minutes', 30)]) !!}
+											        <span class="input-group-addon">{{ trans_choice('app.minutes', 30) }}</span>
+											    </div>
+										      	<div class="help-block with-errors"></div>
+											@else
+												<span>{{ $system->can_cancel_order_within }}</span>
+											@endif
+									  	</div>
+									</div>
+
+							    	<div class="row">
+								    	<div class="col-sm-7 text-right">
+											<div class="form-group">
+										        {!! Form::label('ask_customer_for_email_subscription', trans('app.ask_customer_for_email_subscription'). ':', ['class' => 'with-help control-label']) !!}
+											  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.ask_customer_for_email_subscription') }}"></i>
+											</div>
+										</div>
+								    	<div class="col-sm-4">
+									  		@if($can_update)
+											  	<div class="handle horizontal text-center">
+													<a href="javascript:void(0)" data-link="{{ route('admin.setting.system.config.toggle', 'ask_customer_for_email_subscription') }}" type="button" class="btn btn-md btn-secondary btn-toggle {{ $system->ask_customer_for_email_subscription ? 'active' : '' }}" data-toggle="button" aria-pressed="{{ $system->ask_customer_for_email_subscription ? 'true' : 'false' }}" autocomplete="off">
+														<div class="btn-handle"></div>
+													</a>
+											  	</div>
+											@else
+												<span>{{ $system->ask_customer_for_email_subscription ? trans('app.on') : trans('app.off') }}</span>
+											@endif
+										</div>
+								  	</div><!-- /.row -->
+
+									<div class="row">
+										<div class="col-sm-7">
+											<div class="form-group text-right">
+												{!! Form::label('social_auth', trans('app.show_social_auth').':', ['class' => 'with-help control-label']) !!}
+												<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.social_auth') }}"></i>
+											</div>
+										</div>
+										<div class="col-sm-4">
+									  		@if($can_update)
+												<div class="handle horizontal text-center">
+													<a href="javascript:void(0)" data-link="{{ route('admin.setting.system.config.toggle', 'social_auth') }}" type="button" class="btn btn-md btn-secondary btn-toggle {{ $system->social_auth ? 'active' : '' }}" data-toggle="button" aria-pressed="{{ $system->social_auth ? 'true' : 'false' }}" autocomplete="off">
+														<div class="btn-handle"></div>
+													</a>
+												</div>
+											@else
+												<span>{{ $system->social_auth ? trans('app.on') : trans('app.off') }}</span>
+											@endif
+										</div>
+								  	</div> <!-- /.row -->
+
+							    	<div class="row">
+								    	<div class="col-sm-7 text-right">
+											<div class="form-group">
+										        {!! Form::label('allow_guest_checkout', trans('app.allow_guest_checkout'). ':', ['class' => 'with-help control-label']) !!}
+											  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.allow_guest_checkout') }}"></i>
+											</div>
+										</div>
+								    	<div class="col-sm-4">
+									  		@if($can_update)
+											  	<div class="handle horizontal text-center">
+													<a href="javascript:void(0)" data-link="{{ route('admin.setting.system.config.toggle', 'allow_guest_checkout') }}" type="button" class="btn btn-md btn-secondary btn-toggle {{ $system->allow_guest_checkout ? 'active' : '' }}" data-toggle="button" aria-pressed="{{ $system->allow_guest_checkout ? 'true' : 'false' }}" autocomplete="off">
+														<div class="btn-handle"></div>
+													</a>
+											  	</div>
+											@else
+												<span>{{ $system->allow_guest_checkout ? trans('app.on') : trans('app.off') }}</span>
+											@endif
+										</div>
+								  	</div><!-- /.row -->
+								</fieldset>
+					    	</div>
+
+					    	<div class="col-sm-6">
+					    		<fieldset>
+					    			<legend><i class="fa fa-cubes hidden-sm"></i> {{ trans('app.inventory') }}</legend>
+									<div class="form-group">
+								        {!! Form::label('max_img_size_limit_kb', trans('app.max_img_size_limit_kb'). ':', ['class' => 'with-help col-sm-6 control-label']) !!}
+									  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.config_max_img_size_limit_kb') }}"></i>
+									  	<div class="col-sm-5 nopadding-left">
+									  		@if($can_update)
+									    	    {!! Form::number('max_img_size_limit_kb', $system->max_img_size_limit_kb, ['class' => 'form-control', 'placeholder' => trans('app.placeholder.max_img_size_limit_kb')]) !!}
+										      	<div class="help-block with-errors"></div>
+											@else
+												<span>{{ $system->max_img_size_limit_kb }}</span>
+											@endif
+									  	</div>
+									</div>
+
+									<div class="form-group">
+								        {!! Form::label('max_number_of_inventory_imgs', trans('app.max_number_of_inventory_imgs'). ':', ['class' => 'with-help col-sm-6 control-label']) !!}
+									  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.config_max_number_of_inventory_imgs') }}"></i>
+									  	<div class="col-sm-5 nopadding-left">
+									  		@if($can_update)
+									    	    {!! Form::number('max_number_of_inventory_imgs', $system->max_number_of_inventory_imgs, ['class' => 'form-control', 'placeholder' => trans('app.placeholder.max_number_of_inventory_imgs')]) !!}
+										      	<div class="help-block with-errors"></div>
+											@else
+												<span>{{ $system->max_number_of_inventory_imgs }}</span>
 											@endif
 									  	</div>
 									</div>
@@ -189,116 +340,6 @@
 									</div>
 					    		</fieldset>
 
-					    		<fieldset>
-					    			<legend>{{ trans('app.config_customer_section') }}</legend>
-
-									<div class="form-group">
-								        {!! Form::label('can_cancel_order_within', trans('app.can_cancel_order_within'). ':', ['class' => 'with-help col-sm-6 control-label']) !!}
-									  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.config_can_cancel_order_within') }}"></i>
-									  	<div class="col-sm-5 nopadding-left">
-									  		@if($can_update)
-											    <div class="input-group">
-										    	    {!! Form::number('can_cancel_order_within', $system->can_cancel_order_within, ['class' => 'form-control', 'placeholder' => trans_choice('app.minutes', 30)]) !!}
-											        <span class="input-group-addon">{{ trans_choice('app.minutes', 30) }}</span>
-											    </div>
-										      	<div class="help-block with-errors"></div>
-											@else
-												<span>{{ $system->can_cancel_order_within }}</span>
-											@endif
-									  	</div>
-									</div>
-
-							    	<div class="row">
-								    	<div class="col-sm-7 text-right">
-											<div class="form-group">
-										        {!! Form::label('ask_customer_for_email_subscription', trans('app.ask_customer_for_email_subscription'). ':', ['class' => 'with-help control-label']) !!}
-											  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.ask_customer_for_email_subscription') }}"></i>
-											</div>
-										</div>
-								    	<div class="col-sm-4">
-									  		@if($can_update)
-											  	<div class="handle horizontal text-center">
-													<a href="javascript:void(0)" data-link="{{ route('admin.setting.system.config.toggle', 'ask_customer_for_email_subscription') }}" type="button" class="btn btn-md btn-secondary btn-toggle {{ $system->ask_customer_for_email_subscription ? 'active' : '' }}" data-toggle="button" aria-pressed="{{ $system->ask_customer_for_email_subscription ? 'true' : 'false' }}" autocomplete="off">
-														<div class="btn-handle"></div>
-													</a>
-											  	</div>
-											@else
-												<span>{{ $system->ask_customer_for_email_subscription ? trans('app.on') : trans('app.off') }}</span>
-											@endif
-										</div>
-								  	</div><!-- /.row -->
-
-							    	<div class="row">
-								    	<div class="col-sm-7 text-right">
-											<div class="form-group">
-										        {!! Form::label('allow_guest_checkout', trans('app.allow_guest_checkout'). ':', ['class' => 'with-help control-label']) !!}
-											  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.allow_guest_checkout') }}"></i>
-											</div>
-										</div>
-								    	<div class="col-sm-4">
-									  		@if($can_update)
-											  	<div class="handle horizontal text-center">
-													<a href="javascript:void(0)" data-link="{{ route('admin.setting.system.config.toggle', 'allow_guest_checkout') }}" type="button" class="btn btn-md btn-secondary btn-toggle {{ $system->allow_guest_checkout ? 'active' : '' }}" data-toggle="button" aria-pressed="{{ $system->allow_guest_checkout ? 'true' : 'false' }}" autocomplete="off">
-														<div class="btn-handle"></div>
-													</a>
-											  	</div>
-											@else
-												<span>{{ $system->allow_guest_checkout ? trans('app.on') : trans('app.off') }}</span>
-											@endif
-										</div>
-								  	</div><!-- /.row -->
-
-							    	<div class="row">
-								    	<div class="col-sm-7 text-right">
-											<div class="form-group">
-										        {!! Form::label('vendor_can_view_customer_info', trans('app.vendor_can_view_customer_info'). ':', ['class' => 'with-help control-label']) !!}
-											  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.vendor_can_view_customer_info') }}"></i>
-											</div>
-										</div>
-								    	<div class="col-sm-4">
-									  		@if($can_update)
-											  	<div class="handle horizontal text-center">
-													<a href="javascript:void(0)" data-link="{{ route('admin.setting.system.config.toggle', 'vendor_can_view_customer_info') }}" type="button" class="btn btn-md btn-secondary btn-toggle {{ $system->vendor_can_view_customer_info ? 'active' : '' }}" data-toggle="button" aria-pressed="{{ $system->vendor_can_view_customer_info ? 'true' : 'false' }}" autocomplete="off">
-														<div class="btn-handle"></div>
-													</a>
-											  	</div>
-											@else
-												<span>{{ $system->vendor_can_view_customer_info ? trans('app.on') : trans('app.off') }}</span>
-											@endif
-										</div>
-								  	</div> <!-- /.row -->
-								</fieldset>
-					    	</div>
-
-					    	<div class="col-sm-6">
-					    		<fieldset>
-					    			<legend><i class="fa fa-cubes hidden-sm"></i> {{ trans('app.inventory') }}</legend>
-									<div class="form-group">
-								        {!! Form::label('max_img_size_limit_kb', trans('app.max_img_size_limit_kb'). ':', ['class' => 'with-help col-sm-6 control-label']) !!}
-									  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.config_max_img_size_limit_kb') }}"></i>
-									  	<div class="col-sm-5 nopadding-left">
-									  		@if($can_update)
-									    	    {!! Form::number('max_img_size_limit_kb', $system->max_img_size_limit_kb, ['class' => 'form-control', 'placeholder' => trans('app.placeholder.max_img_size_limit_kb')]) !!}
-										      	<div class="help-block with-errors"></div>
-											@else
-												<span>{{ $system->max_img_size_limit_kb }}</span>
-											@endif
-									  	</div>
-									</div>
-
-									<div class="form-group">
-								        {!! Form::label('max_number_of_inventory_imgs', trans('app.max_number_of_inventory_imgs'). ':', ['class' => 'with-help col-sm-6 control-label']) !!}
-									  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.config_max_number_of_inventory_imgs') }}"></i>
-									  	<div class="col-sm-5 nopadding-left">
-									  		@if($can_update)
-									    	    {!! Form::number('max_number_of_inventory_imgs', $system->max_number_of_inventory_imgs, ['class' => 'form-control', 'placeholder' => trans('app.placeholder.max_number_of_inventory_imgs')]) !!}
-										      	<div class="help-block with-errors"></div>
-											@else
-												<span>{{ $system->max_number_of_inventory_imgs }}</span>
-											@endif
-									  	</div>
-									</div>
-					    		</fieldset>
 
 					    		<fieldset>
 					    			<legend><i class="fa fa-laptop hidden-sm"></i> {{ trans('app.views') }}</legend>
@@ -423,52 +464,6 @@
 								  	</div>
 								    <!-- /.row -->
 					    		</fieldset>
-
-					    		<fieldset>
-					    			<legend>{{ trans('app.others') }}</legend>
-
-							    	<div class="row">
-
-								    	<div class="col-sm-7 text-right">
-											<div class="form-group">
-										        {!! Form::label('enable_chat', trans('app.enable_live_chat'). ':', ['class' => 'with-help control-label']) !!}
-											  	<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.enable_live_chat_on_platform') }}"></i>
-											</div>
-										</div>
-								    	<div class="col-sm-4">
-									  		@if($can_update)
-											  	<div class="handle horizontal text-center">
-													<a href="javascript:void(0)" data-link="{{ route('admin.setting.system.config.toggle', 'enable_chat') }}" type="button" class="btn btn-md btn-secondary btn-toggle {{ $system->enable_chat ? 'active' : '' }}" data-toggle="button" aria-pressed="{{ $system->enable_chat ? 'true' : 'false' }}" autocomplete="off">
-														<div class="btn-handle"></div>
-													</a>
-											  	</div>
-											@else
-												<span>{{ $system->vendor_can_view_customer_info ? trans('app.on') : trans('app.off') }}</span>
-											@endif
-										</div>
-
-									</div>
-
-									<div class="row">
-										<div class="col-sm-7">
-											<div class="form-group text-right">
-												{!! Form::label('social_auth', trans('app.show_social_auth').':', ['class' => 'with-help control-label']) !!}
-												<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="left" title="{{ trans('help.social_auth') }}"></i>
-											</div>
-										</div>
-										<div class="col-sm-4">
-									  		@if($can_update)
-												<div class="handle horizontal text-center">
-													<a href="javascript:void(0)" data-link="{{ route('admin.setting.system.config.toggle', 'social_auth') }}" type="button" class="btn btn-md btn-secondary btn-toggle {{ $system->social_auth ? 'active' : '' }}" data-toggle="button" aria-pressed="{{ $system->social_auth ? 'true' : 'false' }}" autocomplete="off">
-														<div class="btn-handle"></div>
-													</a>
-												</div>
-											@else
-												<span>{{ $system->social_auth ? trans('app.on') : trans('app.off') }}</span>
-											@endif
-										</div>
-								  	</div> <!-- /.row -->
-								</fieldset>
 					    	</div>
 
 					  		@if($can_update)

@@ -35,7 +35,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        // $products = $this->product->all();
+        //$products = $this->product->all();
 
         $trashes = $this->product->trashOnly();
 

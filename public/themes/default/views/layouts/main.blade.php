@@ -10,6 +10,7 @@
 
     <!-- Main custom css -->
     <link href="{{ theme_asset_url('css/style.css')}}" media="screen" rel="stylesheet">
+    {{-- <link href="https://dl.dropbox.com/s/zyu2rzm3r1limec/resposive.css" media="screen" rel="stylesheet"> --}}
 
     @if(config('active_locales')->firstWhere('code', App::getLocale())->rtl)
        <link href="{{ theme_asset_url('css/rtl.css')}}" media="screen" rel="stylesheet">
@@ -31,6 +32,20 @@
     <div class="wrapper">
         <!-- Header start -->
         <header class="header">
+
+            <!-- VALIDATION ERRORS -->
+            @if (count($errors) > 0)
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <strong>{{ trans('theme.error') }}!</strong> {{ trans('messages.input_error') }}<br><br>
+                  <ul class="list-group">
+                      @foreach ($errors->all() as $error)
+                        <li class="list-group-item list-group-item-danger">{{ $error }}</li>
+                      @endforeach
+                  </ul>
+                </div>
+            @endif
+
             @if(Session::has('global_announcement'))
                 <div class="header__enouncement">
                     @if(session('global_announcement')->action_url)
@@ -46,7 +61,6 @@
 
             @include('theme::nav.main')
         </header>
-        <!-- Header end -->
 
         <div class="close-sidebar">
             <strong><i class="fal fa-times"></i></strong>
@@ -72,7 +86,13 @@
     </div>
     <!-- Wrapper end -->
 
+    <!-- MODALS -->
+    @unless(Auth::guard('customer')->check())
+        @include('theme::auth.modals')
+    @endunless
+
     <script src="{{ theme_asset_url('js/app.js') }}"></script>
+    {{-- <script src="https://dl.dropbox.com/s/nqdfqqp5fper8no/script.js"></script> --}}
 
     @include('theme::notifications')
 

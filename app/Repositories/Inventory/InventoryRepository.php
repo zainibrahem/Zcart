@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 
 interface InventoryRepository
 {
-    public function checkInveoryExist($productId);
+    public function all($status);
+
+    public function checkInventoryExist($productId);
 
     public function findProduct($id);
 

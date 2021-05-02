@@ -15,7 +15,7 @@ class AddPaymentInstructionFieldsToOrderTable extends Migration
     {
         if (! Schema::hasColumn('orders', 'payment_instruction')) {
             Schema::table('orders', function (Blueprint $table) {
-                $table->text('payment_instruction')->nullable();
+                $table->text('payment_instruction')->nullable()->after('shipping_address');
             });
         }
     }

@@ -11,6 +11,6 @@
 @endsection
 
 @section('scripts')
-    @include('theme::scripts.checkout')
+    @include('scripts.checkout')
     @include('theme::scripts.dynamic_checkout')
 @endsection

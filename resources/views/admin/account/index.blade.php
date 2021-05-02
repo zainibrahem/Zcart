@@ -49,5 +49,5 @@
 @endsection
 
 @section('page-script')
-  @include('plugins.stripe-scripts')
+  @includeWhen(Auth::user()->isFromMerchant(), 'plugins.stripe-scripts')
 @endsection

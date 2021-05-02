@@ -4,12 +4,11 @@
             <div class="shell-banner__inner">
                 <div class="row">
                     @foreach($banners as $banner)
-                        <div class="col-lg-{{ $banner['columns'] }} col-12">
+                        <div class="col-lg-{{ $banner['columns'] }} col-12 my-2">
                             <div class="image-banner {{$banner['columns'] > 11 ? 'single-banner' : ''}}">
                                 <div class="shell-banner__box">
                                     <div class="shell-banner__img">
-                                        <img src="{{ isset($banner['feature_image']['path']) && Storage::exists($banner['feature_image']['path']) ? get_storage_file_url($banner['feature_image']['path'], 'full') : '' }}"
-                                             alt="{{ $banner['title'] ?? 'Banner Image' }}" title="{{ $banner['title'] ?? 'Banner Image' }}">
+                                        <img src="{{ isset($banner['feature_image']['path']) && Storage::exists($banner['feature_image']['path']) ? get_storage_file_url($banner['feature_image']['path'], 'full') : '' }}" alt="{{ $banner['title'] ?? 'Banner Image' }}" title="{{ $banner['title'] ?? 'Banner Image' }}">
                                     </div>
                                     <div class="shell-banner__overlay {{ isset($banner['color']) ? 'black' : ''}}">
                                         <div class="single-banner__texts {{ isset($banner['color']) ? 'black' : ''}} ">

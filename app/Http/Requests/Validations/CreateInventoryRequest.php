@@ -24,11 +24,11 @@ class CreateInventoryRequest extends Request
     public function rules()
     {
         $user = $this->user(); //Get current user
+        incevioAutoloadHelpers(getMysqliConnection());
         Request::merge([
                 'shop_id' => $user->merchantId(),
                 'user_id' => $user->id
             ]);
-        incevioAutoloadHelpers(getMysqliConnection());
 
         return [
             'title' => 'required',

@@ -199,6 +199,10 @@ class Cart extends BaseModel
      */
     public function get_shipping_cost()
     {
+        if ($this->shipping_rate_id) {
+            return $this->shipping + $this->handling;
+        }
+
         return $this->is_free_shipping() ? 0 : $this->shipping + $this->handling;
     }
 
@@ -207,9 +211,9 @@ class Cart extends BaseModel
      *
      * @return number
      */
-    public function grand_total()
+    public function calculate_grand_total()
     {
-        $grand_total =  ($this->total + $this->handling + $this->taxes + $this->packaging) - $this->discount;
+        $grand_total = ($this->total + $this->handling + $this->taxes + $this->packaging) - $this->discount;
 
         return $this->is_free_shipping() ? $grand_total : ($grand_total + $this->shipping);
     }
@@ -223,7 +227,7 @@ class Cart extends BaseModel
     {
         // return ! $this->shipping_rate_id;
         foreach($this->inventories as $item) {
-            if( ! $item->free_shipping ) {
+            if (! $item->free_shipping) {
                 return false;
             }
         }
@@ -234,13 +238,16 @@ class Cart extends BaseModel
     /**
      * Setters
      */
-    public function setDiscountAttribute($value){
+    public function setDiscountAttribute($value)
+    {
         $this->attributes['discount'] = $value ?? Null;
     }
-    public function setShippingAddressAttribute($value){
+    public function setShippingAddressAttribute($value)
+    {
         $this->attributes['shipping_address'] = is_numeric($value) ? $value : Null;
     }
-    public function setBillingAddressAttribute($value){
+    public function setBillingAddressAttribute($value)
+    {
         $this->attributes['billing_address'] = is_numeric($value) ? $value : Null;
     }
 
@@ -252,7 +259,7 @@ class Cart extends BaseModel
     public function getLabelText()
     {
         $txt = '';
-        if($this->coupon_id && $this->discount){
+        if ($this->coupon_id && $this->discount) {
             $txt .= trans('app.coupon_applied', ['coupon' => $this->coupon->name]);
             // $txt .= trans('app.discount_applied', ['amount' => get_formated_currency($this->discount)]);
         }
